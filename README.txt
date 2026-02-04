@@ -1,7 +1,7 @@
-API Graphique utilisé : DirectX12 , prise en main et implémentation simplifié car ecosystème Microsoft , possibilité d'optimisation complexe entre CPU et carte GPU
+API Graphique utilisé : DirectX11, prise en main et implémentation simplifié car ecosystème Microsoft ,
 API Graphique non retenu :
 
-- DirectX 11 , pas assez de custom possible sur l'optimisation
+- DirectX 12 , Trop complexe
 - OpenGL , Trop simple
 - Vulkan , Intéressant mais prise en main compliqué
 
@@ -19,6 +19,7 @@ API Son non retenu :
 - Mini Audio 
 - OpenAL 
 - Wwise
+
 
 
 
