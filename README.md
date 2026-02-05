@@ -34,7 +34,7 @@ Ce document décrit les choix techniques et l’architecture envisagée pour **E
 ## 2. System Overview
 
 ### 2.1 Description générale
-El Motor est un moteur de jeu modulaire écrit en C++ (C++17), conçu pour séparer clairement les responsabilités entre le rendu, la physique, l’audio, les entrées et la logique de jeu. Cette approche vise à faciliter la maintenance, l’évolution et les tests des différents systèmes.
+El Motor est un moteur de jeu modulaire écrit en C++ (C++20), conçu pour séparer clairement les responsabilités entre le rendu, la physique, l’audio, les entrées et la logique de jeu. Cette approche vise à faciliter la maintenance, l’évolution et les tests des différents systèmes.
 
 ### 2.2 Composants principaux
 - **Rendering System** : Gestion du rendu graphique
