@@ -15,11 +15,6 @@ int height = 800;
 
 bool FullScreen = false;
 
-// pointeur vers la fonction de gestion des messages
-//PasFini
-//wc.cbSize = sizeof(WNDCLASSEX); // taille de la structure
-//wc.style = CS_HREDRAW | CS_VREDRAW; // style de la fenetre
-
 
 void mainloop() {
 	MSG msg; // structure pour stocker les messages
