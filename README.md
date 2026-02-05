@@ -4,7 +4,7 @@
 - **Project Title:** El Motor – C++ Game Engine
 - **Version:** 1.0
 - **Date:** 2026-02-05
-- **Author(s):** Groupe *El Motor* (5 personnes)
+- **Author(s):** Groupe *El Motor* (6 personnes)
 - **Context:** Début du développement du moteur
 
 ## Revision History
@@ -88,13 +88,15 @@ Jolt Physics a été sélectionnée pour la gestion de la physique en raison de 
 
 ---
 
-#### API Audio retenue : **FMOD**
-FMOD a été retenue pour la gestion de l’audio en raison de sa robustesse, de sa simplicité d’intégration et de son usage répandu dans l’industrie du jeu vidéo. Elle permet de gérer efficacement les sons, la spatialisation et les événements audio tout en restant adaptée à un moteur en développement.
+#### API Audio retenue : **MiniAudio**
+
+MiniAudio a été retenue pour la gestion de l’audio du moteur en raison de sa **légèreté**, de sa **simplicité d’intégration** et du **contrôle fin** qu’elle offre sur le fonctionnement interne du système audio.  
+Cette bibliothèque bas niveau permet à l’équipe de concevoir un système audio **sur mesure**, parfaitement intégré à l’architecture du moteur, tout en garantissant de bonnes performances.
 
 **APIs audio non retenues :**
-- **MiniAudio** et **OpenAL** : Solutions plus bas niveau nécessitant la mise en place manuelle de nombreux systèmes audio.
-- **Wwise** : Middleware très complet mais trop lourd et complexe pour le périmètre du projet.
-
+- **FMOD** : Middleware robuste et largement utilisé dans l’industrie, mais offrant un niveau d’abstraction trop élevé pour les objectifs pédagogiques du projet, limitant la maîtrise des systèmes audio internes du moteur.
+- **OpenAL** : API plus ancienne avec un modèle d’utilisation moins flexible et moins adapté à une architecture moteur moderne.
+- **Wwise** : Solution très complète mais trop lourde et complexe pour le périmètre et la durée du projet, nécessitant un pipeline externe conséquent.
 ---
 
 ## 5. État d’avancement
