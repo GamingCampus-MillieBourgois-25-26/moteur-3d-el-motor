@@ -12,5 +12,10 @@ add_library(Engine
 )
 
 target_sources(Engine PRIVATE Engine.cpp)
+#target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
 
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
+target_link_libraries(Engine PRIVATE
+    d3d11
+    dxgi
+    d3dcompiler
+)
