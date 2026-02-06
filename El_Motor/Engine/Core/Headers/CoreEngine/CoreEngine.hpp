@@ -1,6 +1,6 @@
 
-#include "Core/Headers/Time_Manager/TimeManager.hpp"
-#include "Core/Headers/Input_Manager/InputManager.hpp"
+#include "../Core/Headers/Time_Manager/TimeManager.hpp"
+#include "../Core/Headers/Input_Manager/InputManager.hpp"
 
 
 
