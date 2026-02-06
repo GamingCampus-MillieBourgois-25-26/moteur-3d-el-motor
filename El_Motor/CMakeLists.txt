@@ -19,6 +19,6 @@ set(GLFW_BUILD_DOCS OFF)
 
 FetchContent_MakeAvailable(glfw)
 
+add_subdirectory(Engine)
 add_subdirectory(Editor)
 add_subdirectory(Runtime)
-add_subdirectory(Engine)
