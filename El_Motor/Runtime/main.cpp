@@ -4,5 +4,5 @@
 
 int main() {
 	WindowOpener window;
-	window.test();
+	window.WindowDisplay();
 }

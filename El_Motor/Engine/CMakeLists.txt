@@ -1,12 +1,9 @@
-file(GLOB_RECURSE ENGINE_SOURCES
-    Source/*.cpp
-    Component/UserComponents/Camera/Source/Camera.cpp
+set (ENGINE_SOURCES
+    Core/Source/Window/Window.cpp
 )
 
-file(GLOB_RECURSE ENGINE_HEADERS
-    Headers/*.hpp
-    Headers/*.h
-    Core/Source/Input_Manager/InputState.hpp
+set (ENGINE_HEADERS
+    Core/Headers/Window/Window.hpp
 )
 
 add_library(Engine
@@ -14,11 +11,15 @@ add_library(Engine
     ${ENGINE_HEADERS}
 )
 
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
+target_compile_definitions(Engine PRIVATE ENGINE_BUILD_DLL)
 
-target_link_libraries(Engine PRIVATE
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers)
+
+target_link_libraries(Engine PUBLIC
+    glfw
     d3d11
     dxgi
-    d3dcompiler
-    
+    d3dcompiler 
 )
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${ENGINE_SOURCES} ${ENGINE_HEADERS})
