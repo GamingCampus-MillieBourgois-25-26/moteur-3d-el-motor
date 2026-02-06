@@ -1,5 +1,5 @@
 file(GLOB_RECURSE ENGINE_SOURCES
-    *.cpp
+    Source/*.cpp
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
@@ -12,11 +12,12 @@ add_library(Engine
 )
 
 
-target_sources(Engine PRIVATE Engine.cpp)
+target_sources(Engine PRIVATE Engine.cpp "Component/UserComponents/Camera/Source/Camera.cpp")
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
 
 target_link_libraries(Engine PRIVATE
     d3d11
     dxgi
     d3dcompiler
+    
 )
