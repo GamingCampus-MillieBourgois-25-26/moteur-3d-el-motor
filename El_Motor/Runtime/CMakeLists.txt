@@ -15,6 +15,3 @@ target_link_libraries(Runtime
         dxgi
 )
 
-target_compile_definitions(Runtime PRIVATE
-    GLFW_EXPOSE_NATIVE_WIN32
-)

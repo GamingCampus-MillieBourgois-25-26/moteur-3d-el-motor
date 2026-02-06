@@ -9,7 +9,7 @@ set (ENGINE_HEADERS
 add_library(Engine
     ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
-)
+ "Core/Source/Window/Window.cpp")
 
 target_compile_definitions(Engine PRIVATE ENGINE_BUILD_DLL)
 
