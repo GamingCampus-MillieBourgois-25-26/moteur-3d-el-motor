@@ -1,4 +1,4 @@
-
+#pragma once
 #include "../Core/Headers/Time_Manager/TimeManager.hpp"
 #include "../Core/Headers/Input_Manager/InputManager.hpp"
 
@@ -13,6 +13,9 @@ namespace Engine
 
         InputManager inputManager;
         TimeManager timeManager;
+        //.... assetManager;
+        //.... entityManager
+        //.... SceneManager
         bool running = false;
     public:
 		void init();        // initialisation du moteur
