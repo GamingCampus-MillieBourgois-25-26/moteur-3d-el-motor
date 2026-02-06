@@ -1,5 +1,6 @@
 file(GLOB_RECURSE ENGINE_SOURCES
     Source/*.cpp
+    Core/Source/Window/*.cpp 
     Component/UserComponents/Camera/Source/Camera.cpp
 )
 
@@ -12,7 +13,7 @@ file(GLOB_RECURSE ENGINE_HEADERS
 add_library(Engine
     ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
-)
+ "Core/Source/Window/Window.cpp")
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
 
