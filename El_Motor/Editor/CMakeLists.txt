@@ -2,7 +2,12 @@ file(GLOB_RECURSE EDITOR_SOURCES
 	*.cpp
 )
 
-add_executable(Editor ${EDITOR_SOURCES})
+file(GLOB_RECURSE EDITOR_HEADERS
+	Headers/*.hpp
+)
+
+add_executable(Editor ${EDITOR_SOURCES} 
+                      ${EDITOR_HEADERS})
 
 target_link_libraries(Editor PRIVATE
     Engine

@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
-    include/*.hpp
+    Headers/*.hpp
 )
 
 add_library(Engine
@@ -13,7 +13,7 @@ add_library(Engine
 
 
 target_sources(Engine PRIVATE Engine.cpp)
-#target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
 
 target_link_libraries(Engine PRIVATE
     d3d11
