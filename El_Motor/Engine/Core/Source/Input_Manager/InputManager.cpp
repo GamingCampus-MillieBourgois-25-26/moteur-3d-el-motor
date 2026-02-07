@@ -58,11 +58,6 @@ void Engine::InputManager::updateMouseButton(MouseButton button, bool isDown) {
 }
 
 
-
-
-
-
-
 // Fonctions publiques
 
 

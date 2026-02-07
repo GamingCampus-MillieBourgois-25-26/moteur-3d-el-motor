@@ -5,12 +5,15 @@ void Engine::CoreEngine::init() {
 	inputManager.init();
 	loggerManager.LogInitialize();
 	running = true;
+	windowOpener.WindowInit();
 }
 
 void Engine::CoreEngine::run() {
-	while (running) {
-		timeManager.update();
-		inputManager.update();
+	while (running && !glfwWindowShouldClose(windowOpener.getMyWindow())) {
+			timeManager.update();
+			inputManager.update();
+			windowOpener.windowPollEvents();
+			windowOpener.windowSwapBuffers();
 	}
 }
 

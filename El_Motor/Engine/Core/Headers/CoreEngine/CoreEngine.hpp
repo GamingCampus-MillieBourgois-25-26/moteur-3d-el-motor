@@ -2,6 +2,8 @@
 #include "../Core/Headers/Time_Manager/TimeManager.hpp"
 #include "../Core/Headers/Input_Manager/InputManager.hpp"
 #include "../Core/Headers/Logger/Logger.hpp"
+#include "../Core/Headers/Window/Window.hpp"
+
 
 
 namespace Engine
@@ -9,11 +11,13 @@ namespace Engine
 
     class CoreEngine {
     private:
-		// Besoin d'ajouter les autres systèmes comme le rendu, la gestion des scènes, etc.
+		// Besoin d'ajouter les autres systï¿½mes comme le rendu, la gestion des scï¿½nes, etc.
 
         InputManager inputManager;
         TimeManager timeManager;
 		LoggerManager loggerManager;
+		WindowOpener windowOpener;
+
         //.... assetManager;
         //.... entityManager
         //.... SceneManager
@@ -21,6 +25,6 @@ namespace Engine
     public:
 		void init();        // initialisation du moteur
         void run();       // boucle principale
-		void shutdown();    // arrêt du moteur
+		void shutdown();    // arrï¿½t du moteur
     };
 }

@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "../Engine/Core/Headers/Window/Window.hpp"
+#include "../Core/Headers/CoreEngine/CoreEngine.hpp"
 
 int main() {
-	WindowOpener window;
-	window.WindowDisplay();
+	Engine::CoreEngine engine;
+	engine.init();
+	engine.run();
 }
