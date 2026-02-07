@@ -1,7 +1,7 @@
 #pragma once
 #include "../Core/Headers/Time_Manager/TimeManager.hpp"
 #include "../Core/Headers/Input_Manager/InputManager.hpp"
-
+#include "../Core/Headers/Logger/Logger.hpp"
 
 
 namespace Engine
@@ -13,6 +13,7 @@ namespace Engine
 
         InputManager inputManager;
         TimeManager timeManager;
+		LoggerManager loggerManager;
         //.... assetManager;
         //.... entityManager
         //.... SceneManager

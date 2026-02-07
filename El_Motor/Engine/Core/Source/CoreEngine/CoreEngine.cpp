@@ -3,6 +3,7 @@
 void Engine::CoreEngine::init() {
 	// Initialisation des systèmes de l'Engine , fenêtre, rendu, etc.
 	inputManager.init();
+	loggerManager.LogInitialize();
 	running = true;
 }
 
@@ -15,5 +16,6 @@ void Engine::CoreEngine::run() {
 
 void Engine::CoreEngine::shutdown() {
 	// Nettoyage du moteur, libération de mémoires(à faire)
+	loggerManager.LogShutdown();
 	running = false;
 }
