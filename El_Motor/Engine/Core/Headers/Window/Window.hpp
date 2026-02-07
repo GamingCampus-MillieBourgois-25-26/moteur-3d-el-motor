@@ -18,5 +18,8 @@ namespace Engine
 
 		GLFWwindow* getMyWindow() { return window.get(); } // récupere le pointeur brut de la fenêtre pour l'utiliser plus tard
 
+
+		void WindowRender();
+
 	};
 }
