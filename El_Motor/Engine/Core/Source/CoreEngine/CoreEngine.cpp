@@ -4,16 +4,24 @@ void Engine::CoreEngine::init() {
 	// Initialisation des systèmes de l'Engine , fenêtre, rendu, etc.
 	inputManager.init();
 	running = true;
+	windowOpener.WindowInit();
 }
 
 void Engine::CoreEngine::run() {
-	while (running) {
-		timeManager.update();
-		inputManager.update();
+	while (running && !glfwWindowShouldClose(windowOpener.getMyWindow())) {
+			timeManager.update();
+			inputManager.update();
+			render();
+			windowOpener.windowPollEvents();
+			windowOpener.windowSwapBuffers();
 	}
 }
 
 void Engine::CoreEngine::shutdown() {
 	// Nettoyage du moteur, libération de mémoires(à faire)
 	running = false;
+}
+
+void Engine::CoreEngine::render() {
+	// Appel des fonctions de rendu (à faire)
 }
