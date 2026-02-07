@@ -1,8 +1,9 @@
-set (RUNTIME_SOURCES
-    main.cpp
+file(GLOB_RECURSE RUNTIME_SOURCES
+	*.cpp
 )
 
-set (RUNTIME_HEADERS
+file(GLOB_RECURSE RUNTIME_HEADERS
+	Headers/*.hpp
 )
 
 add_executable(Runtime ${RUNTIME_SOURCES} 
@@ -11,7 +12,9 @@ add_executable(Runtime ${RUNTIME_SOURCES}
 target_link_libraries(Runtime
     PRIVATE
         Engine
+        glfw
         d3d11
         dxgi
 )
+
 
