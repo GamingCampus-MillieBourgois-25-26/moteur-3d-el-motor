@@ -1,33 +1,23 @@
 #include "../Core/Headers/Logger/Logger.hpp"
 
+Engine::LoggerManager& Engine::LoggerManager::Get()
+{
+	static LoggerManager instance; // unique instance
+	return instance;
+}
+
+
 void Engine::LoggerManager::LogInitialize()
 {
 	std::cout << "Logger initialized." << std::endl;
+	LogInfo("Logger initialized.");
 }
 void Engine::LoggerManager::LogShutdown()
 {
 	std::cout << "Logger shutdown." << std::endl;
+	LogInfo("Logger shutdown.");
 }
 
-// Logique de log simple qui affiche les messages dans la console selon leur type.
-void Engine::LoggerManager::Log(const std::string& message, LogType type)
-{
-	switch (type)
-	{
-	case LogType::Error:
-		std::cerr << "[ERROR] " << message << std::endl;
-		break;
-	case LogType::Warning:
-		std::cerr << "[WARNING] " << message << std::endl;
-		break;
-	case LogType::Info:
-		std::cout << "[INFO] " << message << std::endl;
-		break;
-	default:
-		std::cout << "[UNKNOWN] " << message << std::endl;
-		break;
-	}
-}
 
 
 
@@ -48,18 +38,45 @@ void Engine::LoggerManager::LogInfo(const std::string& message)
 }
 
 
-
-
-void Engine::LoggerManager::LogToFile(const std::string& message, const std::string& filename)
+// Logique de log simple qui affiche les messages dans la console selon leur type.
+void Engine::LoggerManager::Log(const std::string& message, LogType type)
 {
-	std::ofstream file(filename, std::ios::app);
-	if (file.is_open())
+	switch (type)
 	{
-		file << message << std::endl;
-		file.close();
+	case LogType::Error:
+		std::cerr << "[ERROR] " << message << std::endl;
+		LogToFile("[ERROR] " + message);
+		break;
+	case LogType::Warning:
+		std::cerr << "[WARNING] " << message << std::endl;
+		LogToFile("[WARNING] " + message);
+		break;
+	case LogType::Info:
+		std::cout << "[INFO] " << message << std::endl;
+		LogToFile("[INFO] " + message);
+		break;
+	default:
+		std::cout << "[UNKNOWN] " << message << std::endl;
+		LogToFile("[UNKNOWN] " + message);
+		break;
 	}
-	else
-	{
-		std::cerr << "[ERROR] Unable to open log file: " << filename << std::endl;
+}
+
+// Fonction qui écrit les messages de log dans un fichier. Elle vérifie d'abord si le dossier existe et le crée si nécessaire, puis ouvre le fichier et écrit le message.
+void Engine::LoggerManager::LogToFile(const std::string& message)
+{
+	std::filesystem::path logPath(logFilePath);
+
+	if (!std::filesystem::exists(logPath.parent_path())) {
+		std::filesystem::create_directories(logPath.parent_path());
+	}
+
+	std::ofstream file(logFilePath, std::ios::app);
+	if (file) {
+		file << message << std::endl;
+	}
+	else {
+		std::cerr << "[LOGGER ERROR] Unable to open log file: "
+			<< logFilePath << std::endl;
 	}
 }

@@ -23,8 +23,11 @@ namespace Engine
         //.... SceneManager
         bool running = false;
     public:
+
+		CoreEngine() = default;
+
 		void init();        // initialisation du moteur
         void run();       // boucle principale
-		void shutdown();    // arr�t du moteur
+		void shutdown();    // shutdown du moteur
     };
 }
