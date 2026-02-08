@@ -1,0 +1,28 @@
+#pragma once
+#include <string>
+#include "API_Sound/AudioTypes.h"
+
+namespace EI
+{
+    class IAudioSystem
+    {
+    public:
+        virtual ~IAudioSystem() = default;
+
+        // Cycle de vie
+        virtual bool Init() = 0;
+        virtual void Shutdown() = 0;
+        virtual void Update(float dt) = 0;
+
+        // Ressources
+        virtual SoundHandle LoadSound(const std::string& path, const SoundDesc& desc = {}) = 0;
+        virtual void UnloadSound(SoundHandle sound) = 0;
+
+        // Lecture
+        virtual VoiceHandle Play(SoundHandle sound, const VoiceParams& params = {}) = 0;
+        virtual void Stop(VoiceHandle voice) = 0;
+
+        // Volume global
+        virtual void SetMasterVolume(float volume) = 0;
+    };
+}
