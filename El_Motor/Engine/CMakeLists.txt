@@ -22,7 +22,7 @@ add_library(Engine
   "Core/Source/CoreEngine/CoreEngine.cpp"
 )
 
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty)
 
 target_link_libraries(Engine PRIVATE
     glfw

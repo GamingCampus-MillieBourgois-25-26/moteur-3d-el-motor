@@ -67,6 +67,7 @@ namespace EI
             if (it->second.desc.spatial)
                 flags |= MA_SOUND_FLAG_SPATIALIZATION;
 
+
             if (ma_sound_init_from_file(&engine_, it->second.path.c_str(), flags, nullptr, nullptr, &v.sound) != MA_SUCCESS)
                 return 0;
 
@@ -98,7 +99,8 @@ namespace EI
 
         void SetMasterVolume(float volume) override
         {
-            ma_engine_set_volume(&engine_, volume);
+            masterVolume_ = volume;
+            ma_engine_set_volume(&engine_, masterVolume_);
         }
 
     private:
