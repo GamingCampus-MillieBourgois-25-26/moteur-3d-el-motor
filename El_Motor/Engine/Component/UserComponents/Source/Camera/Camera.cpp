@@ -14,18 +14,33 @@ Camera::Camera() {
 	fov = DirectX::XM_PIDIV4;
 }
 
-Camera::Update();
+///////// CALCUL DE MATRICES //////////
 
-Camera::ProjectionMatrix() const {
-	return DirectX::XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);
+void Camera::ProjectionMatrix() {
+	projection = DirectX::XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);
 }
 
-Camera::ViewMatrix() const {
-	DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&position);
+void Camera::ViewMatrix() {
+	DirectX::XMVECTOR pos = DirectX::XMLoadFloat3(&position); 
 	DirectX::XMVECTOR rot = DirectX::XMLoadFloat4(&rotation);
 
-	DirectX::XMVECTOR forwardVec = DirectX::XMVector3Rotate(DirectX::XMLoadFloat3(&forward), rot);
-	DirectX::XMVECTOR upVec = DirectX::XMVector3Rotate(DirectX::XMLoadFloat3(&up), rot);
+	view = DirectX::XMMatrixRotationQuaternion(XMQuaternionInverse(rot)) * XMMatrixTranslation(-pos.x, -pos.y, -pos.z);
+}
 
-	return DirectX::XMMatrixLookToLH(pos, forwardVec, upVec);
+void Camera::VPMatrix() {
+	VP = view * projection;
+}
+
+////////// GETTERS //////////
+
+DirectX::XMFLOAT4X4 Camera::Getprojection() const{
+	return projection;
+}
+
+DirectX::XMFLOAT4X4 Camera::Getview() const {
+	return view;
+}
+
+DirectX::XMFLOAT4X4 Camera::GetVP() const{
+	return VP;
 }

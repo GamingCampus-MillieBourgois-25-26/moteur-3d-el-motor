@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "InputManager.hpp"
 
 class Camera{
 private:
@@ -15,21 +16,26 @@ private:
 	float farPlane;
 	float fov;
 
-	DirectX::XMFLOAT4X4 projectionMatrix;
-	DirectX::XMFLOAT4X4 viewMatrix;
+	float moveSpeed;
+	float sensitivity;
 
-	DirectX::XMFLOAT4X4 VPMatrix;
+	DirectX::XMFLOAT4X4 projection;
+	DirectX::XMFLOAT4X4 view;
+	DirectX::XMFLOAT4X4 VP;
 	 
 protected:
-	///////// GETTERS //////////
+	void ProjectionMatrix();    // Persepective
+	void ViewMatrix();		    // World to Camera
+	void VPMatrix();			// Projection * View
 
-	DirectX::XMMATRIX ProjectionMatrix() const; // Persepective
-	DirectX::XMMATRIX ViewMatrix() const;		// World to Camera
-	
-	DirectX::XMMATRIX VPMatrix() const;			// Projection * View
+	//////// GETTERS //////////
 
+	DirectX::XMFLOAT4X4 Getprojection() const;
+	DirectX::XMFLOAT4X4 Getview() const;
+	DirectX::XMFLOAT4X4 GetVP() const;
 
 public:
 	Camera();
-	Update();
+
+	virtual void Update() = 0;
 };
