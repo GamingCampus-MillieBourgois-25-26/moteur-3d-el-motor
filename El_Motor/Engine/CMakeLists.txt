@@ -20,7 +20,7 @@ add_library(Engine
   "Core/Source/Input_Manager/InputManager.cpp"
   "Core/Source/Time_Manager/TimeManager.cpp"
   "Core/Source/CoreEngine/CoreEngine.cpp"
-)
+  "Core/Source/D3D11/D3D11.cpp")
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
 
