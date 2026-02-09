@@ -2,7 +2,10 @@
 
 
 void Engine::InputManager::init() {
-	keyStates.fill(InputState::Up);
+    if (initialized == true) return;
+    initialized = true;
+
+    keyStates.fill(InputState::Up);
     mouseStates.fill(InputState::Up);
     mousePosition = { 0.f, 0.f };
     previousMousePosition = { 0.f, 0.f };
@@ -94,6 +97,5 @@ void Engine::InputManager::setMousePosition(Vec2 pos) {
 Engine::Vec2 Engine::InputManager::getMousePosition() const { return mousePosition; }
 
 Engine::Vec2 Engine::InputManager::getMouseDelta() const {
-    return { mousePosition.x - previousMousePosition.x,
-             mousePosition.y - previousMousePosition.y };
+    return mouseDelta;
 }
