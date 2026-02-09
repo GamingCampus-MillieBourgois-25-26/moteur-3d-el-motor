@@ -4,13 +4,15 @@ void Engine::CoreEngine::init() {
 	// Initialisation des systèmes de l'Engine , fenêtre, rendu, etc.
 	inputManager.init();
 	loggerManager.LogInitialize();
+	timeManager.Init();
 	running = true;
 	windowOpener.WindowInit();
 }
 
 void Engine::CoreEngine::run() {
 	while (running && !glfwWindowShouldClose(windowOpener.getMyWindow())) {
-			timeManager.update();
+			timeManager.Update();
+			float dt = timeManager.GetDeltaTime();
 			inputManager.update();
 			windowOpener.windowPollEvents();
 			windowOpener.windowSwapBuffers();

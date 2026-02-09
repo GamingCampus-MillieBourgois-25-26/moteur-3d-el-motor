@@ -5,5 +5,5 @@
 int main() {
 	Engine::CoreEngine engine;
 	engine.init();
-	engine.run();
+	engine.run(); // Libérer la mémoire
 }

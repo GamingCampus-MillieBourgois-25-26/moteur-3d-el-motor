@@ -1,10 +1,37 @@
 #include "../Core/Headers/Time_Manager/TimeManager.hpp"
 
+void Engine::TimeManager::Init()
+{
+	lastTime = Clock::now();
+	deltaTime = 0.0f;
+}
 
-void Engine::TimeManager::update() {
-	static auto lastTime = chrono::high_resolution_clock::now(); // Initialisation de lastTime à la première exécution
-	auto currentTime = chrono::high_resolution_clock::now(); // Calcul du temps écoulé depuis la dernière mise à jour
-	chrono::duration<float> elapsed = currentTime - lastTime;// Mise à jour de deltaTime avec le temps écoulé en secondes
-	deltaTime = elapsed.count();// Mise à jour de lastTime pour la prochaine mise à jour
-	lastTime = currentTime;// Mise à jour de totalTime avec le temps écoulé en secondes
+void Engine::TimeManager::Update()
+{
+	auto currentTime = Clock::now();
+	std::chrono::duration<float> elapsed = currentTime - lastTime;
+	deltaTime = elapsed.count();
+
+	// Clamp du deltaTime empeche les frame drops extrêmes qui pourraient causer des problèmes sur le jeu
+	const float maxDelta = 0.1f;
+	if (deltaTime > maxDelta)
+		deltaTime = maxDelta;
+
+	lastTime = currentTime;
+
+	if (deltaTime > maxDelta)
+	{
+		Engine::LoggerManager::Get().LogWarning
+		(
+			"DeltaTime spike detected: " + std::to_string(deltaTime)
+		);
+		deltaTime = maxDelta;
+	}
+
+
+}
+
+float Engine::TimeManager::GetDeltaTime() const
+{
+	return deltaTime;
 }
