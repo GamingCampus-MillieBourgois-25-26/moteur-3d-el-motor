@@ -24,6 +24,11 @@ private:
 	DirectX::XMFLOAT4X4 VP;
 	 
 protected:
+	void RotationUpdate(Engine::InputManager& input);
+	void FowardUpdate();
+	void RightUpdate();
+	void UpUpdate();
+
 	void ProjectionMatrix();    // Persepective
 	void ViewMatrix();		    // World to Camera
 	void VPMatrix();			// Projection * View
@@ -37,5 +42,5 @@ protected:
 public:
 	Camera();
 
-	virtual void Update() = 0;
+	virtual void Update(Engine::InputManager &input) = 0;
 };

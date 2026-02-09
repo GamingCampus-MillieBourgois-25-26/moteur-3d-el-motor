@@ -5,5 +5,5 @@ class EditorCamera : public Camera {
 	public:
 	EditorCamera();
 
-	void Update() override;  
+	void Update(Engine::InputManager &input) override;
 };
