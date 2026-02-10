@@ -10,12 +10,12 @@ void Engine::CoreEngine::init() {
 }
 
 void Engine::CoreEngine::run() {
-	while (running && !glfwWindowShouldClose(windowOpener.getMyWindow())) {
-			timeManager.Update();
-			float dt = timeManager.GetDeltaTime();
-			inputManager.update();
-			windowOpener.windowPollEvents();
-			windowOpener.windowSwapBuffers();
+	if (running == true) {
+		timeManager.Update();
+		float dt = timeManager.GetDeltaTime();
+		inputManager.update();
+		windowOpener.windowPollEvents();
+		windowOpener.windowSwapBuffers();
 	}
 }
 
