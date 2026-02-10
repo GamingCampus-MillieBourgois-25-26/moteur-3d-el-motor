@@ -40,6 +40,7 @@ namespace Engine
 		TimeManager& getTimeManager() { return timeManager; }
 		LoggerManager& getLoggerManager() { return loggerManager; }
 		WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
+		Application& getApplication() { return application; }
 
     };
 }
