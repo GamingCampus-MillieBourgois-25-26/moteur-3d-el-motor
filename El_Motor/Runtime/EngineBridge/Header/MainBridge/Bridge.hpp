@@ -1,15 +1,9 @@
-#include "InputBridge/InputBridge.hpp"
-
-
+#include "../../Runtime/EngineBridge/Header/InputBridge/InputBridge.hpp"
 
 namespace Runtime
 {
-
-
 	class Bridge {
 	public:
-
-
 		void init();
 		void run();
 		void shutdown();

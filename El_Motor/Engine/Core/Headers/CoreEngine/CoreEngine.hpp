@@ -19,7 +19,6 @@ namespace Engine
 		LoggerManager loggerManager;
 		Application application;
 
-		//WindowOpener windowOpener;
 
         //.... assetManager;
         //.... entityManager
@@ -34,13 +33,13 @@ namespace Engine
         void run();         // boucle principale
 		void shutdown();   // shutdown du moteur
 		bool isRunning() const { return running; } // vérifie si le moteur est en cours d'exécution
-		bool shouldClose() const { return windowOpener.getMyWindow(); } // vérifie si la fenêtre doit se fermer
+		bool shouldClose() const { return application.windowOpener->getMyWindow(); } // vérifie si la fenêtre doit se fermer
 
 		// Getters pour les différents systèmes du moteur
 		InputManager& getInputManager() { return inputManager; }
 		TimeManager& getTimeManager() { return timeManager; }
 		LoggerManager& getLoggerManager() { return loggerManager; }
-		WindowOpener& getWindowOpener() { return windowOpener; }
+		WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
 
     };
 }
