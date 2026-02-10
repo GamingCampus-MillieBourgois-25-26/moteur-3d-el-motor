@@ -1,11 +1,7 @@
-#include <iostream>
-
-#include "../Core/Headers/CoreEngine/CoreEngine.hpp"
-#include "../Core/Headers/D3D11/D3D11.hpp"
+#include "../Runtime/EngineBridge/Header/MainBridge/Bridge.hpp"
 
 int main() {
-	Engine::CoreEngine engine;
-	engine.init();
-	engine.run(); // Libérer la mémoire
-
+	Runtime::Bridge bridge;
+	bridge.init();
+	bridge.run();
 }
