@@ -2,7 +2,8 @@
 #include "../Core/Headers/Time_Manager/TimeManager.hpp"
 #include "../Core/Headers/Input_Manager/InputManager.hpp"
 #include "../Core/Headers/Logger/Logger.hpp"
-#include "../Core/Headers/Window/Window.hpp"
+#include "../Core/Headers/Application/App.hpp"
+//#include "../Core/Headers/Window/Window.hpp"
 
 
 
@@ -16,7 +17,9 @@ namespace Engine
         InputManager inputManager;
         TimeManager timeManager;
 		LoggerManager loggerManager;
-		WindowOpener windowOpener;
+		Application application;
+
+		//WindowOpener windowOpener;
 
         //.... assetManager;
         //.... entityManager

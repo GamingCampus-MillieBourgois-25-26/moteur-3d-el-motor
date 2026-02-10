@@ -6,16 +6,16 @@ void Engine::CoreEngine::init() {
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	running = true;
-	windowOpener.WindowInit();
+	application = Application(); // Initialise l'application, qui à son tour initialise la fenêtre et D3D11
 }
 
 void Engine::CoreEngine::run() {
-	while (running && !glfwWindowShouldClose(windowOpener.getMyWindow())) {
+	while (running && !glfwWindowShouldClose(application.windowOpener->getMyWindow())) {
 			timeManager.Update();
 			float dt = timeManager.GetDeltaTime();
 			inputManager.update();
-			windowOpener.windowPollEvents();
-			windowOpener.windowSwapBuffers();
+			application.windowOpener->windowPollEvents();
+			application.windowOpener->windowSwapBuffers();
 	}
 }
 
