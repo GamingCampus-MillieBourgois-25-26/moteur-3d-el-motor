@@ -19,6 +19,9 @@ void Runtime::InputBridge::fetchGLFWInput(Engine::CoreEngine& core) {
 	input.updateKey(Engine::KeyCode::Q, glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS);
 	input.updateKey(Engine::KeyCode::S, glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS);
 	input.updateKey(Engine::KeyCode::D, glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS);
+	input.updateKey(Engine::KeyCode::ESCAPE, glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS);
+	input.updateKey(Engine::KeyCode::SPACE, glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
+
 
 	// Mise à jour des inputs souris
 	input.updateMouseButton(Engine::MouseButton::Left, glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);

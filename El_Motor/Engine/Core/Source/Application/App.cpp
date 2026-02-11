@@ -1,6 +1,5 @@
 #include "../Core/Headers/Application/App.hpp"
 
-
 namespace Engine
 {
 	Application::Application() {
