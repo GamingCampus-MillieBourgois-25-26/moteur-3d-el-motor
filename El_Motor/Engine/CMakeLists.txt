@@ -1,13 +1,11 @@
 file(GLOB_RECURSE ENGINE_SOURCES
-    Source/*.cpp
     Core/Source/Window/*.cpp 
     Component/UserComponents/Camera/Source/Camera.cpp
 
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
-    Headers/*.hpp
-    Headers/*.h
+    Core/Headers/*.hpp
     Core/Source/Input_Manager/InputState.hpp
 )
 
