@@ -1,4 +1,4 @@
-#include "../../Runtime/EngineBridge/Header/InputBridge/InputBridge.hpp"
+#include "InputBridge/InputBridge.hpp"
 
 namespace Runtime
 {

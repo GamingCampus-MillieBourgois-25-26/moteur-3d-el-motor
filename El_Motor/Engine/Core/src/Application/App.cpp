@@ -1,4 +1,4 @@
-#include "../Core/Headers/Application/App.hpp"
+#include "Application/App.hpp"
 
 namespace Engine
 {

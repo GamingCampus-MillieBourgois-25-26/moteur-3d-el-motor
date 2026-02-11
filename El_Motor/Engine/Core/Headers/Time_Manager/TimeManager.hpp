@@ -1,6 +1,6 @@
 #pragma once
 #include <chrono>
-#include "../Logger/Logger.hpp"
+#include "Logger/Logger.hpp"
 
 namespace Engine
 {

@@ -1,4 +1,4 @@
-#include "../Core/Headers/Time_Manager/TimeManager.hpp"
+#include "Time_Manager/TimeManager.hpp"
 
 void Engine::TimeManager::Init()
 {

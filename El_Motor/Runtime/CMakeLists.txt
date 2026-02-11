@@ -1,5 +1,6 @@
 file(GLOB_RECURSE RUNTIME_SOURCES
-	*.cpp
+	EngineBridge/src/*.cpp
+
     
 )
 
@@ -13,12 +14,11 @@ file(GLOB_RECURSE RUNTIME_HEADERS
 
 add_executable(Runtime ${RUNTIME_SOURCES} 
                        ${RUNTIME_HEADERS} 
-                       "EngineBridge/Source/MainBridge/Bridge.cpp" 
-                       "EngineBridge/Source/InputBridge/InputBridge.cpp"
+                       
 )
 
 target_include_directories(Runtime
-    PRIVATE
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/EngineBridge/Header
 )
 

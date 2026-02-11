@@ -1,4 +1,4 @@
-#include "../Core/Headers/Input_Manager/InputManager.hpp"
+#include "Input_Manager/InputManager.hpp"
 
 
 void Engine::InputManager::init() {

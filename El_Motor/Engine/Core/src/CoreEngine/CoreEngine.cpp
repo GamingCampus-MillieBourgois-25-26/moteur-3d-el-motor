@@ -1,4 +1,4 @@
-#include "../Core/Headers/CoreEngine/CoreEngine.hpp"
+#include "CoreEngine/CoreEngine.hpp"
 
 void Engine::CoreEngine::init() {
 	// Initialisation des syst�mes de l'Engine , fen�tre, rendu, etc.

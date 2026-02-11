@@ -1,4 +1,4 @@
-#include "../Runtime/EngineBridge/Header/MainBridge/Bridge.hpp"
+#include "MainBridge/Bridge.hpp"
 
 int main() {
 	Runtime::Bridge bridge;
