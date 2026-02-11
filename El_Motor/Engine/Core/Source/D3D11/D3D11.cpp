@@ -1,6 +1,11 @@
 #include "../Core/Headers/D3D11/D3D11.hpp"
-#include <wrl.h>
 
+#include <d3dcompiler.h>
+#include <wrl.h>
+#include <memory>
+#include <iostream>
+
+#pragma comment(lib, "d3dcompiler.lib")
 
 namespace Engine
 {
@@ -23,7 +28,9 @@ namespace Engine
 		);
 		ID3D11Resource* pBackBuffer = nullptr;
 		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
-		pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+		if (pDevice != nullptr) {
+			pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+		}
 		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
 	}
 
@@ -87,6 +94,7 @@ namespace Engine
 		pContext->ClearRenderTargetView(pTarget, clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 	}
 
+
 	void D3D11::DrawTriangleTest() 
 	{
 		namespace wrl = Microsoft::WRL; // Alias pour simplifier l'utilisation des ComPtr
@@ -117,6 +125,29 @@ namespace Engine
 		const UINT stride = sizeof(Vertex); // Taille d'un sommet en bytes (utilisée pour lier le buffer de vertex)
 		const UINT offset = 0u; // Offset dans le buffer de vertex (généralement 0 pour commencer au début)
 		pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer,&stride, &offset);
-		pContext->Draw(3u, 0); // Dessine un triangle en utilisant 3 sommets à partir de l'index 0
+
+		wrl::ComPtr<ID3D11VertexShader> pVertexShader;
+		wrl::ComPtr<ID3DBlob> pBlob;
+
+		HRESULT hr = D3DReadFileToBlob(L"../../Headers/Shader/VertexShader.cso", &pBlob);
+
+		if (FAILED(hr)) {
+			if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
+				std::cout << "Erreur : fichier VertexShader.cso non trouvé !" << std::endl;
+			}
+			else {
+				std::cout << "Erreur : impossible de lire VertexShader.cso, code HRESULT = 0x"
+					<< std::hex << hr << std::dec << std::endl;
+			}
+			return; // Sort de la fonction, on ne peut pas continuer
+		}
+
+		std::cout << "VertexShader.cso chargé avec succès !" << std::endl;
+
+		// Si on arrive ici, pBlob est valide
+		pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
+
+		pContext->VSSetShader(pVertexShader.Get(), nullptr, 0); // Lie le vertex shader au pipeline de rendu
+		pContext->Draw(std::size(vertices), 0); // Dessine un triangle
 	}
 }
