@@ -1,14 +1,14 @@
 # Regen with this: cmake . -G "Visual Studio 17" -B out
 
 file(GLOB_RECURSE ENGINE_SOURCES
-    Core/src/*.cpp 
-    cpnt/*.cpp
+    Core/src/**/*.cpp 
+    cpnt/**/*.cpp
 
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
-    Core/Headers/*.hpp
-    cpnt/*.hpp
+    Core/Headers/**/*.hpp
+    cpnt/**/*.hpp
 )
 
 add_library(Engine
