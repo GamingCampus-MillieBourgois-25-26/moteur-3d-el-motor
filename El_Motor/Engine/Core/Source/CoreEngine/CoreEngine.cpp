@@ -1,26 +1,26 @@
 #include "../Core/Headers/CoreEngine/CoreEngine.hpp"
 
 void Engine::CoreEngine::init() {
-	// Initialisation des systèmes de l'Engine , fenêtre, rendu, etc.
+	// Initialisation des systï¿½mes de l'Engine , fenï¿½tre, rendu, etc.
 	inputManager.init();
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	running = true;
-	windowOpener.WindowInit();
+	application = Application(); // Initialise l'application, qui ï¿½ son tour initialise la fenï¿½tre et D3D11
 }
 
 void Engine::CoreEngine::run() {
-	while (running && !glfwWindowShouldClose(windowOpener.getMyWindow())) {
+	while (running) {
 			timeManager.Update();
 			float dt = timeManager.GetDeltaTime();
 			inputManager.update();
-			windowOpener.windowPollEvents();
-			windowOpener.windowSwapBuffers();
+			application.windowOpener->windowPollEvents();
+			application.windowOpener->windowSwapBuffers();	
 	}
 }
 
 void Engine::CoreEngine::shutdown() {
-	// Nettoyage du moteur, libération de mémoires(à faire)
+	// Nettoyage du moteur, libï¿½ration de mï¿½moires(ï¿½ faire)
 	loggerManager.LogShutdown();
 	running = false;
 }
