@@ -1,26 +1,26 @@
+# Regen with this: cmake . -G "Visual Studio 17" -B out
+
 file(GLOB_RECURSE ENGINE_SOURCES
-    Source/*.cpp
-    Core/Source/Window/*.cpp 
-    Component/UserComponents/Camera/Source/Camera.cpp
+    Core/src/*.cpp 
+    cpnt/*.cpp
+
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
-    Headers/*.hpp
-    Headers/*.h
-    Core/Source/Input_Manager/InputState.hpp
+    Core/Headers/*.hpp
+    cpnt/*.hpp
 )
 
 add_library(Engine
     ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
-  "Core/Source/Window/Window.cpp" "Core/Source/Logger/Logger.cpp")
+)
 
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers)
 
 target_link_libraries(Engine PRIVATE
     glfw
     d3d11
     dxgi
-    d3dcompiler
-    
+    d3dcompiler    
 )

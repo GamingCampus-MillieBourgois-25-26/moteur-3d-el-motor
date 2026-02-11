@@ -1,13 +1,21 @@
 #pragma once
-#include <iostream>
 #include <chrono>
-using namespace std;
+#include "Logger/Logger.hpp"
 
 namespace Engine
 {
-    class TimeManager {
-    public:
-        float deltaTime = 0.0f;
-        void update(); // met à jour deltaTime
-    };
+	class TimeManager
+	{
+	public:
+		void Init();
+		void Update();
+
+		float GetDeltaTime() const;
+
+	private:
+		using Clock = std::chrono::high_resolution_clock;
+
+		Clock::time_point lastTime;
+		float deltaTime = 0.0f;
+	};
 }

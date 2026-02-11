@@ -3,17 +3,20 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 
-class WindowOpener {
-private :
-	const int WIDTH = 800, HEIGHT = 600;
-	std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> window{ nullptr, glfwDestroyWindow };
+namespace Engine
+{
+	class WindowOpener {
+	private:
+		const int WIDTH = 800, HEIGHT = 600;
+		std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> window{ nullptr, glfwDestroyWindow };
 
-public:
+	public:
 
-	void WindowDisplay();
-	void WindowInit();
-	void WindowRenderer();
-	GLFWwindow* getMyWindow() { return window.get(); }
+		void WindowInit(); // Initialisation de la fenêtre
+		void windowPollEvents() { glfwPollEvents(); } // Récupère les événements de la fenêtre via GLFW
+		void windowSwapBuffers() { glfwSwapBuffers(window.get()); } // Affiche le contenu rendu à l'écran en échangeant les buffers entre le back buffer et le front buffer
 
-	void test();
-};
+		GLFWwindow* getMyWindow() const { return window.get(); } // récupere le pointeur brut de la fenêtre pour l'utiliser plus tard
+
+	};
+}

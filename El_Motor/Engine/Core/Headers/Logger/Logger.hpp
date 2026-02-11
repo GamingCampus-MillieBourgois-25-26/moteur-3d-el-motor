@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-
+#include <filesystem>
 
 
 
@@ -10,36 +10,40 @@ namespace Engine
 {
 
 	//Types de log
-	enum class LogType
-	{
-		Error,
-		Warning,
-		Info
-	};
 
 	class LoggerManager
 	{
 	protected:
-
+		
 	public:
-		//Constructeur et destructeur
-		LoggerManager() {};
-		~LoggerManager() {};
 
-		//Fonctions de log
+		static LoggerManager& Get();
+
+		//Constructeur et destructeur
+		LoggerManager() = default;
+		~LoggerManager() = default;
+		LoggerManager(const LoggerManager&) = delete; // Empêche la copie de l'instance
+		LoggerManager& operator=(const LoggerManager&) = delete; // Empêche l'assignation de l'instance
+
+		//Fonctions d'init et de shutdown du logger
 		void LogInitialize();
 		void LogShutdown();
 
-		void Log(const std::string& message, LogType type = LogType::Info);
-
+		
+		// Fonctions de log spécifiques pour chaque type de message
 		void LogError(const std::string& message);
 		void LogWarning(const std::string& message);
 		void LogInfo(const std::string& message);
 
-		void LogToFile(const std::string& message, const std::string& filename);
+		
 
 	private:
 
+	enum class LogType{Error,Warning,Info};
 
+	std::string logFilePath = "..\\UserLog.txt"; // Chemin par défaut pour les logs
+
+	void Log(const std::string& message, LogType type = LogType::Info);
+	void LogToFile(const std::string& message);
 	};
 }
