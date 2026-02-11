@@ -3,33 +3,33 @@
 EditorCamera::EditorCamera() : Camera() {}
 
 void EditorCamera::Update(Engine::InputManager& input) {
-	ViewMatrix();
-	ProjectionMatrix();
-	VPMatrix();
+	GlobalUpdate();
 
 	// POSITION & ROTATION //   
 			// float speed = moveSpeed * dt; SI DELTATIME
 
-	if (input.isKeyPressed('Z')) {
+	switch (input.isKeyPressed(Engine::KeyCode)) {
+	case 'Z' :
 		position += forward * moveSpeed;
-	}
-	if (input.isKeyPressed('S')) {
+		break;
+	case 'S' :
 		position -= forward * moveSpeed;
-	}
-	if (input.isKeyPressed('Q')) {
+		break;
+	case 'Q' :
 		position += right * moveSpeed;
-	}
-	if (input.isKeyPressed('D')) {
+		break;
+	case 'D' :
 		position -= right * moveSpeed;
-	}
-	if (input.isKeyPressed('A')) {
+		break;
+	case 'A' :
 		position += up * moveSpeed;
-	}
-	if (input.isKeyPressed('E')) {
+		break;
+	case 'E' :
 		position -= up * moveSpeed;
+		break;
 	}
 
-	/*if (input.isMousePressed('Left')) {    A VOIR
-		
-	}*/
+	if (input.isMousePressed('Left')) {
+		MouseUpdate();
+	}
 }

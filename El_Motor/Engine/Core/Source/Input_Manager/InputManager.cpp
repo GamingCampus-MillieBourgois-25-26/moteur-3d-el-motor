@@ -102,3 +102,5 @@ Engine::Vec2 Engine::InputManager::getMouseDelta() const {
     return { mousePosition.x - previousMousePosition.x,
              mousePosition.y - previousMousePosition.y };
 }
+
+Engine::Vec2 Engine::InputManager::getPreviousMousePosition() const { return previousMousePosition; }

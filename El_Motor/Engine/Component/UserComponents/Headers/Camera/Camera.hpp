@@ -16,8 +16,10 @@ private:
 	float farPlane;
 	float fov;
 
-	float moveSpeed;
-	float sensitivity;
+	float moveSpeed = 1.f;
+	float sensitivity = 0.01f;
+
+	bool firstMousePos = true;
 
 	DirectX::XMFLOAT4X4 projection;
 	DirectX::XMFLOAT4X4 view;
@@ -32,6 +34,9 @@ protected:
 	void ProjectionMatrix();    // Persepective
 	void ViewMatrix();		    // World to Camera
 	void VPMatrix();			// Projection * View
+
+	void MouseUpdate(Engine::InputManager& input);
+	void GlobalUpdate();
 
 	//////// GETTERS //////////
 

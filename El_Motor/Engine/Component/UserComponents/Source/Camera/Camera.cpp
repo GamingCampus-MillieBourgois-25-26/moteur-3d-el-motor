@@ -53,6 +53,55 @@ void Camera::VPMatrix() {
 	VP = view * projection;
 }
 
+void Camera::MouseUpdate(Engine::InputManager& input){ // lastxy ; xyoffset ; sensitivity ; fistPos ; 
+
+	float Xpos = input.getMousePosition().x;
+	float Ypos = input.getMousePosition().y;
+
+	float lastX = 0.f;
+	float lastY = 0.f;
+
+	if (firstMousePos) {
+		lastX = Xpos;
+		lastY = Ypos;
+
+		firstMousePos = false;
+	}
+
+	float XOffset = lastX - Xpos;
+	float YOffset = lastY - Ypos;
+
+	lastX = Xpos;
+	lastY = Ypos;
+
+	XOffset *= sensitivity;
+	YOffset *= sensitivity;
+
+	float yaw += XOffset;
+	float pitch += YOffset;
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	DirectX::XMFLOAT3 direction;
+	direction.x = cos(DirectX::XMConvertToRadians(yaw)) * cos(DirectX::XMConvertToRadians(pitch));
+	direction.y = sin(DirectX::XMConvertToRadians(pitch));
+	direction.z = sin(DirectX::XMConvertToRadians(yaw)) * cos(DirectX::XMConvertToRadians(pitch));
+	forward = DirectX::XMVector3Normalize(direction);
+}
+
+void Camera::GlobalUpdate(){
+	FowardUpdate();
+	RightUpdate();
+	UpUpdate();
+	MouseUpdate();
+	ProjectionMatrix();
+	ViewMatrix();
+	VPMatrix();
+}
+
 ////////// GETTERS //////////
 
 DirectX::XMFLOAT4X4 Camera::Getprojection() const{
