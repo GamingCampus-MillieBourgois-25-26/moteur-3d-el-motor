@@ -6,7 +6,7 @@ void Engine::CoreEngine::init() {
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	running = true;
-	application = Application(); // Initialise l'application, qui � son tour initialise la fen�tre et D3D11
+	application.initApp();
 }
 
 void Engine::CoreEngine::run() {
@@ -15,7 +15,7 @@ void Engine::CoreEngine::run() {
 			float dt = timeManager.GetDeltaTime();
 			inputManager.update();
 			application.windowOpener->windowPollEvents();
-			application.windowOpener->windowSwapBuffers();	
+			application.PresentDx();
 	}
 }
 

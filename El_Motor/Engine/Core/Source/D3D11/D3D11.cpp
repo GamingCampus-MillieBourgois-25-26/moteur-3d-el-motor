@@ -1,4 +1,5 @@
 #include "../Core/Headers/D3D11/D3D11.hpp"
+#include <wrl.h>
 
 
 namespace Engine
@@ -20,20 +21,25 @@ namespace Engine
 			nullptr,// Feature Level
 			&pContext
 		);
+		ID3D11Resource* pBackBuffer = nullptr;
+		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
+		pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
 	}
 
 	D3D11::~D3D11() {
 		if (pSwapChain != nullptr) pSwapChain->Release(); // Libère le swap chain
 		if (pContext != nullptr) pContext->Release(); // Libère le contexte de rendu
 		if (pDevice != nullptr) pDevice->Release(); // Libère le device
+		if (pTarget != nullptr) pTarget->Release(); // Libère la vue de rendu
 	}
 
 
 	IDXGIAdapter1* D3D11::searchForAdapters() {
-		IDXGIFactory1* pFactory = nullptr;
-		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // Factory version 1
+		IDXGIFactory1* pFactory = nullptr; // Pointeur pour la factory DXGI
+		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
 
-		IDXGIAdapter1* pAdapter = nullptr;
+		IDXGIAdapter1* pAdapter = nullptr; 
 		IDXGIAdapter1* bestAdapter = nullptr;
 		SIZE_T maxVRam = 0;
 
@@ -44,7 +50,7 @@ namespace Engine
 				continue; // Ignore les adaptateurs logiciels
 			if (desc.DedicatedVideoMemory > maxVRam) {
 				maxVRam = desc.DedicatedVideoMemory;
-				bestAdapter = pAdapter;
+				bestAdapter = pAdapter; // Met à jour le meilleur adaptateur trouvé jusqu'à présent
 			}
 		}
 		return bestAdapter;
@@ -69,5 +75,48 @@ namespace Engine
 		SwapChDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; // Effet de swap
 		SwapChDesc.Flags = 0; // Flags supplémentaires
 		return SwapChDesc; // Retourne la description du swap chain
+	}
+
+
+	void D3D11::Present() {
+		pSwapChain->Present(1u, 0); // Présente le swap chain à l'écran, avec un intervalle de synchronisation de 1
+	}
+
+	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
+		float clearColor[] = { r, g, b, 1.0f }; // Couleur de nettoyage (RGBA)
+		pContext->ClearRenderTargetView(pTarget, clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
+	}
+
+	void D3D11::DrawTriangleTest() 
+	{
+		namespace wrl = Microsoft::WRL; // Alias pour simplifier l'utilisation des ComPtr
+
+		struct Vertex {
+			float x, y; // Position du sommet
+		};
+
+		const Vertex vertices[] = {
+			{ 0.0f, 0.5f}, // Sommet supérieur
+			{ 0.5f, -0.5f}, // Sommet inférieur droit
+			{ -0.5f, -0.5f} // Sommet inférieur gauche
+		};
+
+		wrl::ComPtr<ID3D11Buffer> pVertexBuffer; // ComPtr est un smartPointer spécial pour les ressources type COM (Components Object Model)
+		D3D11_BUFFER_DESC bufferDesc = {}; // Description du buffer de vertex
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Indique que ce buffer sera utilisé comme buffer de vertex
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT; // Indique que le buffer sera utilisé de manière standard (lecture/écriture par le GPU)
+		bufferDesc.CPUAccessFlags = 0; // Pas d'accès CPU nécessaire
+		bufferDesc.MiscFlags = 0; // Pas de flags supplémentaires
+		bufferDesc.ByteWidth = sizeof(vertices); // Taille totale du buffer en bytes (nombre de sommets * taille d'un sommet)
+		bufferDesc.StructureByteStride = sizeof(Vertex); // Taille d'un sommet en bytes
+
+		D3D11_SUBRESOURCE_DATA initData = {}; // Données initiales pour le buffer de vertex
+		initData.pSysMem = vertices; // Pointeur vers les données des sommets
+
+		pDevice->CreateBuffer(&bufferDesc, &initData,&pVertexBuffer);
+		const UINT stride = sizeof(Vertex); // Taille d'un sommet en bytes (utilisée pour lier le buffer de vertex)
+		const UINT offset = 0u; // Offset dans le buffer de vertex (généralement 0 pour commencer au début)
+		pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer,&stride, &offset);
+		pContext->Draw(3u, 0); // Dessine un triangle en utilisant 3 sommets à partir de l'index 0
 	}
 }
