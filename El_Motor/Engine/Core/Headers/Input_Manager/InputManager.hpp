@@ -38,7 +38,7 @@ private:
 
     //clavier
     std::array<InputState, (size_t)KeyCode::COUNT> keyStates;
-
+    bool initialized = false;
 
     //Souris
     std::array<InputState, (size_t)MouseButton::COUNT> mouseStates;

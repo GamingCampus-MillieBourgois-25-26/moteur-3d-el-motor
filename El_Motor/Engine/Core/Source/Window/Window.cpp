@@ -20,19 +20,4 @@ namespace Engine
 			return;
 		}
 	}
-
-	void WindowOpener::WindowRender()
-	{
-		// Get frame buffer size
-		int bufferWidth, bufferHeight;
-		glfwGetFramebufferSize(getMyWindow(), &bufferWidth, &bufferHeight);
-
-		// Main loop
-		while (!glfwWindowShouldClose(getMyWindow()))
-		{
-			// Get user input
-			glfwPollEvents();
-		}
-	}
-
 }

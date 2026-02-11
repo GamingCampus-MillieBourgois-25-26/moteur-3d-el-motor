@@ -22,6 +22,10 @@ add_library(Engine
   "Core/Source/CoreEngine/CoreEngine.cpp"
   "Core/Source/Asset_Manager/AssetManager.cpp" 
   "Core/Source/Assets/Asset.cpp" "Core/Source/Assets/MeshAsset/MeshAsset.cpp")
+  "Core/Source/D3D11/D3D11.cpp"
+  "Core/Source/Application/App.cpp"
+)
+
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers)
 
@@ -29,6 +33,5 @@ target_link_libraries(Engine PRIVATE
     glfw
     d3d11
     dxgi
-    d3dcompiler
-    
+    d3dcompiler    
 )
