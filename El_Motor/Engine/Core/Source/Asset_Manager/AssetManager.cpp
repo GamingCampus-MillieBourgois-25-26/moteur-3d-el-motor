@@ -1,10 +1,7 @@
 #include <iostream>
 #include "../Core/Headers/Asset_Manager/AssetManager.hpp"
 
-AssetManager& AssetManager::Get() {
-    static AssetManager instance;
-    return instance;
-}
+
 
 void AssetManager::Reload(const std::string& path) {
     auto it = m_assets.find(path);

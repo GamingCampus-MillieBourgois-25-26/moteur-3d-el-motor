@@ -21,7 +21,7 @@ add_library(Engine
   "Core/Source/Time_Manager/TimeManager.cpp"
   "Core/Source/CoreEngine/CoreEngine.cpp"
   "Core/Source/Asset_Manager/AssetManager.cpp" 
-  "Core/Source/Assets/Asset.cpp" "Core/Source/Assets/MeshAsset/MeshAsset.cpp")
+  "Core/Source/Assets/Asset.cpp" "Core/Source/Assets/MeshAsset/MeshAsset.cpp"
   "Core/Source/D3D11/D3D11.cpp"
   "Core/Source/Application/App.cpp"
 )
