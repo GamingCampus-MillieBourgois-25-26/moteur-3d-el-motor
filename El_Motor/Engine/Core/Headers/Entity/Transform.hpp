@@ -15,7 +15,9 @@ struct Vec3 {
     }
 
     Vec3& operator+=(const Vec3& other) {
-        x += other.x; y += other.y; z += other.z;
+        x += other.x;
+        y += other.y;
+        z += other.z;
         return *this;
     }
 
@@ -26,17 +28,31 @@ struct Vec3 {
 
 class Transform : public Component {
 public:
-    Vec3 position;
-    Vec3 rotation;
+    Vec3 position{};
+    Vec3 rotation{};
     Vec3 scale{ 1.f, 1.f, 1.f };
 
     Transform() = default;
 
-    Transform(const Vec3& pos, const Vec3& rot = Vec3(), const Vec3& scl = Vec3(1.f, 1.f, 1.f))
+    Transform(const Vec3& pos,
+        const Vec3& rot = Vec3(),
+        const Vec3& scl = Vec3(1.f, 1.f, 1.f))
         : position(pos), rotation(rot), scale(scl) {
     }
 
+    void Translate(const Vec3& delta) {
+        position += delta;
+    }
+
+    void SetPosition(const Vec3& p) {
+        position = p;
+    }
+
+    const Vec3& GetPosition() const {
+        return position;
+    }
+
     void Update(float dt) override {
-        //
+        // vide pour l'instant
     }
 };

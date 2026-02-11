@@ -11,4 +11,7 @@ public:
     virtual void Start() {}
     virtual void Update(float dt) {}
     virtual void OnDestroy() {}
+
+protected:
+    Component() = default;
 };

@@ -1,11 +1,13 @@
 #include "../../Headers/Entity/GameObject.hpp"
 
-// Constructor / Destructor
+// Constructor
 GameObject::GameObject() {
     AddComponent<Transform>();
 }
+
+// Destructor
 GameObject::~GameObject() {
-    // destroy components
+    // Destroy components
     for (Component* c : components) {
         if (c) {
             c->OnDestroy();
@@ -14,7 +16,7 @@ GameObject::~GameObject() {
     }
     components.clear();
 
-    // detach from parent
+    // Detach from parent
     if (parent) {
         auto& siblings = parent->children;
         siblings.erase(
@@ -23,7 +25,7 @@ GameObject::~GameObject() {
         );
     }
 
-    // destroy children
+    // Destroy children
     for (GameObject* child : children) {
         delete child;
     }
@@ -41,7 +43,10 @@ void GameObject::Update(float dt) {
 
 // Hierarchy
 void GameObject::SetParent(GameObject* newParent) {
-    // remove from old parent
+    if (newParent == this)
+        return;
+
+    // Remove from old parent
     if (parent) {
         auto& siblings = parent->children;
         siblings.erase(
@@ -67,4 +72,9 @@ const std::vector<GameObject*>& GameObject::GetChildren() const {
 // Components
 const std::vector<Component*>& GameObject::GetAllComponents() const {
     return components;
+}
+
+// Shortcut Transform
+Transform* GameObject::GetTransform() {
+    return GetComponent<Transform>();
 }

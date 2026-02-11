@@ -50,4 +50,7 @@ public:
     }
 
     const std::vector<Component*>& GetAllComponents() const;
+
+    // Shortcut Transform
+    Transform* GetTransform();
 };

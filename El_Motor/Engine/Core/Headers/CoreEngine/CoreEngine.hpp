@@ -3,8 +3,8 @@
 #include "../Core/Headers/Input_Manager/InputManager.hpp"
 #include "../Core/Headers/Logger/Logger.hpp"
 #include "../Core/Headers/Application/App.hpp"
-//#include "../Core/Headers/Window/Window.hpp"
-
+#include "../Core/Headers/Window/Window.hpp"
+#include "../Core/Headers/Scene/Scene.hpp"
 
 
 namespace Engine
@@ -18,10 +18,9 @@ namespace Engine
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		Application application;
-
+		Scene scene;
 
         //.... assetManager;
-        //.... entityManager
         //.... SceneManager
 
         bool running = false;
