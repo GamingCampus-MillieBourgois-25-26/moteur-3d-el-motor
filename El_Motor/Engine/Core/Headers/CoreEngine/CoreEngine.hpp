@@ -18,6 +18,7 @@ namespace Engine
 		LoggerManager loggerManager;
 		Application application;
 		AssetManager assetManager;
+		Scene scene;
 
         //.... assetManager;
 

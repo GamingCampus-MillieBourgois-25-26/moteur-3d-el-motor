@@ -7,7 +7,7 @@
 
 class Scene {
 private:
-	//std::vector<GameObject*> rootObjects;
+	std::vector<GameObject*> rootObjects;
 
 public:
 	Scene() = default;
@@ -18,5 +18,5 @@ public:
 
 	void Update(float dt);
 
-	//const std::vector<GameObject*>& GetRootObjects() const;
+	const std::vector<GameObject*>& GetRootObjects() const;
 };
