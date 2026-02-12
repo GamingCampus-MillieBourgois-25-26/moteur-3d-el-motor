@@ -9,6 +9,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
 file(GLOB_RECURSE ENGINE_HEADERS
     Core/Headers/**/*.hpp
     cpnt/**/*.hpp
+    Externals/**/*.h
 )
 
 add_library(Engine

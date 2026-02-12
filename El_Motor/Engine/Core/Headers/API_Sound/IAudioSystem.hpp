@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
-#include "API_Sound/AudioTypes.h"
+#include <unordered_map>
+#include "API_Sound/AudioTypes.hpp"
 
-namespace EI
+
+namespace Engine
 {
     class IAudioSystem
     {
