@@ -1,4 +1,4 @@
-#include "../Core/Headers/Logger/Logger.hpp"
+#include "Logger/Logger.hpp"
 
 Engine::LoggerManager& Engine::LoggerManager::Get()
 {

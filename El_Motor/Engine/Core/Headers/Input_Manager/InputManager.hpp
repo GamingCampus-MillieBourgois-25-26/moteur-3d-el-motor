@@ -16,7 +16,6 @@ public:
     void init();
     void update();
 
-
     //Clavier
     void updateKey(KeyCode key, bool isDown);
     bool isKeyPressed(KeyCode key) const;
@@ -32,13 +31,14 @@ public:
     void setMousePosition(Vec2 pos);
     Vec2 getMousePosition() const;
     Vec2 getMouseDelta() const;
+    Vec2 getPreviousMousePosition() const;
 
 
 private:
 
     //clavier
     std::array<InputState, (size_t)KeyCode::COUNT> keyStates;
-
+    bool initialized = false;
 
     //Souris
     std::array<InputState, (size_t)MouseButton::COUNT> mouseStates;

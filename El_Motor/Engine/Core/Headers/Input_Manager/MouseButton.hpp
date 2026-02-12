@@ -6,7 +6,7 @@ namespace Engine {
         Left,
         Right,
         Middle,
-        COUNT
+		COUNT // Correspond au nombre total de boutons de souris supportés , permet d'éviter de hardcoder la taille de l'enum
     };
 
 }
