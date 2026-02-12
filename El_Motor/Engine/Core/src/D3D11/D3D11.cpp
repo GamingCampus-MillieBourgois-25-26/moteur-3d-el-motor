@@ -132,19 +132,7 @@ namespace Engine
 		wrl::ComPtr<ID3DBlob> pBlob;
 
 		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
-
-		if (FAILED(hr)) {
-			if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
-				std::cout << "Erreur : fichier VertexShader.cso non trouvé !" << std::endl;
-			}
-			else {
-				std::cout << "Erreur : impossible de lire VertexShader.cso, code HRESULT = 0x"
-					<< std::hex << hr << std::dec << std::endl;
-			}
-			return; // Sort de la fonction, on ne peut pas continuer
-		}
-
-		std::cout << "VertexShader.cso chargé avec succès !" << std::endl;
+		std::cout << "VertexShader.cso loaded" << std::endl;
 
 		// Si on arrive ici, pBlob est valide
 		pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
