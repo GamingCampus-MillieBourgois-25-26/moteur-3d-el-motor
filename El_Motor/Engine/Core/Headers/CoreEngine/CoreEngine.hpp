@@ -4,7 +4,6 @@
 #include "Input_Manager/InputManager.hpp"
 #include "Logger/Logger.hpp"
 #include "Application/App.hpp"
-//#include "Window/Window.hpp"
 #include "Scene/Scene.hpp"
 
 namespace Engine
@@ -18,7 +17,6 @@ namespace Engine
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		Application application;
-		Scene sceneManager;
 
         //.... assetManager;
 

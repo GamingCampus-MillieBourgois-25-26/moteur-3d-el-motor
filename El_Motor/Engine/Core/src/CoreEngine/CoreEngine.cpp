@@ -16,7 +16,6 @@ void Engine::CoreEngine::run() {
 			inputManager.update();
 			application.windowOpener->windowPollEvents();
 			application.windowOpener->windowSwapBuffers();
-			sceneManager.Update(dt);
 	}
 }
 
