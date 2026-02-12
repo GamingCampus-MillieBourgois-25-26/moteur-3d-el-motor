@@ -15,7 +15,8 @@ void Engine::CoreEngine::run() {
 			float dt = timeManager.GetDeltaTime();
 			inputManager.update();
 			application.windowOpener->windowPollEvents();
-			application.windowOpener->windowSwapBuffers();	
+			application.windowOpener->windowSwapBuffers();
+			sceneManager.Update(dt);
 	}
 }
 

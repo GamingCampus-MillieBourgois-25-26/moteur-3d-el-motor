@@ -1,11 +1,11 @@
 #pragma once
+
 #include "Time_Manager/TimeManager.hpp"
 #include "Input_Manager/InputManager.hpp"
 #include "Logger/Logger.hpp"
 #include "Application/App.hpp"
-//#include "../Core/Headers/Window/Window.hpp"
-
-
+//#include "Window/Window.hpp"
+#include "Scene/Scene.hpp"
 
 namespace Engine
 {
@@ -18,13 +18,12 @@ namespace Engine
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		Application application;
-
+		Scene sceneManager;
 
         //.... assetManager;
-        //.... entityManager
-        //.... SceneManager
 
         bool running = false;
+
     public:
 
 		CoreEngine() = default;
