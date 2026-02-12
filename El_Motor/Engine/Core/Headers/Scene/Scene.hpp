@@ -1,27 +1,23 @@
 #pragma once
 
 #include "Entity/Entity.hpp"
-//#include "AssetManager/AssetManager.hpp"
-#include "../Entity/GameObject.hpp"
+//#include "AssetManager.hpp"
+#include "Entity/GameObject.hpp"
 
 #include <vector>
 
-namespace Engine
-{
-	class Scene {
-	private:
-		std::vector<GameObject*> rootObjects;
+class Scene {
+private:
+	std::vector<GameObject*> rootObjects;
 
-	public:
-		Scene() = default;
-		~Scene();
+public:
+	Scene() = default;
+	~Scene();
 
-		GameObject* CreateGameObject();
-		void DestroyGameObject(GameObject* go);
+	GameObject* CreateGameObject();
+	void DestroyGameObject(GameObject* go);
 
-		void Update(float dt);
+	void Update(float dt);
 
-		const std::vector<GameObject*>& GetRootObjects() const;
-	};
-
-}
+	const std::vector<GameObject*>& GetRootObjects() const;
+};

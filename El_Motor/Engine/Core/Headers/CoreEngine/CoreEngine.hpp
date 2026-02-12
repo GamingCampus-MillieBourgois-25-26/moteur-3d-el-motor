@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../Core/Headers/Time_Manager/TimeManager.hpp"
-#include "../Core/Headers/Input_Manager/InputManager.hpp"
-#include "../Core/Headers/Logger/Logger.hpp"
-#include "../Core/Headers/Application/App.hpp"
-//#include "../Core/Headers/Window/Window.hpp"
-#include "../Core/Headers/Scene/Scene.hpp"
+#include "Time_Manager/TimeManager.hpp"
+#include "Input_Manager/InputManager.hpp"
+#include "Logger/Logger.hpp"
+#include "Application/App.hpp"
+//#include "Window/Window.hpp"
+#include "Scene/Scene.hpp"
 
 namespace Engine
 {
@@ -18,12 +18,12 @@ namespace Engine
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		Application application;
-		Scene scene;
+		Scene sceneManager;
 
         //.... assetManager;
-        //.... SceneManager
 
         bool running = false;
+
     public:
 
 		CoreEngine() = default;

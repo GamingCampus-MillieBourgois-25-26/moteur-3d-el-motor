@@ -1,12 +1,16 @@
-#include "../../Headers/Entity/GameObject.hpp"
+#include "Entity/GameObject.hpp"
+#include "Logger/Logger.hpp"
 
 // Constructor
 GameObject::GameObject() {
     AddComponent<Transform>();
+    Engine::LoggerManager::Get().LogInfo("GameObject created");
 }
 
 // Destructor
 GameObject::~GameObject() {
+    Engine::LoggerManager::Get().LogInfo("GameObject destroyed");
+
     // Destroy components
     for (Component* c : components) {
         if (c) {
