@@ -11,7 +11,6 @@ public:
 	~HubManager();
 
 
-
 	//Functions
 	void Init();
 	void CreateScene();
