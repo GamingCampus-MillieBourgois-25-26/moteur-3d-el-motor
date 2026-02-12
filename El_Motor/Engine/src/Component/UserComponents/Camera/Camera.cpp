@@ -136,6 +136,10 @@ void Camera::MouseUpdate(Engine::InputManager& input)
     XMStoreFloat3(&forward, direction);
 }
 
+void Camera::MoveUpdate(Engine::InputManager& input) {
+
+}
+
 void Camera::GlobalUpdate(Engine::InputManager& input)
 {
     FowardUpdate();

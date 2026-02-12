@@ -37,6 +37,7 @@ protected:
     void VPMatrix(); // Projection * View
 
     void MouseUpdate(Engine::InputManager& input);
+    void MoveUpdate(Engine::InputManager& input);
     void GlobalUpdate(Engine::InputManager& input);
 
     //////// GETTERS //////////
