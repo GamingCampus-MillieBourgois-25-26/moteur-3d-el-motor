@@ -1,22 +1,19 @@
 # Regen with this: cmake . -G "Visual Studio 17" -B out
 
 file(GLOB_RECURSE ENGINE_SOURCES
-    Core/src/**/*.cpp 
-    cpnt/src/**/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
-    Core/Headers/**/*.hpp
-    cpnt/Headers/**/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
 )
 
 add_library(Engine
-    ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
+    ${ENGINE_SOURCES}
 )
 
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers)
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpnt/Headers)
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(Engine PRIVATE
     glfw
