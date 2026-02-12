@@ -130,14 +130,17 @@ namespace Engine
 
 		wrl::ComPtr<ID3D11VertexShader> pVertexShader;
 		wrl::ComPtr<ID3DBlob> pBlob;
-
-		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
-		std::cout << "VertexShader.cso loaded" << std::endl;
+		HRESULT hrV = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
 
 		// Si on arrive ici, pBlob est valide
 		pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-
 		pContext->VSSetShader(pVertexShader.Get(), nullptr, 0); // Lie le vertex shader au pipeline de rendu
-		pContext->Draw(std::size(vertices), 0); // Dessine un triangle
+
+		wrl::ComPtr<ID3D11PixelShader> pPixelShader; 
+		HRESULT hrP = D3DReadFileToBlob(L"Shader/PixelShader.cso", &pBlob);
+		pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
+		pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+
+		pContext->Draw((UINT)std::size(vertices), 0); // Dessine un triangle
 	}
 }
