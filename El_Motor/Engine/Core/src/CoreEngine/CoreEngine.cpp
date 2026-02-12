@@ -5,6 +5,7 @@ void Engine::CoreEngine::init() {
 	inputManager.init();
 	loggerManager.LogInitialize();
 	timeManager.Init();
+	
 	running = true;
 	application.initApp();
 }
@@ -16,6 +17,7 @@ void Engine::CoreEngine::run() {
 			inputManager.update();
 			application.windowOpener->windowPollEvents();
 			application.PresentDx();
+			scene.Update(dt);
 	}
 }
 
