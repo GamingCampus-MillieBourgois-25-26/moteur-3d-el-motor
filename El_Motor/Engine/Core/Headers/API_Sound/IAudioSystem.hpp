@@ -17,12 +17,12 @@ namespace Engine
         virtual void Update(float dt) = 0;
 
         // Ressources
-        virtual SoundHandle LoadSound(const std::string& path, const SoundDesc& desc = {}) = 0;
-        virtual void UnloadSound(SoundHandle sound) = 0;
+        virtual EI::SoundHandle LoadSound(const std::string& path, const EI::SoundDesc& desc = {}) = 0;
+        virtual void UnloadSound(EI::SoundHandle sound) = 0;
 
         // Lecture
-        virtual VoiceHandle Play(SoundHandle sound, const VoiceParams& params = {}) = 0;
-        virtual void Stop(VoiceHandle voice) = 0;
+        virtual EI::VoiceHandle Play(EI::SoundHandle sound, const EI::VoiceParams& params = {}) = 0;
+        virtual void Stop(EI::VoiceHandle voice) = 0;
 
         // Volume global
         virtual void SetMasterVolume(float volume) = 0;

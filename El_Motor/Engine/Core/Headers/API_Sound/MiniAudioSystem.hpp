@@ -1,9 +1,9 @@
 #pragma once
 
-#include "API_Sound/IAudioSystem.hpp"
-
 #include <string>
 #include <unordered_map>
+#include "miniaudio/miniaudio.h"
+#include "API_Sound/IAudioSystem.hpp"
 
 // Forward declaration miniaudio
 struct ma_engine;
@@ -21,11 +21,11 @@ namespace Engine
         void Shutdown() override;
         void Update(float deltaTime) override;
 
-        SoundHandle LoadSound(const std::string& path, const SoundDesc& desc = {}) override;
-        void UnloadSound(SoundHandle sound) override;
+        EI::SoundHandle LoadSound(const std::string& path, const EI::SoundDesc& desc = {}) override;
+        void UnloadSound(EI::SoundHandle sound) override;
 
-        VoiceHandle Play(SoundHandle sound, const VoiceParams& params = {}) override;
-        void Stop(VoiceHandle voice) override;
+        EI::VoiceHandle Play(EI::SoundHandle sound, const EI::VoiceParams& params = {}) override;
+        void Stop(EI::VoiceHandle voice) override;
 
         void SetMasterVolume(float volume) override;
 
@@ -33,7 +33,7 @@ namespace Engine
         struct SoundRes
         {
             std::string path;
-            SoundDesc desc;
+            EI::SoundDesc desc;
         };
 
         struct VoiceInst
@@ -46,10 +46,10 @@ namespace Engine
 
         float masterVolume_ = 1.0f;
 
-        SoundHandle soundId_ = 0;
-        VoiceHandle voiceId_ = 0;
+        EI::SoundHandle soundId_ = 0;
+        EI::VoiceHandle voiceId_ = 0;
 
-        std::unordered_map<SoundHandle, SoundRes> sounds_;
-        std::unordered_map<VoiceHandle, VoiceInst> voices_;
+        std::unordered_map<EI::SoundHandle, SoundRes> sounds_;
+        std::unordered_map<EI::VoiceHandle, VoiceInst> voices_;
     };
 }

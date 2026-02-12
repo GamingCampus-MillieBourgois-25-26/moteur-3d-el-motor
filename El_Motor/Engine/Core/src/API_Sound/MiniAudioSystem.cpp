@@ -1,8 +1,6 @@
-#include "MiniAudioSystem.hpp"
 
 #define MINIAUDIO_IMPLEMENTATION
-#include "miniaudio/miniaudio.h"
-#include ""
+#include "API_Sound/MiniAudioSystem.hpp"
 
 namespace Engine
 {
@@ -48,65 +46,65 @@ namespace Engine
         }
     }
 
-    SoundHandle MiniAudioSystem::LoadSound(const std::string& path, const SoundDesc& desc)
+    EI::SoundHandle MiniAudioSystem::LoadSound(const std::string& path, const EI::SoundDesc& desc)
     {
-        SoundHandle id = ++soundId_;
+        EI::SoundHandle id = ++soundId_;
         sounds_[id] = SoundRes{ path, desc };
         return id;
     }
 
-    void MiniAudioSystem::UnloadSound(SoundHandle sound)
+    void MiniAudioSystem::UnloadSound(EI::SoundHandle sound)
     {
         sounds_.erase(sound);
     }
 
-    VoiceHandle MiniAudioSystem::Play(SoundHandle sound, const VoiceParams& params)
-    {
-        auto it = sounds_.find(sound);
-        if (it == sounds_.end())
-            return 0;
+    //EI::VoiceHandle MiniAudioSystem::Play(EI::SoundHandle sound, const EI::VoiceParams& params)
+    //{
+    //    auto it = sounds_.find(sound);
+    //    if (it == sounds_.end())
+    //        return 0;
 
-        ma_uint32 flags = 0;
+    //    ma_uint32 flags = 0;
 
-        if (it->second.desc.stream)
-            flags |= MA_SOUND_FLAG_STREAM;
+    //    if (it->second.desc.stream)
+    //        flags |= MA_SOUND_FLAG_STREAM;
 
-        if (it->second.desc.spatial)
-            flags |= MA_SOUND_FLAG_SPATIALIZATION;
+    //    if (it->second.desc.spatial)
+    //        flags |= MA_SOUND_FLAG_SPATIALIZATION;
 
-        auto* newSound = new ma_sound{};
+    //    auto* newSound = new ma_sound{};
 
-        if (ma_sound_init_from_file(
-            engine_,
-            it->second.path.c_str(),
-            flags,
-            nullptr,
-            nullptr,
-            newSound) != MA_SUCCESS)
-        {
-            delete newSound;
-            return 0;
-        }
+    //    if (ma_sound_init_from_file(
+    //        engine_,
+    //        it->second.path.c_str(),
+    //        flags,
+    //        nullptr,
+    //        nullptr,
+    //        newSound) != MA_SUCCESS)
+    //    {
+    //        delete newSound;
+    //        return 0;
+    //    }
 
-        ma_sound_set_volume(newSound, params.volume);
-        ma_sound_set_pitch(newSound, params.pitch);
-        ma_sound_set_pan(newSound, params.pan);
-        ma_sound_set_looping(newSound, params.loop);
+    //    ma_sound_set_volume(newSound, params.volume);
+    //    ma_sound_set_pitch(newSound, params.pitch);
+    //    ma_sound_set_pan(newSound, params.pan);
+    //    ma_sound_set_looping(newSound, params.loop);
 
-        if (ma_sound_start(newSound) != MA_SUCCESS)
-        {
-            ma_sound_uninit(newSound);
-            delete newSound;
-            return 0;
-        }
+    //    if (ma_sound_start(newSound) != MA_SUCCESS)
+    //    {
+    //        ma_sound_uninit(newSound);
+    //        delete newSound;
+    //        return 0;
+    //    }
 
-        VoiceHandle id = ++voiceId_;
-        voices_[id] = VoiceInst{ newSound };
+    //    EI::VoiceHandle id = ++voiceId_;
+    //    voices_[id] = VoiceInst{ newSound };
 
-        return id;
-    }
+    //    return id;
+    //}
 
-    void MiniAudioSystem::Stop(VoiceHandle voice)
+    void MiniAudioSystem::Stop(EI::VoiceHandle voice)
     {
         auto it = voices_.find(voice);
         if (it == voices_.end())
