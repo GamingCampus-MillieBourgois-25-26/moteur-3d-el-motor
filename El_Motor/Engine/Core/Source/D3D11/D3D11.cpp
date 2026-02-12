@@ -5,6 +5,8 @@
 #include <memory>
 #include <iostream>
 
+
+
 #pragma comment(lib, "d3dcompiler.lib")
 
 namespace Engine
@@ -129,7 +131,7 @@ namespace Engine
 		wrl::ComPtr<ID3D11VertexShader> pVertexShader;
 		wrl::ComPtr<ID3DBlob> pBlob;
 
-		HRESULT hr = D3DReadFileToBlob(L"../../Headers/Shader/VertexShader.cso", &pBlob);
+		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
 
 		if (FAILED(hr)) {
 			if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
