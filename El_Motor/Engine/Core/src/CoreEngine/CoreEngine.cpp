@@ -7,6 +7,7 @@ void Engine::CoreEngine::init() {
 	timeManager.Init();
 	running = true;
 	application = Application(); // Initialise l'application, qui � son tour initialise la fen�tre et D3D11
+	
 }
 
 void Engine::CoreEngine::run() {

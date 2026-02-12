@@ -1,4 +1,8 @@
-#include "Camera.hpp"
+#include "Camera/Camera.hpp"
+
+#include "xmmintrin.h"
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
 
 Camera::Camera() {
 	position = DirectX::XMFLOAT3(0.0f, 0.0f, 3.0f);
@@ -18,25 +22,34 @@ void Camera::RotationUpdate(Engine::InputManager& input) {
 	float dx = input.getMouseDelta().x;
 	float dy = input.getMouseDelta().y;
 
-	float yaw = dx * mouseSensitivity;
-	float pitch = dy * mouseSensitivity;
+	float yaw = dx * sensitivity;
+	float pitch = dy * sensitivity;
 
-	XMVECTOR qYaw = DirectX::XMQuaternionRotationAxis(XMVectorSet(0,1,0,0), yaw); // Monde
-	XMVECTOR qPitch = DirectX::XMQuaternionRotationAxis(right, pitch);            // Local Camera
+	DirectX::XMVECTOR rightVector = DirectX::XMLoadFloat3(&right);
 
-	rotation = XMQuaternionNormalize(qPitch * qYaw * rotation);
+	DirectX::XMVECTOR qYaw = DirectX::XMQuaternionRotationAxis(DirectX::XMVectorSet(0,1,0,0), yaw); // Monde
+	DirectX::XMVECTOR qPitch = DirectX::XMQuaternionRotationAxis(rightVector, pitch);
+
+	DirectX::XMVECTOR rotVec = XMLoadFloat4(&rotation);
+	DirectX::XMVECTOR result = DirectX::XMVECTOR::operator*(qPitch, qYaw);
+	qPitch *= qYaw;
+	DirectX::XMVECTOR result = _mm_mul_ss(qPitch, qYaw);
+
+	rotVec = DirectX::XMQuaternionNormalize(qPitch * 5.5f * rotVec);
+
+	XMStoreFloat4(&rotation, rotVec);
 }
 
 void Camera::FowardUpdate() {
-	forward = XMVector3Rotate(XMVectorSet(0, 0, 1, 0), rotation);
+	forward = DirectX::XMVector3Rotate(DirectX::XMVectorSet(0, 0, 1, 0), rotation);
 }
 
 void Camera::RightUpdate() {
-	right = XMVector3Rotate(XMVectorSet(1, 0, 0, 0), rotation);
+	right = DirectX::XMVector3Rotate(DirectX::XMVectorSet(1, 0, 0, 0), rotation);
 }
 
 void Camera::UpUpdate() {
-	up = XMVector3Rotate(XMVectorSet(0, 1, 0, 0), rotation);
+	up = DirectX::XMVector3Rotate(DirectX::XMVectorSet(0, 1, 0, 0), rotation);
 }
 
 ///////// CALCUL DE MATRICES //////////

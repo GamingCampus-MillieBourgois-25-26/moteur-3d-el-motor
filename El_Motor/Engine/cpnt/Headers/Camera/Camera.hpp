@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#include "InputManager.hpp"
+#include "Input_Manager/InputManager.hpp"
 
 class Camera{
 private:
