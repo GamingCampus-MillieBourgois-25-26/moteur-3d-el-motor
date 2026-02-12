@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <iostream>
 #include <d3d11.h>
-#include "Assets/Asset.hpp"
+#include "../Assets/Asset.hpp"
 
 class AssetManager {
 public:

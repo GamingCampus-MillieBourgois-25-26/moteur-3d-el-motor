@@ -5,8 +5,6 @@
 #include <memory>
 #include <iostream>
 
-
-
 #pragma comment(lib, "d3dcompiler.lib")
 
 namespace Engine
@@ -48,7 +46,7 @@ namespace Engine
 		IDXGIFactory1* pFactory = nullptr; // Pointeur pour la factory DXGI
 		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
 
-		IDXGIAdapter1* pAdapter = nullptr; 
+		IDXGIAdapter1* pAdapter = nullptr;
 		IDXGIAdapter1* bestAdapter = nullptr;
 		SIZE_T maxVRam = 0;
 
@@ -97,50 +95,88 @@ namespace Engine
 	}
 
 
-	void D3D11::DrawTriangleTest() 
+	void Engine::D3D11::DrawTriangleTest()
 	{
-		namespace wrl = Microsoft::WRL; // Alias pour simplifier l'utilisation des ComPtr
+		namespace wrl = Microsoft::WRL;
+		HRESULT hr;
 
 		struct Vertex {
-			float x, y; // Position du sommet
+			float x, y;
 		};
 
+		// Triangle centré, bien visible
 		const Vertex vertices[] = {
-			{ 0.0f, 0.5f}, // Sommet supérieur
-			{ 0.5f, -0.5f}, // Sommet inférieur droit
-			{ -0.5f, -0.5f} // Sommet inférieur gauche
+			{ 0.0f,  0.9f },
+			{ 0.9f, -0.9f },
+			{-0.9f, -0.9f }
 		};
 
-		wrl::ComPtr<ID3D11Buffer> pVertexBuffer; // ComPtr est un smartPointer spécial pour les ressources type COM (Components Object Model)
-		D3D11_BUFFER_DESC bufferDesc = {}; // Description du buffer de vertex
-		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Indique que ce buffer sera utilisé comme buffer de vertex
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT; // Indique que le buffer sera utilisé de manière standard (lecture/écriture par le GPU)
-		bufferDesc.CPUAccessFlags = 0; // Pas d'accès CPU nécessaire
-		bufferDesc.MiscFlags = 0; // Pas de flags supplémentaires
-		bufferDesc.ByteWidth = sizeof(vertices); // Taille totale du buffer en bytes (nombre de sommets * taille d'un sommet)
-		bufferDesc.StructureByteStride = sizeof(Vertex); // Taille d'un sommet en bytes
+		// --- Vertex buffer ---
+		ID3D11Buffer* pVertexBuffer = nullptr;
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.ByteWidth = sizeof(vertices);
+		bufferDesc.StructureByteStride = sizeof(Vertex);
 
-		D3D11_SUBRESOURCE_DATA initData = {}; // Données initiales pour le buffer de vertex
-		initData.pSysMem = vertices; // Pointeur vers les données des sommets
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = vertices;
 
-		pDevice->CreateBuffer(&bufferDesc, &initData,&pVertexBuffer);
-		const UINT stride = sizeof(Vertex); // Taille d'un sommet en bytes (utilisée pour lier le buffer de vertex)
-		const UINT offset = 0u; // Offset dans le buffer de vertex (généralement 0 pour commencer au début)
-		pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer,&stride, &offset);
+		hr = pDevice->CreateBuffer(&bufferDesc, &initData, &pVertexBuffer);
+		if (FAILED(hr)) { std::cout << "Failed to create vertex buffer\n"; return; }
 
-		wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-		wrl::ComPtr<ID3DBlob> pBlob;
-		HRESULT hrV = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
+		const UINT stride = sizeof(Vertex);
+		const UINT offset = 0;
+		pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
-		// Si on arrive ici, pBlob est valide
-		pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-		pContext->VSSetShader(pVertexShader.Get(), nullptr, 0); // Lie le vertex shader au pipeline de rendu
+		// --- Shaders ---
+		ID3DBlob* pBlob = nullptr;
+		ID3D11PixelShader* pPixelShader = nullptr;
+		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", &pBlob);
+		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
+		hr = pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
+		if (FAILED(hr)) { std::cout << "CreatePixelShader failed\n"; return; }
+		pContext->PSSetShader(pPixelShader, nullptr, 0);
 
-		wrl::ComPtr<ID3D11PixelShader> pPixelShader; 
-		HRESULT hrP = D3DReadFileToBlob(L"Shader/PixelShader.cso", &pBlob);
-		pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-		pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+		ID3D11VertexShader* pVertexShader = nullptr;
+		hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
+		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
+		hr = pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
+		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
+		pContext->VSSetShader(pVertexShader, nullptr, 0);
 
-		pContext->Draw((UINT)std::size(vertices), 0); // Dessine un triangle
+		// --- Input layout ---
+		ID3D11InputLayout* pInputLayout = nullptr;
+		const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		hr = pDevice->CreateInputLayout(inputElementDesc, (UINT)std::size(inputElementDesc),
+			pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout);
+		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
+		pContext->IASetInputLayout(pInputLayout);
+
+		// --- Bind render target ---
+		pContext->OMSetRenderTargets(1, &pTarget, nullptr);
+		pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		// --- Viewport dynamique ---
+		RECT rect;
+		GetClientRect(myWindow, &rect);
+		float width = static_cast<float>(rect.right - rect.left);
+		float height = static_cast<float>(rect.bottom - rect.top);
+
+		D3D11_VIEWPORT viewport = {};
+		viewport.Width = width;
+		viewport.Height = height;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		pContext->RSSetViewports(1, &viewport);
+
+		// --- Draw call ---
+		pContext->Draw((UINT)std::size(vertices), 0);
+
 	}
+
 }
