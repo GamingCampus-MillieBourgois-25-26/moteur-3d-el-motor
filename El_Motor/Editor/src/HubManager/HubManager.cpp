@@ -1,4 +1,5 @@
 #include "HubManager/HubManager.hpp"
+#include "Scene/Scene.hpp"
 
 HubManager::HubManager()
 {

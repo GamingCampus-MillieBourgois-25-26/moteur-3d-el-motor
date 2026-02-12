@@ -1,4 +1,5 @@
 #include "InputBridge/InputBridge.hpp"
+#include "Input_Manager/InputManager.hpp"
 
 
 void Runtime::InputBridge::init() {

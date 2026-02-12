@@ -1,9 +1,7 @@
 #pragma once
-
-#include <string>
-#include <unordered_map>
 #include "miniaudio/miniaudio.h"
 #include "API_Sound/IAudioSystem.hpp"
+#include "API_Sound/AudioTypes.hpp"
 
 // Forward declaration miniaudio
 struct ma_engine;

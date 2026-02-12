@@ -1,4 +1,5 @@
 #include "Time_Manager/TimeManager.hpp"
+#include "Logger/Logger.hpp"
 
 void Engine::TimeManager::Init()
 {
