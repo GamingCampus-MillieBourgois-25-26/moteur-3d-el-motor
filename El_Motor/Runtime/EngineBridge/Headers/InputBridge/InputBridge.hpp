@@ -1,3 +1,4 @@
+#pragma once
 #include "CoreEngine/CoreEngine.hpp"
 
 namespace Runtime

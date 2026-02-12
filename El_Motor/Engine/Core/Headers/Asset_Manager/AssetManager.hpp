@@ -28,16 +28,16 @@ public:
         m_assets[path] = asset;
         return asset;
     }
-    void init();
     void Reload(const std::string& path);
     void UnloadAll();
-
-private:
-    std::unordered_map<std::string, std::shared_ptr<Asset>> m_assets;
-
     AssetManager() = default;
     ~AssetManager();
 
     AssetManager(const AssetManager&) = delete;
     AssetManager& operator=(const AssetManager&) = delete;
+private:
+    std::unordered_map<std::string, std::shared_ptr<Asset>> m_assets;
+
+
+   
 };

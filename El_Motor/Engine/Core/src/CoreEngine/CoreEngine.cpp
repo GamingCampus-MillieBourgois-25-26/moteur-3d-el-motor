@@ -3,7 +3,6 @@
 void Engine::CoreEngine::init() {
 	// Initialisation des syst�mes de l'Engine , fen�tre, rendu, etc.
 	inputManager.init();
-	assetManager.init();
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	
