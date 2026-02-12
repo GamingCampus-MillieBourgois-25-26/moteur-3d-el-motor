@@ -1,11 +1,12 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-#include "../Asset.hpp"
-#include <vector>
-#include <DirectXMath.h>
-#include <d3d11.h>
 
-// Simple vertex struct pour DX11
+#include <vector>
+#include <string>
+#include <d3d11.h>
+#include <DirectXMath.h>
+
+#include "../Asset.hpp"
+
 struct Vertex {
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT3 normal;
@@ -20,10 +21,7 @@ public:
     ID3D11Buffer* vertexBuffer = nullptr;
     ID3D11Buffer* indexBuffer = nullptr;
 
-    // Charge le OBJ et crée les buffers DX11
-    void Load() override;
+    void Load() override;                     
+    void CreateBuffers(ID3D11Device* device); 
     void Unload() override;
-
-private:
-    void CreateBuffersDX11(); // helper interne pour GPU
 };
