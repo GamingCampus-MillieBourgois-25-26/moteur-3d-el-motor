@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Time_Manager/TimeManager.hpp"
+#include "Asset_Manager/AssetManager.hpp"
 #include "Input_Manager/InputManager.hpp"
 #include "Logger/Logger.hpp"
 #include "Application/App.hpp"
@@ -12,11 +13,11 @@ namespace Engine
     class CoreEngine {
     private:
 		// Besoin d'ajouter les autres syst�mes comme le rendu, la gestion des sc�nes, etc.
-
         InputManager inputManager;
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		Application application;
+		AssetManager assetManager;
 
         //.... assetManager;
 
@@ -38,6 +39,8 @@ namespace Engine
 		LoggerManager& getLoggerManager() { return loggerManager; }
 		WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
 		Application& getApplication() { return application; }
+		AssetManager& getAssetManager() { return assetManager; }
+
 
     };
 }
