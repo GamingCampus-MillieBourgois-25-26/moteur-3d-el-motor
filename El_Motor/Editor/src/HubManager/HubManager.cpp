@@ -16,11 +16,10 @@ void HubManager::Init()
 
 void HubManager::CreateScene()
 {
-	std::unique_ptr<Scene> scene = std::make_unique<Scene>();
+	std::unique_ptr<Engine::Scene> scene = std::make_unique<Engine::Scene>();
 }
 
 void HubManager::LoadScene()
 {
 
 }
-
