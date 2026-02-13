@@ -3,17 +3,18 @@
 #define GLFW_EXPOSE_NATIVE_WIN32 // permet le glfwGetWin32Window() d'être défini
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-
 #include <d3d11_1.h>
 #include <d3d11.h>
 #include <dxgi.h>
 
 #include <Windows.h> // pour HWND et API Windows
+#include "Window/IWindow.hpp"
+
 
 namespace Engine {
 	class D3D11 {
 	public:
-		D3D11(GLFWwindow* window);
+		D3D11(IWindow& window);
 		D3D11(const D3D11& other) = delete; // Interdit la copie
 		D3D11& operator=(const D3D11& other) = delete; // Interdit l'assignation
 

@@ -9,8 +9,9 @@
 
 namespace Engine
 {
-	D3D11::D3D11(GLFWwindow* window) {
-		myWindow = glfwGetWin32Window(window); // Récupère le handle de la fenêtre à partir de GLFW
+	D3D11::D3D11(IWindow& window)
+	{
+		myWindow = static_cast<HWND>(window.GetNativeWindow());
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = initSwapChainDesc(); // variable locale pour la description du swap chain, initialisée avec les paramètres souhaités
 
 		D3D11CreateDeviceAndSwapChain(
@@ -33,6 +34,7 @@ namespace Engine
 		}
 		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
 	}
+
 
 	D3D11::~D3D11() {
 		if (pSwapChain != nullptr) pSwapChain->Release(); // Libère le swap chain
