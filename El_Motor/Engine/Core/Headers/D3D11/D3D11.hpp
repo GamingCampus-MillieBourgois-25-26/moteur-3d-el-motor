@@ -19,11 +19,17 @@ namespace Engine {
 
 		~D3D11();
 
+		void Present(); // Permet de présenter le swap chain à l'écran
+		void ClearBackBuffer(float r, float g, float b) noexcept; // Permet de nettoyer le back buffer avec une couleur spécifiée
+
+		void DrawTriangleTest();
+
 	private:
 		HWND myWindow;
 		ID3D11Device* pDevice = nullptr;
 		ID3D11DeviceContext* pContext = nullptr;
 		IDXGISwapChain* pSwapChain = nullptr;
+		ID3D11RenderTargetView* pTarget = nullptr;
 
 		IDXGIAdapter1* searchForAdapters(); // permet de rechercher les adaptateurs disponibles et de choisir le meilleur
 		DXGI_SWAP_CHAIN_DESC initSwapChainDesc(); // permet d'initialiser la description du swap chain avec les paramètres souhaités
