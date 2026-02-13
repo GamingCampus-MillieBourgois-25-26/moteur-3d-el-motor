@@ -17,7 +17,6 @@ file(GLOB_RECURSE ENGINE_HEADERS
 add_library(Engine
     ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
-    "Core/Headers/Window/IWindow.hpp"
 )
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers 
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Externals
