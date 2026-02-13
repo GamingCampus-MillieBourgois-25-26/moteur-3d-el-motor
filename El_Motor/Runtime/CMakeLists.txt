@@ -7,11 +7,15 @@ file(GLOB_RECURSE RUNTIME_HEADERS
 	EngineBridge/Headers/*.hpp 
 )
 
+file(GLOB SHADER_FILES
+    #Shaders/*.hlsl
+)
 
 
 
 add_executable(Runtime ${RUNTIME_SOURCES} 
                        ${RUNTIME_HEADERS}
+                       ${SHADER_FILES}
                        EngineBridge/src/Main/main.cpp
                        
 )

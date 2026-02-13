@@ -1,0 +1,47 @@
+#pragma once
+
+#include "Time_Manager/TimeManager.hpp"
+#include "Asset_Manager/AssetManager.hpp"
+#include "Input_Manager/InputManager.hpp"
+#include "Logger/Logger.hpp"
+#include "Application/App.hpp"
+#include "Scene/Scene.hpp"
+
+namespace Engine
+{
+
+    class CoreEngine {
+    private:
+		// Besoin d'ajouter les autres syst�mes comme le rendu, la gestion des sc�nes, etc.
+        InputManager inputManager;
+        TimeManager timeManager;
+		LoggerManager loggerManager;
+		Application application;
+		AssetManager assetManager;
+		Scene scene;
+
+        //.... assetManager;
+
+        bool running = false;
+
+    public:
+
+		CoreEngine() = default;
+
+		void init();         // initialisation du moteur
+        void run();         // boucle principale
+		void shutdown();   // shutdown du moteur
+		bool isRunning() const { return running; } // vérifie si le moteur est en cours d'exécution
+		bool shouldClose() const { return application.windowOpener->getMyWindow(); } // vérifie si la fenêtre doit se fermer
+
+		// Getters pour les différents systèmes du moteur
+		InputManager& getInputManager() { return inputManager; }
+		TimeManager& getTimeManager() { return timeManager; }
+		LoggerManager& getLoggerManager() { return loggerManager; }
+		WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
+		Application& getApplication() { return application; }
+		AssetManager& getAssetManager() { return assetManager; }
+
+
+    };
+}

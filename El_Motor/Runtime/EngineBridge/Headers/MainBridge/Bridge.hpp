@@ -1,3 +1,4 @@
+#pragma once
 #include "InputBridge/InputBridge.hpp"
 
 namespace Runtime

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/CoreEngine/CoreEngine.hpp"
+#include "CoreEngine/CoreEngine.hpp"
 
 namespace Runtime
 {
