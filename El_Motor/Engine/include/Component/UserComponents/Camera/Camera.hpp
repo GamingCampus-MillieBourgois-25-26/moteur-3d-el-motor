@@ -1,6 +1,9 @@
 #pragma once
 
 #include <DirectXMath.h>
+
+#include "Core/Input_Manager/KeyCode.hpp"
+#include "Core/Input_Manager/MouseButton.hpp"
 #include "Core/Input_Manager/InputManager.hpp"
 
 class Camera
