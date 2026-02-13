@@ -13,12 +13,10 @@ add_library(imgui_lib STATIC ${IMGUI_CORE_SOURCES} ${IMGUI_BACKEND_SOURCES})
 
 file(GLOB_RECURSE EDITOR_SOURCES
 	src/**/*.cpp
-    External/ImGui/src/**/*.cpp
 )
 
 file(GLOB_RECURSE EDITOR_HEADERS
 	 Headers/**/*.hpp
-     External/ImGui/Headers/**/*.h
 )
 
 add_executable(Editor ${EDITOR_SOURCES} 
@@ -35,7 +33,12 @@ target_link_libraries(Editor PRIVATE
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers
-                                         ${CMAKE_CURRENT_SOURCE_DIR}/External
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/Headers
+)
+target_include_directories(Editor PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/Headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/src/Backend
 )
 
 target_compile_definitions(Editor PRIVATE

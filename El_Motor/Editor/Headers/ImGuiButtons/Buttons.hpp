@@ -1,6 +1,5 @@
 #include "Scripting/Scripting.hpp"
 #include "Window/Window.hpp"
-#include "ImGui/Headers/imgui.h"
 
 
 namespace Editor {

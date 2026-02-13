@@ -20,7 +20,10 @@ add_library(Engine
 )
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers 
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Externals
-                                         ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers)
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/Components/UserComponents/Headers
+
+)
 
 
 target_link_libraries(Engine PRIVATE
