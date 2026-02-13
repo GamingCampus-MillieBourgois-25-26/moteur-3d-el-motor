@@ -2,7 +2,7 @@
 
 file(GLOB_RECURSE ENGINE_SOURCES
     Core/src/**/*.cpp 
-    cpnt/**/*.cpp
+    Components/UserComponents/**/*.cpp
 
 )
 
@@ -10,7 +10,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
 
 file(GLOB_RECURSE ENGINE_HEADERS
     Core/Headers/**/*.hpp
-    cpnt/**/*.hpp
+    Components/UserComponents/**/*.hpp
     Externals/**/*.h
 )
 
