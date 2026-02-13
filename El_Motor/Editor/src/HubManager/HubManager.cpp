@@ -18,11 +18,10 @@ void Editor::HubManager::Init()
 
 void Editor::HubManager::CreateScene()
 {
-	std::unique_ptr<Scene> scene = std::make_unique<Scene>();
+	std::unique_ptr<Engine::Scene> scene = std::make_unique<Engine::Scene>();
 }
 
 void Editor::HubManager::LoadScene()
 {
 
 }
-

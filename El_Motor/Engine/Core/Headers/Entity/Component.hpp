@@ -1,17 +1,19 @@
 #pragma once
 
-class GameObject;
+namespace Engine {
+    class GameObject;
 
-class Component {
-public:
-    GameObject* gameObject = nullptr;
+    class Component {
+    public:
+        GameObject* gameObject = nullptr;
 
-    virtual ~Component() = default;
+        virtual ~Component() = default;
 
-    virtual void Start() {}
-    virtual void Update(float dt) {}
-    virtual void OnDestroy() {}
+        virtual void Start() {}
+        virtual void Update(float dt) {}
+        virtual void OnDestroy() {}
 
-protected:
-    Component() = default;
-};
+    protected:
+        Component() = default;
+    };
+}
