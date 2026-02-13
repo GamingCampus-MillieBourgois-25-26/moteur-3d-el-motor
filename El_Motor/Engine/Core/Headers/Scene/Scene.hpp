@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity/Entity.hpp"
+
 //#include "AssetManager/AssetManager.hpp"
 #include "Entity/GameObject.hpp"
 

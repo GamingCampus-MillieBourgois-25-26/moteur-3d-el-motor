@@ -4,8 +4,7 @@
 #include <string>
 #include <d3d11.h>
 #include <DirectXMath.h>
-
-#include "../Asset.hpp"
+#include "Assets/Asset.hpp"
 
 struct Vertex {
     DirectX::XMFLOAT3 position;

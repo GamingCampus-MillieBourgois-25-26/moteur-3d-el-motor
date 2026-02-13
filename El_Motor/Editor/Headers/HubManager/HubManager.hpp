@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene/Scene.hpp"
+
 #include <iostream>
 
 
@@ -9,7 +9,6 @@ public:
 
 	HubManager();
 	~HubManager();
-
 
 
 	//Functions

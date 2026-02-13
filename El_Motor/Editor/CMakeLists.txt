@@ -9,7 +9,8 @@ file(GLOB_RECURSE EDITOR_HEADERS
 add_executable(Editor ${EDITOR_SOURCES} 
                       ${EDITOR_HEADERS}
                       src/Main/Editor.cpp
- )
+
+)
 
 target_link_libraries(Editor PRIVATE
     Engine

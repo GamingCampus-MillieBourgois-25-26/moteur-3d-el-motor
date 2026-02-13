@@ -1,5 +1,6 @@
 #include "Scene/Scene.hpp"
 #include "Logger/Logger.hpp"
+#include "Entity/Entity.hpp"
 #include <algorithm>
 
 Scene::~Scene() {

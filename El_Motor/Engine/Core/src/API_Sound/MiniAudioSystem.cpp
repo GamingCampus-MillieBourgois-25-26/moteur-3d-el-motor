@@ -1,6 +1,8 @@
 
 #define MINIAUDIO_IMPLEMENTATION
 #include "API_Sound/MiniAudioSystem.hpp"
+#include <string>
+#include <unordered_map>
 
 namespace Engine
 {
