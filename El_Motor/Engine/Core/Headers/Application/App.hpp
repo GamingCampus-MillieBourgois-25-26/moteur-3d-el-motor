@@ -1,6 +1,6 @@
 #pragma once
-#include "../D3D11/D3D11.hpp"
-#include "../Window/Window.hpp"
+#include "D3D11/D3D11.hpp"
+#include "Window/Window.hpp"
 
 
 namespace Engine {

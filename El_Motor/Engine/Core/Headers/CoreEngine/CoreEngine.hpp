@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../Time_Manager/TimeManager.hpp"
-#include "../Asset_Manager/AssetManager.hpp"
-#include "../Input_Manager/InputManager.hpp"
-#include "../Logger/Logger.hpp"
-#include "../Application/App.hpp"
-#include "../Scene/Scene.hpp"
+#include "Time_Manager/TimeManager.hpp"
+#include "Asset_Manager/AssetManager.hpp"
+#include "Input_Manager/InputManager.hpp"
+#include "Logger/Logger.hpp"
+#include "Application/App.hpp"
+#include "Scene/Scene.hpp"
 
 namespace Engine
 {
