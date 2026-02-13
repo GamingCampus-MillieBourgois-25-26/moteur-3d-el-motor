@@ -2,24 +2,24 @@
 #include "Window/Window.hpp"
 
 
-void Scrpit::Scripter::loadScript(){
+void Editor::Scripter::loadScript(){
 
 
 }
 
 
-void Scrpit::Scripter::executeScript() {
+void Editor::Scripter::executeScript() {
 
 
 };
 
 
-void Scrpit::Scripter::makeScript() {
+void Editor::Scripter::makeScript() {
 
 }
 
 
-void Scrpit::Scripter::saveScript() {
+void Editor::Scripter::saveScript() {
 
 
 }

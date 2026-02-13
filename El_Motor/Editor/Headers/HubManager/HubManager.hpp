@@ -1,34 +1,36 @@
 #pragma once
 
 #include <iostream>
+#include "Window/Window.hpp"
+
+namespace Editor {
+	class HubManager
+	{
+	public:
+
+		HubManager();
+		~HubManager();
 
 
-class HubManager
-{
-public:
-
-	HubManager();
-	~HubManager();
-
-
-	//Functions
-	void Init();
-	void CreateScene();
-	void LoadScene();
-
-
-
-	//Getters
-	std::string GetSessionName() const { return sessionName; }
+		//Functions
+		void Init();
+		void CreateScene();
+		void LoadScene();
 
 
 
-	//Setters
-	void SetSessionName(std::string name) { sessionName = name; }
-
-private:
+		//Getters
+		std::string GetSessionName() const { return sessionName; }
 
 
-	//Variables
-	std::string sessionName = "Null";
-};
+
+		//Setters
+		void SetSessionName(std::string name) { sessionName = name; }
+
+	private:
+
+
+		//Variables
+		std::string sessionName = "Null";
+	};
+}

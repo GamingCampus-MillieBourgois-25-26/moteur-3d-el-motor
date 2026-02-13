@@ -1,25 +1,27 @@
 #include "HubManager/HubManager.hpp"
 #include "Scene/Scene.hpp"
 
-HubManager::HubManager()
+Editor::HubManager::HubManager()
 {
+
 }
 
-HubManager::~HubManager()
+Editor::HubManager::~HubManager()
 {
+
 }
 
-void HubManager::Init()
+void Editor::HubManager::Init()
 {
 	
 }
 
-void HubManager::CreateScene()
+void Editor::HubManager::CreateScene()
 {
 	std::unique_ptr<Scene> scene = std::make_unique<Scene>();
 }
 
-void HubManager::LoadScene()
+void Editor::HubManager::LoadScene()
 {
 
 }
