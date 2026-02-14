@@ -1,11 +1,17 @@
 #pragma once
 
 #include <iostream>
-#include "Window/Window.hpp"
+#include "Application/App.hpp"
+#include "ImGuiLayer/ImGuiLayer.hpp"
 
 namespace Editor {
 	class HubManager
 	{
+	protected:
+		Engine::Application app;
+
+
+
 	public:
 
 		HubManager();
@@ -14,8 +20,8 @@ namespace Editor {
 
 		//Functions
 		void Init();
-		void CreateScene();
-		void LoadScene();
+		void CreateProject();
+		void LoadProject();
 
 
 
@@ -31,6 +37,8 @@ namespace Editor {
 
 
 		//Variables
+		ImGuiLayer guiLayer;
 		std::string sessionName = "Null";
+
 	};
 }

@@ -1,5 +1,5 @@
 #include "Scripting/Scripting.hpp"
-#include "Window/Window.hpp"
+
 
 
 namespace Editor {
@@ -11,9 +11,12 @@ namespace Editor {
 		~Buttons() {};
 
 
-
+		void init();
 		void startRuntime();
-
+		void selectEntity();
+		void changeCmpntValue();
+		void ShowEntity();
+		void ManageEntity();
 
 
 	private:

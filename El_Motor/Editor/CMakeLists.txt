@@ -52,7 +52,8 @@ target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 
 target_include_directories(Editor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Headers
-     External/imgui/includes                     
+     External/imgui/includes/CoreIncludes
+     External/imgui/includes/backend
      External/imgui/src/Backend                  
 )
 
