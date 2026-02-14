@@ -1,7 +1,8 @@
 #pragma once
 
 
-
+namespace Editor
+{
 	class EditorCore
 	{
 
@@ -11,7 +12,7 @@
 
 
 	protected:
-		
+
 
 	public:
 		EditorCore() {}
@@ -23,3 +24,4 @@
 
 
 	};
+}

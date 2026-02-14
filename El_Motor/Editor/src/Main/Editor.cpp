@@ -3,7 +3,7 @@
 
 int main()
 {
-	HubManager editor;
+	Editor::HubManager editor;
 	editor.Init();
 	editor.CreateProject();
 }

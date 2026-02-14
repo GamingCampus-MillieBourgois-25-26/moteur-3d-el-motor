@@ -21,7 +21,9 @@ namespace Engine {
 
 		void Present(); // Permet de présenter le swap chain à l'écran
 		void ClearBackBuffer(float r, float g, float b) noexcept; // Permet de nettoyer le back buffer avec une couleur spécifiée
-
+		ID3D11Device* GetDevice() const noexcept { return pDevice; }
+		ID3D11DeviceContext* GetContext() const noexcept { return pContext; }
+		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain; }
 		void DrawTriangleTest();
 	private:
 		HWND myWindow;

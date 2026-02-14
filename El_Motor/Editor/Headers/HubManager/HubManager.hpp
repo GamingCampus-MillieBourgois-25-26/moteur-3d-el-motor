@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
 
-
+namespace Editor
+{
 	class HubManager
 	{
 	protected:
@@ -39,3 +40,4 @@
 		std::string sessionName = "Null";
 
 	};
+}

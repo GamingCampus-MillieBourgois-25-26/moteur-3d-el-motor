@@ -2,14 +2,14 @@
 
 
 
-void EditorCore::editorInit() {
+void Editor::EditorCore::editorInit() {
 
 
 }
 
 
 
-void EditorCore::editorShutdown() {
+void Editor::EditorCore::editorShutdown() {
 
 
 

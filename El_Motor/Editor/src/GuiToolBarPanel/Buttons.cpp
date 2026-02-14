@@ -2,22 +2,22 @@
 
 
 
-void Buttons::init() {
+void Editor::Buttons::init() {
 
 
 
 }
 
 
-void Buttons::startRuntime() {
+void Editor::Buttons::startRuntime() {
 
 
 }
 
-void Buttons::selectEntity() {
+void Editor::Buttons::selectEntity() {
 
 }
-void Buttons::changeCmpntValue() {
+void Editor::Buttons::changeCmpntValue() {
 
 
 

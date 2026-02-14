@@ -1,25 +1,25 @@
 #include "HubManager/HubManager.hpp"
 
 
-HubManager::HubManager()
+Editor::HubManager::HubManager()
 {
 
 }
 
-HubManager::~HubManager()
+Editor::HubManager::~HubManager()
 {
 
 }
 
-void HubManager::Init()
+void Editor::HubManager::Init()
 {
 }
 
-void HubManager::CreateProject()
+void Editor::HubManager::CreateProject()
 {
 }
 
-void HubManager::LoadProject()
+void Editor::HubManager::LoadProject()
 {
 
 }
