@@ -1,17 +1,15 @@
 #pragma once
 
-struct GLFWwindow;
-struct ID3D11Device;
-struct ID3D11DeviceContext;
-
 namespace Editor
 {
 	class ImGuiLayer
 	{
 	public:
-		void Init(GLFWwindow* window,
-			ID3D11Device* device,
-			ID3D11DeviceContext* context);
+
+		ImGuiLayer() {};
+		~ImGuiLayer() {};
+
+		void Init();
 
 		void Begin();
 		void End();

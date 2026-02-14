@@ -1,5 +1,4 @@
 #include "Scripting/Scripting.hpp"
-#include "Window/Window.hpp"
 
 
 void Editor::Scripter::loadScript(){

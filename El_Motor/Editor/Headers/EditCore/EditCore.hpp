@@ -1,10 +1,7 @@
-#include "Scripting/Scripting.hpp"
-#include "GuiToolBarPanel/Buttons.hpp"
-#include "HubManager/HubManager.hpp"
+#pragma once
 
 
 
-namespace Editor {
 	class EditorCore
 	{
 
@@ -21,12 +18,8 @@ namespace Editor {
 		~EditorCore() {}
 
 		void editorInit();
-		void editorRun(Engine::Application& app);
 		void editorShutdown();
 
 
 
 	};
-
-
-}

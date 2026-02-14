@@ -23,9 +23,6 @@ namespace Engine {
 		void ClearBackBuffer(float r, float g, float b) noexcept; // Permet de nettoyer le back buffer avec une couleur spécifiée
 
 		void DrawTriangleTest();
-		ID3D11Device* const GetDevice() const { return pDevice; } // Getter pour le device D3D11
-		ID3D11DeviceContext* const GetContext() const { return pContext; } // Getter pour le contexte de rendu D3D11
-		IDXGISwapChain* const GetSwapChain() const { return pSwapChain; }
 	private:
 		HWND myWindow;
 		ID3D11Device* pDevice = nullptr;

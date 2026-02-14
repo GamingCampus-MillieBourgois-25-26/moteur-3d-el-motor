@@ -1,8 +1,7 @@
+#pragma once
+
 #include "Scripting/Scripting.hpp"
 
-
-
-namespace Editor {
 
 	class Buttons
 	{
@@ -22,9 +21,3 @@ namespace Editor {
 	private:
 
 	};
-
-
-
-
-
-}

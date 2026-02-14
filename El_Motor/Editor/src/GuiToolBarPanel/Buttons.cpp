@@ -1,24 +1,23 @@
-#include "ImGuiButtons/Buttons.hpp"
-#include "Window/Window.hpp"
+#include "GuiToolBarPanel/Buttons.hpp"
 
 
 
-void Editor::Buttons::init() {
+void Buttons::init() {
 
 
 
 }
 
 
-void Editor::Buttons::startRuntime() {
+void Buttons::startRuntime() {
 
 
 }
 
-void Editor::Buttons::selectEntity() {
+void Buttons::selectEntity() {
 
 }
-void Editor::Buttons::changeCmpntValue() {
+void Buttons::changeCmpntValue() {
 
 
 
