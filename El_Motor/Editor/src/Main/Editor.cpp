@@ -1,9 +1,9 @@
 #include <iostream>
-#include "EditCore/EditCore.hpp"
+#include "HubManager/HubManager.hpp"
 int main()
 {
-	Editor::EditorCore editor;
-	editor.editorInit();
-	editor.editorRun();
+	Editor::HubManager editor;
+	editor.Init();
+	editor.CreateProject();
 }
 

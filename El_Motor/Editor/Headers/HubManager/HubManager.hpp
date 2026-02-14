@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Application/App.hpp"
 #include "ImGuiLayer/ImGuiLayer.hpp"
+#include "EditCore/EditCore.hpp"
 
 namespace Editor {
 	class HubManager
@@ -37,6 +38,7 @@ namespace Editor {
 
 
 		//Variables
+		EditorCore coreEditor;
 		ImGuiLayer guiLayer;
 		std::string sessionName = "Null";
 

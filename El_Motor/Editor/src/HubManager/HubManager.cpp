@@ -15,7 +15,7 @@ Editor::HubManager::~HubManager()
 
 void Editor::HubManager::Init()
 {
-	//guiLayer.Init(app.getWindowOpener().getMyWindow(),,);
+	guiLayer.Init(app.getWindowOpener().getMyWindow(),app.getD3D11()->GetDevice(),app.getD3D11()->GetContext());
 }
 
 void Editor::HubManager::CreateProject()
