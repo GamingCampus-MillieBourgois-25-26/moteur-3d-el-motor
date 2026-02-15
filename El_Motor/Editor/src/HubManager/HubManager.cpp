@@ -39,6 +39,7 @@ void Editor::HubManager::HubRun()
 
         case EditorState::Editor:
         {
+            DrawEditorUI();
             coreEditor.editorRun();
         }
         break;
@@ -63,7 +64,6 @@ void Editor::HubManager::LoadProject()
 
 void Editor::HubManager::DrawHubUI()
 {
-
     ImGui::SetNextWindowSize(ImVec2(420, 100), ImGuiCond_Always);
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
     ImGui::SetNextWindowPos(ImVec2(windowSize.x / 2, windowSize.y / 2));
@@ -89,4 +89,19 @@ void Editor::HubManager::DrawHubUI()
 
 void Editor::HubManager::DrawEditorUI()
 {
+    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, 100), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(0,0));
+    ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
+
+    if (buttons->startRuntime()) 
+    {
+    //Start Runtime
+    }
+
+    ImGui::End(); 
+
+
+
+
 }
