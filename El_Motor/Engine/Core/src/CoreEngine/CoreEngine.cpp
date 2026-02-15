@@ -11,12 +11,10 @@ void Engine::CoreEngine::init() {
 }
 
 void Engine::CoreEngine::run() {
-	while (running) {
-			timeManager.Update();
-			float dt = timeManager.GetDeltaTime();
-			inputManager.update();
-			scene.Update(dt);
-	}
+		timeManager.Update();
+		float dt = timeManager.GetDeltaTime();
+		inputManager.update();
+		scene.Update(dt);
 }
 
 void Engine::CoreEngine::shutdown() {

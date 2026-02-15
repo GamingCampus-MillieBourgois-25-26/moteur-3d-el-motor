@@ -15,8 +15,6 @@ namespace Runtime
 		void run();
 		void shutdown();
 		bool shouldClose() const { return app.windowOpener->getMyWindow(); } // vérifie si la fenêtre doit se fermer
-
-
 	};
 }
 
