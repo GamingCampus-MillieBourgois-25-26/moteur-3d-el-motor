@@ -1,54 +1,58 @@
 #include "ImGuiLayer/ImGuiLayer.hpp"
-#include "D3D11/D3D11.hpp"
-#include "External/imgui/includes/CoreIncludes/imgui.h"
-#include "External/imgui/includes/backend/imgui_impl_dx11.h"
-#include "External/imgui/includes/backend/imgui_impl_glfw.h"
 
+void GuiLayer::Init(GLFWwindow* window, ID3D11Device* device, ID3D11DeviceContext* context, ID3D11RenderTargetView* rtv)
+{
+    m_Window = window;
+    m_Device = device;
+    m_Context = context;
+    m_RTV = rtv;
 
+    // Initialisation ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
 
-	void Editor::ImGuiLayer::Init(GLFWwindow* window,
-		ID3D11Device* device,
-		ID3D11DeviceContext* context)
-	{
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // clavier
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // docking si version récente
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // multi-viewport
 
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
+    ImGui::StyleColorsDark();
 
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    // Initialisation backends
+    ImGui_ImplGlfw_InitForOther(window, true); // GLFW
+    ImGui_ImplDX11_Init(device, context);      // DX11
+}
 
-		ImGui::StyleColorsDark();
+void GuiLayer::BeginFrame()
+{
+    // Bind le render target
+    m_Context->OMSetRenderTargets(1, &m_RTV, nullptr);
 
-		ImGui_ImplGlfw_InitForOther(window, true);
-		ImGui_ImplDX11_Init(device, context);
+    // Commence une nouvelle frame ImGui
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
 
+void GuiLayer::EndFrame()
+{
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+    // Si multi-viewport
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
+}
 
-	}
-
-	void Editor::ImGuiLayer::Begin()
-	{
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-	}
-
-	void Editor::ImGuiLayer::End()
-	{
-		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-		}
-	}
-
-	void Editor::ImGuiLayer::Shutdown()
-	{
-		ImGui_ImplDX11_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-	}
+void GuiLayer::Clear(float r, float g, float b, float a)
+{
+    // Clear le render target avec la couleur passée
+    float clearColor[4] = { r, g, b, a };
+    m_Context->ClearRenderTargetView(m_RTV, clearColor);
+}

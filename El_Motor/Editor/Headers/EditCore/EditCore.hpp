@@ -19,6 +19,7 @@ namespace Editor
 		~EditorCore() {}
 
 		void editorInit();
+		void editorRun();
 		void editorShutdown();
 
 

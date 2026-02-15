@@ -1,25 +1,25 @@
 #pragma once
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_glfw.h"
+#include <GLFW/glfw3.h>
+#include <d3d11.h>
 
-
-struct GLFWwindow;                  
-struct ID3D11Device;                
-struct ID3D11DeviceContext;         
-
-namespace Editor
+class GuiLayer
 {
-	class ImGuiLayer
-	{
-	public:
+public:
+    GuiLayer() = default;
+    ~GuiLayer() = default;
 
-		ImGuiLayer() {};
-		~ImGuiLayer() {};
+    void Init(GLFWwindow* window, ID3D11Device* device, ID3D11DeviceContext* context, ID3D11RenderTargetView* rtv);
+    void BeginFrame();
+    void EndFrame();
 
-		void Init(GLFWwindow* window,
-			ID3D11Device* device,
-			ID3D11DeviceContext* context);
+    void Clear(float r, float g, float b, float a);
 
-		void Begin();
-		void End();
-		void Shutdown();
-	};
-}
+private:
+    GLFWwindow* m_Window = nullptr;
+    ID3D11Device* m_Device = nullptr;
+    ID3D11DeviceContext* m_Context = nullptr;
+    ID3D11RenderTargetView* m_RTV = nullptr;
+};

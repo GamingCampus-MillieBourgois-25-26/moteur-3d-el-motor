@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component.hpp"
+#include "Entity/Component.hpp"
 #include "Asset_Manager/AssetManager.hpp"
 #include "Assets/Asset.hpp"
 #include <memory>

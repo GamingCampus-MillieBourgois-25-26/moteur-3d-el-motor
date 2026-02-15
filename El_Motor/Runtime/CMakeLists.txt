@@ -28,6 +28,7 @@ add_executable(Runtime ${RUNTIME_SOURCES}
 target_include_directories(Runtime
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/EngineBridge/Headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/Shader
 )
 
 

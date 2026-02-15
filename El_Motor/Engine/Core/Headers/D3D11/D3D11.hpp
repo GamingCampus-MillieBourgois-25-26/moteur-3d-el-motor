@@ -24,6 +24,7 @@ namespace Engine {
 		ID3D11Device* GetDevice() const noexcept { return pDevice; }
 		ID3D11DeviceContext* GetContext() const noexcept { return pContext; }
 		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain; }
+		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget; }
 		void DrawTriangleTest();
 	private:
 		HWND myWindow;

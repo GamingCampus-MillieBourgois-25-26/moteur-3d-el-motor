@@ -1,5 +1,6 @@
 #pragma once
-
+#include "Scene/Scene.hpp"
+#include "Entity/Component.hpp"
 
 namespace Editor
 {
@@ -9,13 +10,19 @@ namespace Editor
 		Buttons() {};
 		~Buttons() {};
 
-
 		void init();
-		void startRuntime();
+		
+		//Hub Buttons
+		bool CreateProject();
+		bool LoadProject();
+
+
+		//Editor Buttons
 		void selectEntity();
 		void changeCmpntValue();
 		void ShowEntity();
 		void ManageEntity();
+		bool startRuntime();
 
 
 	private:

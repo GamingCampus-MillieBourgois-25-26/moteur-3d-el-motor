@@ -5,8 +5,8 @@
 #include <utility>
 #include <algorithm>
 
-#include "Component.hpp"
-#include "Transform.hpp"
+#include "Entity/Component.hpp"
+#include "Entity/Transform.hpp"
 
 namespace Engine {
     class GameObject {

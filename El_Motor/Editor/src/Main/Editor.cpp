@@ -5,6 +5,6 @@ int main()
 {
 	Editor::HubManager editor;
 	editor.Init();
-	editor.CreateProject();
+	editor.HubRun();
 }
 
