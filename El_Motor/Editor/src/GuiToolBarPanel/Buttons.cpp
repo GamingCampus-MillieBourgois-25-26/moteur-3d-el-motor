@@ -39,7 +39,7 @@ bool Editor::Buttons::LoadProject() {
 
 bool Editor::Buttons::startRuntime()
 {
-    if (ImGui::Button("Run", ImVec2(200, 50)))
+    if (ImGui::Button("Run", ImVec2(50, 50)))
     {
         return true;
     }

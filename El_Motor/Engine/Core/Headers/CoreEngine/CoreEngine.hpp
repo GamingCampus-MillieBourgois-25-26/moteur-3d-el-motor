@@ -16,7 +16,6 @@ namespace Engine
         InputManager inputManager;
         TimeManager timeManager;
 		LoggerManager loggerManager;
-		Application application;
 		AssetManager assetManager;
 		Scene scene;
 
@@ -32,14 +31,14 @@ namespace Engine
         void run();         // boucle principale
 		void shutdown();   // shutdown du moteur
 		bool isRunning() const { return running; } // vérifie si le moteur est en cours d'exécution
-		bool shouldClose() const { return application.windowOpener->getMyWindow(); } // vérifie si la fenêtre doit se fermer
+		
 
 		// Getters pour les différents systèmes du moteur
 		InputManager& getInputManager() { return inputManager; }
 		TimeManager& getTimeManager() { return timeManager; }
 		LoggerManager& getLoggerManager() { return loggerManager; }
-		WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
-		Application& getApplication() { return application; }
+		/*WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
+		Application& getApplication() { return application; }*/
 		AssetManager& getAssetManager() { return assetManager; }
 
 

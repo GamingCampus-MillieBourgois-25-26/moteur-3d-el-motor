@@ -7,7 +7,7 @@ void Engine::CoreEngine::init() {
 	timeManager.Init();
 	
 	running = true;
-	application.initApp();
+
 }
 
 void Engine::CoreEngine::run() {
@@ -15,8 +15,6 @@ void Engine::CoreEngine::run() {
 			timeManager.Update();
 			float dt = timeManager.GetDeltaTime();
 			inputManager.update();
-			application.windowOpener->windowPollEvents();
-			application.PresentDx();
 			scene.Update(dt);
 	}
 }

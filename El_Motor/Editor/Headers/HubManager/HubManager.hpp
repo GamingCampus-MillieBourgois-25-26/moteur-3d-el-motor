@@ -21,12 +21,11 @@ namespace Editor
 
 
 		//Variables
-		Buttons buttons;
+		Buttons* buttons;
 		Engine::Application app;
 		EditorCore coreEditor;
 		GuiLayer guiLayer;
 		std::string sessionName = "Null";
-
 		EditorState editorState = Hub;
 
 	

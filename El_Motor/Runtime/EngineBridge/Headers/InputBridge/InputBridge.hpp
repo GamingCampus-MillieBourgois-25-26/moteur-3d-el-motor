@@ -8,8 +8,8 @@ namespace Runtime
 	public:
 
 		void init();
-		void update(Engine::CoreEngine& core);
-		void fetchGLFWInput(Engine::CoreEngine& core);
+		void update(Engine::CoreEngine& core , Engine::Application& app);
+		void fetchGLFWInput(Engine::CoreEngine& core, Engine::Application& app);
 
 
 

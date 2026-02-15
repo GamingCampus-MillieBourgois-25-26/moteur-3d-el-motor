@@ -63,20 +63,22 @@ void Editor::HubManager::LoadProject()
 
 void Editor::HubManager::DrawHubUI()
 {
-    ImVec2 windowSize = ImGui::GetIO().DisplaySize;                // Taille de ton ImGui
-    ImGui::SetNextWindowPos(ImVec2(windowSize.x/ 2,windowSize.y / 2));
-    ImGui::Begin("EL MOTOR HUB");
+
+    ImGui::SetNextWindowSize(ImVec2(420, 100), ImGuiCond_Always);
+    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+    ImGui::SetNextWindowPos(ImVec2(windowSize.x / 2, windowSize.y / 2));
+    ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
 
     
-    if (buttons.CreateProject())
+    if (buttons->CreateProject())
     {
         CreateProject();
         SetEditorState(EditorState::Editor);
     }
     ImGui::SameLine();
 
-    if (buttons.LoadProject())
+    if (buttons->LoadProject())
     {
         LoadProject();
         SetEditorState(EditorState::Editor);
@@ -87,5 +89,4 @@ void Editor::HubManager::DrawHubUI()
 
 void Editor::HubManager::DrawEditorUI()
 {
-
 }

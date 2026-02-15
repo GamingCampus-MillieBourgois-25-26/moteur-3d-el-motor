@@ -1,5 +1,5 @@
 #pragma once
-
+#include "CoreEngine/CoreEngine.hpp"
 
 namespace Editor
 {
@@ -8,11 +8,11 @@ namespace Editor
 
 
 	private:
-
+		
 
 
 	protected:
-
+		Engine::CoreEngine coreEngine;
 
 	public:
 		EditorCore() {}
@@ -21,7 +21,7 @@ namespace Editor
 		void editorInit();
 		void editorRun();
 		void editorShutdown();
-
+		void DrawUi();
 
 
 	};
