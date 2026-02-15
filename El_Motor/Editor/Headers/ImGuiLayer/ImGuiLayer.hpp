@@ -1,7 +1,7 @@
 #pragma once
-#include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_glfw.h"
+#include "External/imgui/includes/CoreIncludes/imgui.h"
+#include "External/imgui/includes/backend/imgui_impl_dx11.h"
+#include "External/imgui/includes/backend/imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
 #include <d3d11.h>
 

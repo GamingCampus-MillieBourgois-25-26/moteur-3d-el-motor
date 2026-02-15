@@ -1,16 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-
-
-
 file(GLOB_RECURSE EDITOR_SOURCES
 	src/**/*.cpp
 )
