@@ -47,32 +47,28 @@ bool Editor::Buttons::startRuntime()
     return false;
 
 }
-
-bool Editor::Buttons::showEntity()
-{
-    if (ImGui::Button("show", ImVec2(200, 50)))
-    {
-        return true;
-    }
-    return false;
-}
-
 void Editor::Buttons::selectEntity(Engine::Scene& scene)
 {
-    ImGui::BeginChild("Hierarchy", ImVec2(250, 10), true);
+    ImGui::BeginChild("Hierarchy", ImVec2(250, 0), true);
+    auto& currentSelected = scene.GetRootObjects();
 
-    for (int i = 0; i < /*scene.GetRootObjects().size()*/ ; i++)
+    for (int i = 0; i < scene.GetRootObjects().size() ; i++)
     {
-        ImGui::PushID(i);
+       
+        Engine::GameObject* go = currentSelected[i];
+        if (!go) continue; // skip nullptr
 
-        ImGui::SameLine();
-        std::string label = "Entity " + std::to_string(i);
-        // Sélection
-        bool isSelected = (selectedEntity == i);
-       /* if (ImGui::Selectable(label.c_str(), isSelected))//Box qui défile selon le nombre d'entité 
+
+
+        ImGui::PushID(i);
+        std::string label = "Entity " + std::to_string(i); //Name des entité
+        bool IsSelected = (selectedEntity == go);
+
+
+        if (ImGui::Selectable(label.c_str(), IsSelected))//Box qui défile selon le nombre d'entité 
         {
-            selectedEntity = i;
-        }*/
+            selectedEntity = go;
+        }
 
         ImGui::PopID();
     }
@@ -96,7 +92,7 @@ void Editor::Buttons::createEntity(Engine::Scene& scene)
 {
     if (ImGui::Button("create", ImVec2(100, 50)))
     {
-        scene.CreateGameObject();
+        selectedEntity = scene.CreateGameObject();
     }
 }
 
@@ -104,8 +100,13 @@ void Editor::Buttons::delEntity(Engine::Scene& scene)
 {
     if (ImGui::Button("delete", ImVec2(100, 50)))
     {
-        scene.DestroyGameObject(scene.GetRootObjects()[selectedEntity]);
+        
+        scene.DestroyGameObject(selectedEntity);
+        selectedEntity = nullptr;
     }
 }
+
+
+
 
 

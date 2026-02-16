@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene/Scene.hpp"
-
+#include "Entity/GameObject.hpp"
 namespace Editor
 {
 	class Buttons
@@ -8,7 +8,8 @@ namespace Editor
 	private:
 		
 	protected:
-		int selectedEntity = 0;
+		Engine::GameObject* selectedEntity = nullptr;
+		int CurrentEntity;
 	public:
 		Buttons() {};
 		~Buttons() {};
@@ -23,11 +24,9 @@ namespace Editor
 		//Editor Buttons
 		void selectEntity(Engine::Scene& scene);
 		bool changeCmpntValue();
-		bool showEntity();
 		void createEntity(Engine::Scene& scene);
 		void delEntity(Engine::Scene& scene);
 		bool startRuntime();
-
 
 	
 
