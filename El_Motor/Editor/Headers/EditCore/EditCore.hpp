@@ -8,7 +8,7 @@ namespace Editor
 
 
 	private:
-		
+	
 
 
 	protected:
@@ -22,6 +22,9 @@ namespace Editor
 		void editorRun();
 		void editorShutdown();
 		void DrawUi();
+
+
+		Engine::CoreEngine&  GetEngine() { return coreEngine; }
 
 
 	};

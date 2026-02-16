@@ -71,14 +71,14 @@ void Editor::HubManager::DrawHubUI()
 
 
     
-    if (buttons->CreateProject())
+    if (buttons->createProject())
     {
         CreateProject();
         SetEditorState(EditorState::Editor);
     }
     ImGui::SameLine();
 
-    if (buttons->LoadProject())
+    if (buttons->loadProject())
     {
         LoadProject();
         SetEditorState(EditorState::Editor);
@@ -90,7 +90,7 @@ void Editor::HubManager::DrawHubUI()
 void Editor::HubManager::DrawEditorUI()
 {
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(windowSize.x, 100), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, 300), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(0,0));
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
@@ -98,6 +98,15 @@ void Editor::HubManager::DrawEditorUI()
     {
     //Start Runtime
     }
+
+    ImGui::SameLine(0,40);
+    buttons->createEntity(coreEditor.GetEngine().getScene());
+
+    ImGui::SameLine(0, 5);
+    buttons->delEntity(coreEditor.GetEngine().getScene());
+
+
+
 
     ImGui::End(); 
 

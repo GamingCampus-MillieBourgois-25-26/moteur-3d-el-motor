@@ -1,11 +1,14 @@
 #pragma once
 #include "Scene/Scene.hpp"
-#include "Entity/Component.hpp"
 
 namespace Editor
 {
 	class Buttons
 	{
+	private:
+		
+	protected:
+		int selectedEntity = 0;
 	public:
 		Buttons() {};
 		~Buttons() {};
@@ -13,19 +16,20 @@ namespace Editor
 		void init();
 		
 		//Hub Buttons
-		bool CreateProject();
-		bool LoadProject();
+		bool createProject();
+		bool loadProject();
 
 
 		//Editor Buttons
-		void selectEntity();
-		void changeCmpntValue();
-		void ShowEntity();
-		void ManageEntity();
+		void selectEntity(Engine::Scene& scene);
+		bool changeCmpntValue();
+		bool showEntity();
+		void createEntity(Engine::Scene& scene);
+		void delEntity(Engine::Scene& scene);
 		bool startRuntime();
 
 
-	private:
+	
 
 	};
 }

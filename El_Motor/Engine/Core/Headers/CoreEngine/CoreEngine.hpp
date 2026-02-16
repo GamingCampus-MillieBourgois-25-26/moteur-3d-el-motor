@@ -40,6 +40,7 @@ namespace Engine
 		/*WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
 		Application& getApplication() { return application; }*/
 		AssetManager& getAssetManager() { return assetManager; }
+		Scene& getScene() { return scene; }
 
 
     };
