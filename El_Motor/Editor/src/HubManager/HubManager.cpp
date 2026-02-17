@@ -40,7 +40,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Editor:
         {
             DrawEditorUI();
-            coreEditor.editorRun();
+            coreEditor.editorRun(app);
         }
         break;
         }

@@ -16,13 +16,12 @@ namespace Editor
 			Hub,
 			Editor
 		};
-
+		Engine::Application app;
 	private:
 
 
 		//Variables
 		Buttons buttons;
-		Engine::Application app;
 		EditorCore coreEditor;
 		GuiLayer guiLayer;
 		std::string sessionName = "Null";
@@ -49,8 +48,6 @@ namespace Editor
 		//Getters
 		std::string GetSessionName() const { return sessionName; }
 		EditorState GetEditorState() const { return editorState; }
-
-
 		//Setters
 		void SetSessionName(std::string name) { sessionName = name; }
 		void SetEditorState(EditorState state) { editorState = state; }

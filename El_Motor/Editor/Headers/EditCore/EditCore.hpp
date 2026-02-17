@@ -1,6 +1,6 @@
 #pragma once
 #include "CoreEngine/CoreEngine.hpp"
-
+#include "Application/App.hpp"
 namespace Editor
 {
 	class EditorCore
@@ -9,20 +9,24 @@ namespace Editor
 
 	private:
 	
+		Engine::CoreEngine coreEngine;
+		double x = 0.0;
+		double y = 0.0;
 
 
 	protected:
-		Engine::CoreEngine coreEngine;
 
 	public:
 		EditorCore() {}
 		~EditorCore() {}
 
 		void editorInit();
-		void editorRun();
+		void editorRun(Engine::Application& app);
 		void editorShutdown();
-		void DrawUi();
 
+		void InputUpdate(Engine::Application& app);
+		double getMouseEditorX() const { return x; }
+		double getMouseEditorY() const { return y; }
 
 		Engine::CoreEngine&  GetEngine() { return coreEngine; }
 
