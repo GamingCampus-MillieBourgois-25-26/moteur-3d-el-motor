@@ -12,6 +12,11 @@ class InputManager {
 
 public:
 
+    InputManager();
+
+    ~InputManager();
+
+
     //Global
     void init();
     void update();
