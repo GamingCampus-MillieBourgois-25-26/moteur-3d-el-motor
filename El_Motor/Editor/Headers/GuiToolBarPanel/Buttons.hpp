@@ -1,7 +1,10 @@
 #pragma once
 #include "Scene/Scene.hpp"
 #include "Entity/GameObject.hpp"
+#include "Asset_Manager/AssetManager.hpp"
+#include "Assets/Asset.hpp"
 #include <string>
+#include <filesystem>
 namespace Editor
 {
 	class Buttons
@@ -37,8 +40,12 @@ namespace Editor
 		void editComponent();
 
 
+
+
 		bool startRuntime();
 
+
+		void loadAssets(AssetManager& manager);
 	
 
 	};

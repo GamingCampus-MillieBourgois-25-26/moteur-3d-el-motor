@@ -114,7 +114,7 @@ void Editor::HubManager::DrawEditorUI()
     buttons.selectEntity(coreEditor.GetEngine().getScene());
 
     
-    
+    buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
 
     
     

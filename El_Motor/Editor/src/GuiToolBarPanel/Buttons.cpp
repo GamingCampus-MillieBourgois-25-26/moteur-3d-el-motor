@@ -5,6 +5,7 @@
 #include <iostream>
 
 
+
 void Editor::Buttons::init() 
 {
 
@@ -46,6 +47,12 @@ bool Editor::Buttons::startRuntime()
     return false;
 
 }
+
+void Editor::Buttons::loadAssets(AssetManager& manager)
+{
+
+}
+
 void Editor::Buttons::selectEntity(Engine::Scene& scene)
 {
     ImGui::BeginChild("Hierarchy", ImVec2(250, 0), true);
