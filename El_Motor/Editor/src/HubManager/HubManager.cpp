@@ -89,8 +89,14 @@ void Editor::HubManager::DrawHubUI()
 
 void Editor::HubManager::DrawEditorUI()
 {
+    //Ligne pour lié la fenetre à la fenetre Dx11 , à ajouter quand la fenetre dx sera scale par rapport à l'écran de l'utilisateur (à rescale)
+    //ImGuiViewport* viewport = ImGui::GetMainViewport();
+    //ImGui::SetNextWindowPos(viewport->Pos);
+    //ImGui::SetNextWindowSize(viewport->Size, ImGuiCond_Always);
+    //ImGui::SetNextWindowViewport(viewport->ID);
+
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(windowSize.x, 300), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(0,0));
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
@@ -115,7 +121,7 @@ void Editor::HubManager::DrawEditorUI()
 
     ImGui::End(); 
 
-
+    buttons.showCmpnt(coreEditor.GetEngine().getScene());
 
 
 }
