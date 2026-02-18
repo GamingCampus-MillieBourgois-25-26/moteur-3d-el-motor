@@ -9,27 +9,24 @@ void Engine::TimeManager::Init()
 
 void Engine::TimeManager::Update()
 {
-	auto currentTime = Clock::now();
-	std::chrono::duration<float> elapsed = currentTime - lastTime;
-	deltaTime = elapsed.count();
+    auto currentTime = Clock::now();
+    std::chrono::duration<float> elapsed = currentTime - lastTime;
 
-	// Clamp du deltaTime empeche les frame drops extrêmes qui pourraient causer des problèmes sur le jeu
-	const float maxDelta = 0.1f;
-	if (deltaTime > maxDelta)
-		deltaTime = maxDelta;
+    deltaTime = elapsed.count();
+    lastTime = currentTime;
 
-	lastTime = currentTime;
+    const float maxDelta = 0.1f;
 
-	if (deltaTime > maxDelta)
-	{
-		Engine::LoggerManager::Get().LogWarning
-		(
-			"DeltaTime spike detected: " + std::to_string(deltaTime)
-		);
-		deltaTime = maxDelta;
-	}
+    if (deltaTime > maxDelta)
+    {
+        Engine::LoggerManager::Get().LogWarning(
+            "DeltaTime spike detected: " + std::to_string(deltaTime)
+        );
 
+        deltaTime = maxDelta;
+    }
 
+    fps = 0.9f * fps + 0.1f * (1.0f / deltaTime);
 }
 
 float Engine::TimeManager::GetDeltaTime() const

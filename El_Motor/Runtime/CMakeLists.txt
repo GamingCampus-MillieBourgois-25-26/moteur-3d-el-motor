@@ -1,10 +1,12 @@
 file(GLOB_RECURSE RUNTIME_SOURCES
 	EngineBridge/src/*.cpp
+    Shader/**/*.cso
   
 )
 
 file(GLOB_RECURSE RUNTIME_HEADERS
-	EngineBridge/Headers/*.hpp 
+	EngineBridge/Headers/*.hpp
+     Shader/**/*.hlsl
 )
 
 add_custom_target(copy_assets ALL
@@ -20,11 +22,13 @@ add_executable(Runtime ${RUNTIME_SOURCES}
                        ${SHADER_FILES}
                        EngineBridge/src/Main/main.cpp
                        
+                       
 )
 
 target_include_directories(Runtime
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/EngineBridge/Headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/Shader
 )
 
 

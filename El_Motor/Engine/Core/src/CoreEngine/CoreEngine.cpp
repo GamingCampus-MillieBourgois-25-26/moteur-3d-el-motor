@@ -7,18 +7,14 @@ void Engine::CoreEngine::init() {
 	timeManager.Init();
 	
 	running = true;
-	application.initApp();
+
 }
 
 void Engine::CoreEngine::run() {
-	while (running) {
-			timeManager.Update();
-			float dt = timeManager.GetDeltaTime();
-			inputManager.update();
-			application.windowOpener->windowPollEvents();
-			application.PresentDx();
-			scene.Update(dt);
-	}
+		timeManager.Update();
+		float dt = timeManager.GetDeltaTime();
+		inputManager.update();
+		scene.Update(dt);
 }
 
 void Engine::CoreEngine::shutdown() {

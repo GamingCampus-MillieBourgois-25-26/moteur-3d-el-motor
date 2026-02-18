@@ -6,14 +6,14 @@ void Runtime::InputBridge::init() {
 
 }
 
-void Runtime::InputBridge::update(Engine::CoreEngine& core) {
-	fetchGLFWInput(core);
+void Runtime::InputBridge::update(Engine::CoreEngine& core, Engine::Application& app) {
+	fetchGLFWInput(core,app);
 }
 
-void Runtime::InputBridge::fetchGLFWInput(Engine::CoreEngine& core) {
+void Runtime::InputBridge::fetchGLFWInput(Engine::CoreEngine& core, Engine::Application& app) {
 
 	auto& input = core.getInputManager();
-	GLFWwindow* window = core.getWindowOpener().getMyWindow();
+	GLFWwindow* window = app.getWindowOpener().getMyWindow();
 
 	// Mise à jour des inputs clavier
 	input.updateKey(Engine::KeyCode::Z, glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS);

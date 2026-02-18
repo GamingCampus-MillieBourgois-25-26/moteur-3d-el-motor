@@ -2,7 +2,7 @@
 
 
 
-namespace Scrpit {
+namespace Editor {
 
 	class Scripter {
 
@@ -15,12 +15,11 @@ namespace Scrpit {
 		~Scripter(){}
 
 
-
+		
 		void makeScript();
 		void executeScript();
 		void saveScript();
 		void loadScript();
-
 
 
 

@@ -1,6 +1,18 @@
 #include "Input_Manager/InputManager.hpp"
 
 
+Engine::InputManager::InputManager() {
+    {
+        keyStates.fill(InputState::Up);
+        mouseStates.fill(InputState::Up);
+        mousePosition = { 0.f, 0.f };
+        previousMousePosition = { 0.f, 0.f };
+		mouseDelta = { 0.f, 0.f };
+    }
+}
+
+Engine::InputManager::~InputManager() {}
+
 void Engine::InputManager::init() {
     if (initialized == true) return;
     initialized = true;

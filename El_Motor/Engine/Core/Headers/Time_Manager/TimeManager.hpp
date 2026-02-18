@@ -12,11 +12,16 @@ namespace Engine
 		void Update();
 
 		float GetDeltaTime() const;
+		float GetFPS() const { return fps; }
+
+
+		//Setter 
 
 	private:
 		using Clock = std::chrono::high_resolution_clock;
 
 		Clock::time_point lastTime;
 		float deltaTime = 0.0f;
+		float fps;
 	};
 }
