@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <utility>
 #include <algorithm>
+#include <string>
 
 #include "Entity/Component.hpp"
 #include "Entity/Transform.hpp"
@@ -11,17 +12,23 @@
 namespace Engine {
     class GameObject {
     private:
+        std::string name;
+
         std::vector<Component*> components;
 
         GameObject* parent = nullptr;
         std::vector<GameObject*> children;
 
     public:
-        GameObject();
+        GameObject(const std::string& name = "GameObject");
         ~GameObject();
 
         // Update
         void Update(float dt);
+
+        // Name
+        const std::string& GetName() const;
+        void SetName(const std::string& newName);
 
         // Hierarchy
         void SetParent(GameObject* newParent);

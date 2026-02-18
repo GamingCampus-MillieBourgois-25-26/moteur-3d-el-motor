@@ -16,11 +16,9 @@ list(APPEND EDITOR_SOURCES
     External/imgui/src/CoreSources/imgui_widgets.cpp
     External/imgui/src/CoreSources/imgui_tables.cpp
     External/imgui/src/CoreSources/imgui_demo.cpp
-)
-
-list(APPEND EDITOR_SOURCES
     External/imgui/src/Backend/imgui_impl_dx11.cpp
     External/imgui/src/Backend/imgui_impl_glfw.cpp
+    External/ImGuiFileLog/src/ImGuiFileDialog.cpp
 )
 
 add_executable(Editor ${EDITOR_SOURCES} 
@@ -43,7 +41,9 @@ target_include_directories(Editor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Headers
      External/imgui/includes/CoreIncludes
      External/imgui/includes/backend
-     External/imgui/src/Backend                  
+     External/imgui/src/Backend   
+     External/ImGuiFileLog/includes/coreIncludes
+     External/ImGuiFileLog/includes/dirent
 )
 
 target_compile_definitions(Editor PRIVATE

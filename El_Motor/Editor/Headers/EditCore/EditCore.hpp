@@ -23,6 +23,8 @@ namespace Editor
 		void editorInit();
 		void editorRun(Engine::Application& app);
 		void editorShutdown();
+		void startRuntime();
+
 
 		void InputUpdate(Engine::Application& app);
 		double getMouseEditorX() const { return x; }
