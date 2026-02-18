@@ -5,6 +5,7 @@
 #include <memory>
 #include <iostream>
 
+
 #pragma comment(lib, "d3dcompiler.lib")
 
 namespace Engine
@@ -96,33 +97,21 @@ namespace Engine
 		pContext->ClearRenderTargetView(pTarget, clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 	}
 
-
-	void Engine::D3D11::DrawTriangleTest()
+	void D3D11::DrawTriangleTest(const ShapeData& shapeData)
 	{
 		namespace wrl = Microsoft::WRL;
 		HRESULT hr;
-
-		struct Vertex {
-			float x, y;
-		};
-
-		// Triangle centré, bien visible
-		const Vertex vertices[] = {
-			{ 0.0f,  0.9f },
-			{ 0.9f, -0.9f },
-			{-0.9f, -0.9f }
-		};
 
 		// --- Vertex buffer ---
 		ID3D11Buffer* pVertexBuffer = nullptr;
 		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(vertices);
+		bufferDesc.ByteWidth = static_cast<UINT>(shapeData.vertices.size() * sizeof(Vertex));
 		bufferDesc.StructureByteStride = sizeof(Vertex);
 
 		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = vertices;
+		initData.pSysMem = shapeData.vertices.data();
 
 		hr = pDevice->CreateBuffer(&bufferDesc, &initData, &pVertexBuffer);
 		if (FAILED(hr)) { std::cout << "Failed to create vertex buffer\n"; return; }
@@ -159,7 +148,7 @@ namespace Engine
 
 		// --- Bind render target ---
 		pContext->OMSetRenderTargets(1, &pTarget, nullptr);
-		pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		pContext->IASetPrimitiveTopology(shapeData.topology);
 
 		// --- Viewport dynamique ---
 		RECT rect;
@@ -177,8 +166,14 @@ namespace Engine
 		pContext->RSSetViewports(1, &viewport);
 
 		// --- Draw call ---
-		pContext->Draw((UINT)std::size(vertices), 0);
+		pContext->Draw(static_cast<UINT>(shapeData.vertices.size()), 0);
 
+		// --- Release ---
+		if (pVertexBuffer) pVertexBuffer->Release();
+		if (pPixelShader) pPixelShader->Release();
+		if (pVertexShader) pVertexShader->Release();
+		if (pInputLayout) pInputLayout->Release();
+		if (pBlob) pBlob->Release();
 	}
 
 }

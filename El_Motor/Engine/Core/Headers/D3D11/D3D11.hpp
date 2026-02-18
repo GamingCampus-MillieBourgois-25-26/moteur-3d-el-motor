@@ -6,9 +6,23 @@
 #include <d3d11_1.h>
 #include <d3d11.h>
 #include <dxgi.h>
+#include <vector>
 
 #include <Windows.h> // pour HWND et API Windows
 #include "Window/IWindow.hpp"
+
+namespace Engine {
+	struct Vertex {
+		float x, y; // Position du vertex
+		float r, g, b; // Couleur du vertex
+	};
+
+
+	struct ShapeData {
+		std::vector<Vertex> vertices; // Liste des vertices du shape
+		D3D11_PRIMITIVE_TOPOLOGY topology; // Type de primitive (triangle, rectangle)
+	};
+}
 
 
 namespace Engine {
@@ -26,7 +40,7 @@ namespace Engine {
 		ID3D11DeviceContext* GetContext() const noexcept { return pContext; }
 		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain; }
 		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget; }
-		void DrawTriangleTest();
+		void DrawTriangleTest(const ShapeData& shapeData);
 	private:
 		HWND myWindow;
 		ID3D11Device* pDevice = nullptr;

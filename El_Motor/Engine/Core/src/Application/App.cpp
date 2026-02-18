@@ -10,8 +10,18 @@ namespace Engine
 
 	void Application::PresentDx() {
 		if (d3d11) {
+
+			ShapeData triangle;
+			triangle.vertices = {
+				{0.0f,  0.9f, 1.0f, 0.0f, 0.0f},
+				{0.9f, -0.9f, 0.0f, 1.0f, 0.0f},
+				{-0.9f, -0.9f, 0.0f, 0.0f, 1.0f}
+			};
+			triangle.topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+
 			d3d11->ClearBackBuffer(0.f, 0.f, 1.f); // Nettoie le back buffer avec une couleur grise (à modifier)
-			d3d11->DrawTriangleTest(); // Dessine un triangle de test (à remplacer par le rendu réel du moteur)
+			d3d11->DrawTriangleTest(triangle); // Dessine un triangle de test (à remplacer par le rendu réel du moteur)
 			d3d11->Present(); // Appelle la méthode Present de D3D11 pour présenter le swap chain à l'écran
 		}
 	}
