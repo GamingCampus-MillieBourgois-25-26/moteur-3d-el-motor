@@ -2,6 +2,9 @@
 #include "External/imgui/includes/CoreIncludes/imgui.h"
 #include "External/imgui/includes/backend/imgui_impl_dx11.h"
 #include "External/imgui/includes/backend/imgui_impl_glfw.h"
+#include "External/ImGuiFileLog/includes/coreIncludes/ImGuiFileDialog.h"
+#include "Assets/MeshAsset/MeshAsset.hpp"
+#include "Logger/Logger.hpp"
 #include <iostream>
 
 
@@ -51,6 +54,48 @@ bool Editor::Buttons::startRuntime()
 void Editor::Buttons::loadAssets(AssetManager& manager)
 {
 
+        IGFD::FileDialogConfig config;
+        config.path = "Assets";
+
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "LoadAssetKey",
+            "Choose Asset",
+            ".png,.jpg,.obj,.fbx",
+            config
+        );
+
+        if (ImGuiFileDialog::Instance()->Display("LoadAssetKey"))
+        {
+
+
+
+            if (ImGuiFileDialog::Instance()->IsOk())
+            {
+                std::string filePath =
+                    ImGuiFileDialog::Instance()->GetFilePathName();
+
+                std::string extension =
+                    std::filesystem::path(filePath).extension().string();
+
+                if (extension == ".png" || extension == ".jpg")
+                {
+                    std::cout << "asset loaded" << std::endl;
+                }
+                else if (extension == ".obj" || extension == ".fbx")
+                {
+                    manager.Load<MeshAsset>(filePath);
+                    std::cout << "ok load";
+                }
+                else
+                {
+                    Engine::LoggerManager::Get().LogError(
+                        "Unsupported asset type : " + extension
+                    );
+                }
+            }
+
+            ImGuiFileDialog::Instance()->Close();
+        }
 }
 
 void Editor::Buttons::selectEntity(Engine::Scene& scene)
@@ -92,7 +137,7 @@ void Editor::Buttons::showCmpnt(Engine::Scene& scene)
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
     ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Always);
-    ImGui::SetNextWindowPos(ImVec2(800, 0)); 
+    ImGui::SetNextWindowPos(ImVec2(500, 0)); 
 
     const std::string windowName = "Components";
 	ImGui::Begin(windowName.c_str(), nullptr, ImGuiWindowFlags_NoResize);

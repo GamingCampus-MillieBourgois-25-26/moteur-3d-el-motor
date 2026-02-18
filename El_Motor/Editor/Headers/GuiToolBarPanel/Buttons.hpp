@@ -12,9 +12,11 @@ namespace Editor
 	private:
 		
 	protected:
+		//Selected Entity pointeur + label
 		Engine::GameObject* selectedEntity = nullptr;
 		std::string currentEntityLabel;
 
+		//Selected Component pointer
 		Engine::Component* selectedComponent = nullptr;
 		
 	public:
@@ -46,7 +48,6 @@ namespace Editor
 
 
 		void loadAssets(AssetManager& manager);
-	
 
 	};
 }
