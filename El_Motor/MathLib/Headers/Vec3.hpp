@@ -53,15 +53,15 @@ namespace Math {
 		static Vec3 ClampMagnitude(Vec3& a, T MaxLenght);
 		static Vec3 SlerpUnclamped(Vec3 a, Vec3 b, T t);
 		static Vec3 LerpUnclamped(Vec3 a, Vec3 b, T t);
-		static Vec3 Project(Vec3 Vec, Vec3 onNormal);
-		static Vec3 Perpendicular(Vec3 inDirection);
+		static Vec3 Project(Vec3 Vec, Vec3 onNormal); 
+		static Vec3 Cross(Vec3<T>& a, Vec3<T>& b);
 		static Vec3 Slerp(Vec3 a, Vec3 b, T t);
 		static Vec3 Lerp(Vec3 a, Vec3 b, T t);
 		static Vec3 Scale(Vec3& a, Vec3& b);
 		static Vec3 Min(Vec3& a, Vec3& b);
 		static Vec3 Max(Vec3& a, Vec3& b);
 
-		static T SignedAngle(Vec3 from, Vec3 to);
+		static T SignedAngle(Vec3 from, Vec3 to, Vec3 axis);
 		static T Distance(Vec3& a, Vec3& b);
 		static T Angle(Vec3 a, Vec3 b);
 		static T Dot(Vec3& a, Vec3& b);
