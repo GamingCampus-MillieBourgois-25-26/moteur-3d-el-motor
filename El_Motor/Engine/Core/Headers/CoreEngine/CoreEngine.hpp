@@ -17,8 +17,7 @@ namespace Engine
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		AssetManager assetManager;
-		Scene scene;
-
+		Scene defaultScene;
         //.... assetManager;
 
         bool running = false;
@@ -40,7 +39,11 @@ namespace Engine
 		/*WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
 		Application& getApplication() { return application; }*/
 		AssetManager& getAssetManager() { return assetManager; }
-		Scene& getScene() { return scene; }
+		Scene& getScene() { return defaultScene; }
+		
+
+
+		void SetScene(Scene scene) { defaultScene = scene; }
 
 
     };

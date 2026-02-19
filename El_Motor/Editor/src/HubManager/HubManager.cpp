@@ -17,6 +17,7 @@ void Editor::HubManager::Init()
 {
 	app.initApp();
 	guiLayer.Init(app.getWindowOpener().getMyWindow(),app.getD3D11()->GetDevice(),app.getD3D11()->GetContext(),app.getD3D11()->GetRenderTargetView());
+    Levels.emplace_back(coreEditor.GetEngine().getScene());
 }
 
 void Editor::HubManager::HubRun()
@@ -75,6 +76,7 @@ void Editor::HubManager::DrawHubUI()
     {
         CreateProject();
         SetEditorState(EditorState::Editor);
+        createNewLevel();
     }
     ImGui::SameLine();
 
@@ -105,13 +107,13 @@ void Editor::HubManager::DrawEditorUI()
         logger.LogInfo("RUN STARTED");
         coreEditor.startRuntime();
     }
-    buttons.createEntity(coreEditor.GetEngine().getScene());
-    buttons.delEntity(coreEditor.GetEngine().getScene());
+    buttons.createGO(coreEditor.GetEngine().getScene());
+    buttons.delGO(coreEditor.GetEngine().getScene());
         
 
     ImGui::SameLine(0, 40);
     ImGui::SetCursorPosY(30);
-    buttons.selectEntity(coreEditor.GetEngine().getScene());
+    buttons.selectGO(coreEditor.GetEngine().getScene());
 
     
     
@@ -120,4 +122,10 @@ void Editor::HubManager::DrawEditorUI()
 
     buttons.showCmpnt(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+}
+
+void Editor::HubManager::createNewLevel()
+{
+    Engine::Scene level;
+    Levels.emplace_back(level);
 }

@@ -7,6 +7,7 @@
 #include <filesystem>
 namespace Editor
 {
+	// GO = GameObject
 	class Buttons
 	{
 	private:
@@ -31,15 +32,17 @@ namespace Editor
 
 
 		//Editor Entity Buttons
-		void selectEntity(Engine::Scene& scene);
-		void createEntity(Engine::Scene& scene);
-		void delEntity(Engine::Scene& scene);
+		void selectGO(Engine::Scene& scene);//select GO
+		void createGO(Engine::Scene& scene);//create GO
+		void delGO(Engine::Scene& scene);// delete GO
+		void ChangeGOName();//Change the name of the GO selected
+		bool CheckGoNameValid();//Check if the GO name isn't only composed of spaces
 
 		//Editor Component Buttons
-		void showCmpnt(Engine::Scene& scene);
-		void addComponent();
-		void delComponent();
-		void editComponent();
+		void showCmpnt(Engine::Scene& scene);//show all the component of a selected GO
+		void addComponent(); //add a component to a selecte GO
+		void delComponent(); //delete a component of a selected GO
+		void editComponent(); //Change the value of the selected Go Transform
 
 
 
