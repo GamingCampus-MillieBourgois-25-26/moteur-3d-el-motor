@@ -4,7 +4,7 @@
 
 namespace Math {
 
-	template<typename T>
+	template<typename T = float>
 	class Vec3 {
 	private:
 		T m_x;
