@@ -274,16 +274,27 @@ void Editor::Buttons::ChangeGOName()
         previousGO = selectedEntity;
     }
 
-    if (ImGui::InputText("Name", buffer, sizeof(buffer)))
+
+    if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        
-        selectedEntity->SetName(buffer);
+        if (CheckGoNameValid(buffer))//true if there is only spaces in the buffer
+        {
+            selectedEntity->SetName("GameObject");
+        }
+        else
+        {
+            selectedEntity->SetName(buffer);
+        }
     }
 }
 
-bool Editor::Buttons::CheckGoNameValid()
+bool Editor::Buttons::CheckGoNameValid(const std::string& str)
 {
-    return true;
+    return std::all_of(str.begin(), str.end(),
+        [](unsigned char c)
+        {
+            return std::isspace(c);
+        });
 }
 
 

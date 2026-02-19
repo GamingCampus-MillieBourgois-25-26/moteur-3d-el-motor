@@ -36,7 +36,7 @@ namespace Editor
 		void createGO(Engine::Scene& scene);//create GO
 		void delGO(Engine::Scene& scene);// delete GO
 		void ChangeGOName();//Change the name of the GO selected
-		bool CheckGoNameValid();//Check if the GO name isn't only composed of spaces
+		bool CheckGoNameValid(const std::string& str);//Check if the GO name isn't only composed of spaces
 
 		//Editor Component Buttons
 		void showCmpnt(Engine::Scene& scene);//show all the component of a selected GO
