@@ -4,6 +4,7 @@
 #include "ImGuiLayer/ImGuiLayer.hpp"
 #include "Application/App.hpp"
 #include "GuiToolBarPanel/Buttons.hpp"
+#include <vector>
 
 namespace Editor
 {
@@ -27,7 +28,8 @@ namespace Editor
 		std::string sessionName = "Null";
 		EditorState editorState = Hub;
 		Engine::LoggerManager logger;
-
+		std::vector<Engine::Scene> Levels;
+		Engine::Scene* currentLevel = &coreEditor.GetEngine().getScene();
 	
 	public:
 
@@ -51,6 +53,8 @@ namespace Editor
 		//Setters
 		void SetSessionName(std::string name) { sessionName = name; }
 		void SetEditorState(EditorState state) { editorState = state; }
+
+		void createNewLevel();
 	};
 
 }

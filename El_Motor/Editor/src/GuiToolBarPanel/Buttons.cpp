@@ -4,6 +4,8 @@
 #include "External/imgui/includes/backend/imgui_impl_glfw.h"
 #include "External/ImGuiFileLog/includes/coreIncludes/ImGuiFileDialog.h"
 #include "Assets/MeshAsset/MeshAsset.hpp"
+#include "Entity/Component/MeshComponent.hpp"
+
 #include "Logger/Logger.hpp"
 #include <iostream>
 
@@ -98,7 +100,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
         }
 }
 
-void Editor::Buttons::selectEntity(Engine::Scene& scene)
+void Editor::Buttons::selectGO(Engine::Scene& scene)
 {
     ImGui::BeginChild("Hierarchy", ImVec2(250, 0), true);
     auto& currentSelected = scene.GetRootObjects();
@@ -112,7 +114,7 @@ void Editor::Buttons::selectEntity(Engine::Scene& scene)
 
 
         ImGui::PushID(i);
-        std::string label = "Entity " + std::to_string(i); //Name des entité
+        std::string label = go->GetName();//Name des entité
         bool IsSelected = (selectedEntity == go);
 
 
@@ -146,7 +148,7 @@ void Editor::Buttons::showCmpnt(Engine::Scene& scene)
 
 	ImGui::BeginChild("ComponentList", ImVec2(0, 0), true);//Component list child
 	addComponent();//Button to add component to the selected entity
-
+    ChangeGOName();
     auto& components = selectedEntity->GetAllComponents();
 
     for (size_t i = 0; i < components.size(); i++)
@@ -163,12 +165,13 @@ void Editor::Buttons::showCmpnt(Engine::Scene& scene)
         if (ImGui::Selectable(label.c_str(), isSelected))
         {
             selectedComponent = comp;
+            
         }
-
+        
         ImGui::PopID();
-		editComponent();//Show the component's editable properties if it's selected
+		//Show the component's editable properties if it's selected
     }
-
+    editComponent();
     ImGui::EndChild();
     ImGui::End();
 }
@@ -204,7 +207,8 @@ void Editor::Buttons::addComponent()
     {
         switch (currentItem)
         {
-        case 0: /* Add MeshRenderer */ break;
+        case 0: selectedEntity->AddComponent<Engine::MeshComponent>();
+            break;
         case 1: /* Add Camera */ break;
         case 2: /* Add Light */ break;
         }
@@ -216,7 +220,7 @@ void Editor::Buttons::delComponent()
 {
     if (selectedEntity->GetComponent<Engine::Transform>() != selectedComponent && selectedComponent && ImGui::Button("del"))
     {
-		//fonction pour del selectedComponent;
+		
 		
 	}
 }
@@ -225,17 +229,17 @@ void Editor::Buttons::editComponent()
 {
     if (!selectedComponent)
         return;
-    if(selectedComponent->gameObject->GetComponent<Engine::Transform>() == selectedComponent)
+
+    if (auto* transform = dynamic_cast<Engine::Transform*>(selectedComponent))
     {
-        Engine::Transform* transform = selectedComponent->gameObject->GetComponent<Engine::Transform>();
         ImGui::DragFloat3("Position", &transform->position.x, 0.1f);
         ImGui::DragFloat3("Rotation", &transform->rotation.x, 0.1f);
         ImGui::DragFloat3("Scale", &transform->scale.x, 0.1f);
-	}
+    }
 }
 
 
-void Editor::Buttons::createEntity(Engine::Scene& scene)
+void Editor::Buttons::createGO(Engine::Scene& scene)
 {
     if (ImGui::Button("create", ImVec2(100, 50)))
     {
@@ -243,7 +247,7 @@ void Editor::Buttons::createEntity(Engine::Scene& scene)
     }
 }
 
-void Editor::Buttons::delEntity(Engine::Scene& scene)
+void Editor::Buttons::delGO(Engine::Scene& scene)
 {
     if (ImGui::Button("delete", ImVec2(100, 50)))
     {
@@ -252,6 +256,34 @@ void Editor::Buttons::delEntity(Engine::Scene& scene)
         selectedEntity = nullptr;
         currentEntityLabel = "  ";
     }
+}
+
+void Editor::Buttons::ChangeGOName()
+{
+    if (!selectedEntity)
+        return;
+
+    static char buffer[256] = "";
+    Engine::GameObject* previousGO = nullptr;
+    
+
+    if (selectedEntity != previousGO)
+    {
+        strncpy(buffer, selectedEntity->GetName().c_str(), sizeof(buffer));
+        buffer[sizeof(buffer) - 1] = '\0';
+        previousGO = selectedEntity;
+    }
+
+    if (ImGui::InputText("Name", buffer, sizeof(buffer)))
+    {
+        
+        selectedEntity->SetName(buffer);
+    }
+}
+
+bool Editor::Buttons::CheckGoNameValid()
+{
+    return true;
 }
 
 
