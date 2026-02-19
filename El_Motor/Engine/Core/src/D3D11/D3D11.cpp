@@ -97,7 +97,7 @@ namespace Engine
 		pContext->ClearRenderTargetView(pTarget, clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 	}
 
-	void D3D11::DrawTriangleTest(const ShapeData& shapeData)
+	void D3D11::DrawShape(const ShapeData& shapeData)
 	{
 		namespace wrl = Microsoft::WRL;
 		HRESULT hr;

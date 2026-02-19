@@ -40,7 +40,7 @@ namespace Engine {
 		ID3D11DeviceContext* GetContext() const noexcept { return pContext; }
 		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain; }
 		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget; }
-		void DrawTriangleTest(const ShapeData& shapeData);
+		void DrawShape(const ShapeData& shapeData);
 	private:
 		HWND myWindow;
 		ID3D11Device* pDevice = nullptr;
