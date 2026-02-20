@@ -5,6 +5,8 @@ project(ElMotor LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+enable_testing()
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -23,4 +25,4 @@ add_subdirectory(Engine)
 add_subdirectory(Editor)
 add_subdirectory(Runtime)
 add_subdirectory(MathLib)
-add_subdirectory(UnitTests)
+add_subdirectory(UnitTest)

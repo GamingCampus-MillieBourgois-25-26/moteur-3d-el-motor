@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Vec3.hpp"
-
 template <typename T>
 Math::Vec3<T>::Vec3(T m_x, T m_y, T m_z) : m_x(m_x), m_y(m_y), m_z(m_z) {}
 
