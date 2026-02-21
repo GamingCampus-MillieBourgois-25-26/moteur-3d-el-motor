@@ -34,19 +34,47 @@ namespace Engine
 			pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
 		}
 		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
+
+		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
+		Microsoft::WRL::ComPtr<ID3DBlob> blob;
+
+		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &blob);
+		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
+
+		hr = pDevice->CreateVertexShader(blob->GetBufferPointer(),
+			blob->GetBufferSize(),
+			nullptr,
+			&mVertexShader);
+		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
+
+		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", &blob);
+		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
+
+		hr = pDevice->CreatePixelShader(blob->GetBufferPointer(),
+			blob->GetBufferSize(),
+			nullptr,
+			&mPixelShader);
+		if (FAILED(hr)) { std::cout << "CreatePixelShader failed\n"; return; }
+
+		// === INPUT LAYOUT (basé sur le VS) ===
+		const D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,
+			  D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		hr = pDevice->CreateInputLayout(
+			layout,
+			(UINT)std::size(layout),
+			blob->GetBufferPointer(),
+			blob->GetBufferSize(),
+			&mInputLayout);
+
+		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
 	}
-
-
-	D3D11::~D3D11() {
-		if (pSwapChain != nullptr) pSwapChain->Release(); // Libère le swap chain
-		if (pContext != nullptr) pContext->Release(); // Libère le contexte de rendu
-		if (pDevice != nullptr) pDevice->Release(); // Libère le device
-		if (pTarget != nullptr) pTarget->Release(); // Libère la vue de rendu
-	}
-
 
 	IDXGIAdapter1* D3D11::searchForAdapters() {
-		IDXGIFactory1* pFactory = nullptr; // Pointeur pour la factory DXGI
+		Microsoft::WRL::ComPtr<IDXGIFactory1> pFactory = nullptr; // Pointeur pour la factory DXGI
 		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
 
 		IDXGIAdapter1* pAdapter = nullptr;
@@ -94,86 +122,45 @@ namespace Engine
 
 	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
 		float clearColor[] = { r, g, b, 1.0f }; // Couleur de nettoyage (RGBA)
-		pContext->ClearRenderTargetView(pTarget, clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
+		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
+		if (!pTarget) return;
 	}
 
-	void D3D11::DrawShape(const ShapeData& shapeData)
+	void D3D11::DrawShape(UINT indexCount)
 	{
-		namespace wrl = Microsoft::WRL;
-		HRESULT hr;
+		// === SHADERS ===
+		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+		pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-		// --- Vertex buffer ---
-		ID3D11Buffer* pVertexBuffer = nullptr;
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = static_cast<UINT>(shapeData.vertices.size() * sizeof(Vertex));
-		bufferDesc.StructureByteStride = sizeof(Vertex);
+		// === INPUT LAYOUT ===
+		pContext->IASetInputLayout(mInputLayout.Get());
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = shapeData.vertices.data();
+		// === MESH BIND (MeshAsset) ===
+		// mesh.Bind(context);
+		//  -> IASetVertexBuffers
+		//  -> IASetIndexBuffer
+		//  -> IASetPrimitiveTopology
 
-		hr = pDevice->CreateBuffer(&bufferDesc, &initData, &pVertexBuffer);
-		if (FAILED(hr)) { std::cout << "Failed to create vertex buffer\n"; return; }
-
-		const UINT stride = sizeof(Vertex);
-		const UINT offset = 0;
-		pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
-
-		// --- Shaders ---
-		ID3DBlob* pBlob = nullptr;
-		ID3D11PixelShader* pPixelShader = nullptr;
-		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", &pBlob);
-		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
-		hr = pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-		if (FAILED(hr)) { std::cout << "CreatePixelShader failed\n"; return; }
-		pContext->PSSetShader(pPixelShader, nullptr, 0);
-
-		ID3D11VertexShader* pVertexShader = nullptr;
-		hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
-		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
-		hr = pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
-		pContext->VSSetShader(pVertexShader, nullptr, 0);
-
-		// --- Input layout ---
-		ID3D11InputLayout* pInputLayout = nullptr;
-		const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		hr = pDevice->CreateInputLayout(inputElementDesc, (UINT)std::size(inputElementDesc),
-			pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout);
-		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
-		pContext->IASetInputLayout(pInputLayout);
-
-		// --- Bind render target ---
+		// === RENDER TARGET ===
 		pContext->OMSetRenderTargets(1, &pTarget, nullptr);
-		pContext->IASetPrimitiveTopology(shapeData.topology);
 
-		// --- Viewport dynamique ---
+		// === VIEWPORT ===
 		RECT rect;
 		GetClientRect(myWindow, &rect);
-		float width = static_cast<float>(rect.right - rect.left);
-		float height = static_cast<float>(rect.bottom - rect.top);
 
 		D3D11_VIEWPORT viewport = {};
-		viewport.Width = width;
-		viewport.Height = height;
+		viewport.Width = float(rect.right - rect.left);
+		viewport.Height = float(rect.bottom - rect.top);
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
+
 		pContext->RSSetViewports(1, &viewport);
 
-		// --- Draw call ---
-		pContext->Draw(static_cast<UINT>(shapeData.vertices.size()), 0);
-
-		// --- Release ---
-		if (pVertexBuffer) pVertexBuffer->Release();
-		if (pPixelShader) pPixelShader->Release();
-		if (pVertexShader) pVertexShader->Release();
-		if (pInputLayout) pInputLayout->Release();
-		if (pBlob) pBlob->Release();
+		// === DRAW ===
+		// indexCount = mesh.GetIndexCount()
+		pContext->DrawIndexed(indexCount, 0, 0);
 	}
 
 }

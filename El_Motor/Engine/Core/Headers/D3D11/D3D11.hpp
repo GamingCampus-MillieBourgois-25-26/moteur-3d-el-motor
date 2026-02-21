@@ -7,23 +7,10 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include <vector>
+#include <wrl.h>
 
 #include <Windows.h> // pour HWND et API Windows
 #include "Window/IWindow.hpp"
-
-namespace Engine {
-	struct Vertex {
-		float x, y; // Position du vertex
-		float r, g, b; // Couleur du vertex
-	};
-
-
-	struct ShapeData {
-		std::vector<Vertex> vertices; // Liste des vertices du shape
-		D3D11_PRIMITIVE_TOPOLOGY topology; // Type de primitive (triangle, rectangle)
-	};
-}
-
 
 namespace Engine {
 	class D3D11 {
@@ -32,21 +19,25 @@ namespace Engine {
 		D3D11(const D3D11& other) = delete; // Interdit la copie
 		D3D11& operator=(const D3D11& other) = delete; // Interdit l'assignation
 
-		~D3D11();
+		~D3D11() = default;
 
 		void Present(); // Permet de présenter le swap chain à l'écran
 		void ClearBackBuffer(float r, float g, float b) noexcept; // Permet de nettoyer le back buffer avec une couleur spécifiée
-		ID3D11Device* GetDevice() const noexcept { return pDevice; }
-		ID3D11DeviceContext* GetContext() const noexcept { return pContext; }
-		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain; }
-		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget; }
-		void DrawShape(const ShapeData& shapeData);
+		ID3D11Device* GetDevice() const noexcept { return pDevice.Get(); }
+		ID3D11DeviceContext* GetContext() const noexcept { return pContext.Get(); }
+		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain.Get(); }
+		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget.Get(); }
+		void DrawShape(UINT indexCount);
 	private:
 		HWND myWindow;
-		ID3D11Device* pDevice = nullptr;
-		ID3D11DeviceContext* pContext = nullptr;
-		IDXGISwapChain* pSwapChain = nullptr;
-		ID3D11RenderTargetView* pTarget = nullptr;
+		Microsoft::WRL::ComPtr <ID3D11Device> pDevice = nullptr;
+		Microsoft::WRL::ComPtr <ID3D11DeviceContext> pContext = nullptr;
+		Microsoft::WRL::ComPtr <IDXGISwapChain> pSwapChain = nullptr;
+		Microsoft::WRL::ComPtr <ID3D11RenderTargetView> pTarget = nullptr;
+
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>  mPixelShader;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>  mInputLayout;
 
 		IDXGIAdapter1* searchForAdapters(); // permet de rechercher les adaptateurs disponibles et de choisir le meilleur
 		DXGI_SWAP_CHAIN_DESC initSwapChainDesc(); // permet d'initialiser la description du swap chain avec les paramètres souhaités
