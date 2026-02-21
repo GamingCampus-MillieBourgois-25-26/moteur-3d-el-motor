@@ -1,6 +1,9 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "MathLibrary/Vector3D.h"
+#include "MathLibrary/Quaternions.h"
+#include "MathLibrary/Matrice4x4.h"
 #include "Input_Manager/InputManager.hpp"
 
 class Camera

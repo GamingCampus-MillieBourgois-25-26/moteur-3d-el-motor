@@ -16,23 +16,22 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
-    MathLibrairy
-    GIT_REPOSITORY https://github.com/GamingCampus-MillieBourgois-25-26/MathLibrairy.git
-    GIT_TAG gold
+    MathStaticLibrary
+    GIT_REPOSITORY https://github.com/GamingCampus-MillieBourgois-25-26/MathStaticLibrary.git
 )
 
 FetchContent_Declare(
     JoltPhysics
     GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
-    GIT_TAG 5.5.0
+    GIT_TAG master
 )
 
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw 3d-geometry-club-ceinture JoltPhysics)
+FetchContent_MakeAvailable(glfw JoltPhysics MathStaticLibrary)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)
-add_subdirectory(Runtime)
+add_subdirectory(Runtime) 

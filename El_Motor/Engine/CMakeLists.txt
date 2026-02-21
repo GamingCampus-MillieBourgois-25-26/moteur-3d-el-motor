@@ -31,4 +31,5 @@ target_link_libraries(Engine PRIVATE
     d3d11
     dxgi
     d3dcompiler    
+    MathStaticLibrary
 )
