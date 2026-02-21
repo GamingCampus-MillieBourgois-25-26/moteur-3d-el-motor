@@ -15,14 +15,24 @@ FetchContent_Declare(
     GIT_TAG 3.3.9
 )
 
+FetchContent_Declare(
+    MathLib
+    GIT_REPOSITORY https://github.com/GamingCampus-MillieBourgois-25-26/3d-geometry-club-ceinture.git
+    GIT_TAG gold
+)
+
+FetchContent_Declare(
+    JoltPhysics
+    GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
+    GIT_TAG 5.5.0
+)
+
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw)
+FetchContent_MakeAvailable(glfw 3d-geometry-club-ceinture JoltPhysics)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)
 add_subdirectory(Runtime)
-add_subdirectory(MathLib)
-add_subdirectory(UnitTest)
