@@ -54,7 +54,7 @@ namespace Editor
 		//setter
 		void SetEditorState(EditorState state) { editorState = state; }
 
-		void createNewLevel();
+		//void createNewLevel();
 	};
 
 }
