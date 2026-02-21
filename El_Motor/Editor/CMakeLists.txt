@@ -8,6 +8,17 @@ file(GLOB_RECURSE EDITOR_HEADERS
 	 Headers/**/*.hpp
 )
 
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            "${CMAKE_BINARY_DIR}/Runtime/Shader"
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/Editor/Shader"
+            "${CMAKE_BINARY_DIR}/Runtime/Shader"
+
+    COMMENT "Copy Editor/Shader (contents) to build/x64-Debug/Runtime/Shader"
+)
+
 
 
 list(APPEND EDITOR_SOURCES
