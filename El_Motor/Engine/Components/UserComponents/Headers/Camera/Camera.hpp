@@ -9,12 +9,12 @@
 class Camera
 {
 protected:
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT4 rotation;
+    Maths::Vct3D<float> position;
+    Maths::Quat<float> rotation;
 
-    DirectX::XMFLOAT3 forward;
-    DirectX::XMFLOAT3 right;
-    DirectX::XMFLOAT3 up;
+    Maths::Vct3D<float> forward;
+    Maths::Vct3D<float> right;
+    Maths::Vct3D<float> up;
 
     float aspectRatio;
     float nearPlane;
@@ -26,9 +26,9 @@ protected:
 
     bool firstMousePos = true;
 
-    DirectX::XMFLOAT4X4 projection;
-    DirectX::XMFLOAT4X4 view;
-    DirectX::XMFLOAT4X4 VP;
+    Maths::Matrix4<float> projection;
+    Maths::Matrix4<float> view;
+    Maths::Matrix4<float> VP;
 
     void RotationUpdate(Engine::InputManager& input);
     void FowardUpdate();
@@ -45,9 +45,9 @@ protected:
 
     //////// GETTERS //////////
 
-    DirectX::XMFLOAT4X4 Getprojection() const;
-    DirectX::XMFLOAT4X4 Getview() const;
-    DirectX::XMFLOAT4X4 GetVP() const;
+    Maths::Matrix4<float> Getprojection() const;
+    Maths::Matrix4<float> Getview() const;
+    Maths::Matrix4<float> GetVP() const;
 
 public:
     Camera();
