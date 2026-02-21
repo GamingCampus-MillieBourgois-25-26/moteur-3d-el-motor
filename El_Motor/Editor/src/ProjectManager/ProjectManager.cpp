@@ -131,12 +131,7 @@ void Editor::ProjectManager::loadScene(const std::filesystem::path& scenePath, s
 }
 
 
-void Editor::ProjectManager::loadComponent(const std::filesystem::path& path, std::shared_ptr<Engine::Scene>& scenes) {
 
-
-
-
-}
 
 
 void Editor::ProjectManager::saveProject(std::shared_ptr<Engine::Scene>& scene) {

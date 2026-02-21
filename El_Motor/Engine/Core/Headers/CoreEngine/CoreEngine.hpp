@@ -12,7 +12,7 @@ namespace Engine
 
     class CoreEngine {
     private:
-		// Besoin d'ajouter les autres syst�mes comme le rendu, la gestion des sc�nes, etc.
+		// Besoin d'ajouter les autres systemes comme le rendu, la gestion des scenes, etc.
         InputManager inputManager;
         TimeManager timeManager;
 		LoggerManager loggerManager;

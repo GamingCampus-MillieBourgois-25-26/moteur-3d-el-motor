@@ -14,7 +14,6 @@ namespace Editor {
 	protected:
 		std::filesystem::path currentProjectPath;
 		void loadScene(const std::filesystem::path& path, std::shared_ptr<Engine::Scene>& scene);
-		void loadComponent(const std::filesystem::path& path, std::shared_ptr<Engine::Scene>& scene);
 
 
 	public:
