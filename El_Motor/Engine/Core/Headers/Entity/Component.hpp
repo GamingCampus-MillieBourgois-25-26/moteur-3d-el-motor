@@ -12,7 +12,7 @@ namespace Engine {
         virtual void Start() {}
         virtual void Update(float dt) {}
         virtual void OnDestroy() {}
-
+        virtual std::string GetTypeName() const = 0;
     protected:
         Component() = default;
     };

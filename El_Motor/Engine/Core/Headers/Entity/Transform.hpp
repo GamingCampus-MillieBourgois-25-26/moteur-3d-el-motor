@@ -29,6 +29,11 @@ namespace Engine {
 
     class Transform : public Component {
     public:
+
+        std::string GetTypeName() const override {
+            return "Transform";
+        }
+
         Vec3 position{};
         Vec3 rotation{};
         Vec3 scale{ 1.f, 1.f, 1.f };

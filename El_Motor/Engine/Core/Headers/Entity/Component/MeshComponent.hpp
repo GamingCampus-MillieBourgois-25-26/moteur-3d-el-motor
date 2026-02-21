@@ -37,6 +37,10 @@ namespace Engine {
         void OnDestroy() override {
             m_mesh.reset();
         }
+
+        std::string GetTypeName() const override {
+            return "MeshRenderer";
+        }
     };
 
 }

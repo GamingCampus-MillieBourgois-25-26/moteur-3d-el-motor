@@ -25,11 +25,10 @@ namespace Editor
 		Buttons buttons;
 		EditorCore coreEditor;
 		GuiLayer guiLayer;
-		std::string sessionName = "Null";
 		EditorState editorState = Hub;
 		Engine::LoggerManager logger;
-		std::vector<Engine::Scene> Levels;
-		Engine::Scene* currentLevel = &coreEditor.GetEngine().getScene();
+		//std::vector<Engine::Scene*> Levels;
+		//std::shared_ptr<Engine::Scene>* currentLevel = &coreEditor.GetEngine().getScene();
 	
 	public:
 
@@ -48,13 +47,14 @@ namespace Editor
 
 
 		//Getters
-		std::string GetSessionName() const { return sessionName; }
-		EditorState GetEditorState() const { return editorState; }
-		//Setters
-		void SetSessionName(std::string name) { sessionName = name; }
+		EditorState& GetEditorState()  { return editorState; }
+		//std::vector<Engine::Scene*>& GetLevels() { return Levels; }
+
+
+		//setter
 		void SetEditorState(EditorState state) { editorState = state; }
 
-		void createNewLevel();
+		//void createNewLevel();
 	};
 
 }

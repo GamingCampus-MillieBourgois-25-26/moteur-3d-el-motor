@@ -19,6 +19,7 @@ void MeshAsset::Load()
     std::vector<DirectX::XMFLOAT2> uvs;
 
     std::string line;
+
     while (std::getline(file, line))
     {
         std::stringstream ss(line);
@@ -47,12 +48,18 @@ void MeshAsset::Load()
         {
             std::vector<std::string> faceVerts;
             std::string vert;
+
             while (ss >> vert)
                 faceVerts.push_back(vert);
 
             for (size_t i = 1; i + 1 < faceVerts.size(); ++i)
             {
-                std::string triangle[3] = { faceVerts[0], faceVerts[i], faceVerts[i + 1] };
+                std::string triangle[3] =
+                {
+                    faceVerts[0],
+                    faceVerts[i],
+                    faceVerts[i + 1]
+                };
 
                 for (int j = 0; j < 3; ++j)
                 {
@@ -65,7 +72,7 @@ void MeshAsset::Load()
                     v.normal = normals[n - 1];
 
                     vertices.push_back(v);
-                    indices.push_back(static_cast<uint32_t>(indices.size()));
+                    indices.push_back((uint32_t)indices.size());
                 }
             }
         }
@@ -75,31 +82,76 @@ void MeshAsset::Load()
 void MeshAsset::CreateBuffers(ID3D11Device* device)
 {
     if (!device)
-        throw std::runtime_error("DX11 device is null in CreateBuffers");
+        throw std::runtime_error("Device is null");
 
     D3D11_BUFFER_DESC vbd{};
     vbd.Usage = D3D11_USAGE_DEFAULT;
-    vbd.ByteWidth = static_cast<UINT>(vertices.size() * sizeof(Vertex));
+    vbd.ByteWidth = UINT(vertices.size() * sizeof(Vertex));
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
     D3D11_SUBRESOURCE_DATA vinit{};
     vinit.pSysMem = vertices.data();
 
     HRESULT hr = device->CreateBuffer(&vbd, &vinit, &vertexBuffer);
+
     if (FAILED(hr))
         throw std::runtime_error("Failed to create vertex buffer");
 
     D3D11_BUFFER_DESC ibd{};
     ibd.Usage = D3D11_USAGE_DEFAULT;
-    ibd.ByteWidth = static_cast<UINT>(indices.size() * sizeof(uint32_t));
+    ibd.ByteWidth = UINT(indices.size() * sizeof(uint32_t));
     ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
     D3D11_SUBRESOURCE_DATA iinit{};
     iinit.pSysMem = indices.data();
 
     hr = device->CreateBuffer(&ibd, &iinit, &indexBuffer);
+
     if (FAILED(hr))
         throw std::runtime_error("Failed to create index buffer");
+}
+
+void MeshAsset::Bind(ID3D11DeviceContext* context)
+{
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+
+    context->IASetVertexBuffers(
+        0,
+        1,
+        &vertexBuffer,
+        &stride,
+        &offset
+    );
+
+    context->IASetIndexBuffer(
+        indexBuffer,
+        DXGI_FORMAT_R32_UINT,
+        0
+    );
+
+    context->IASetPrimitiveTopology(
+        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+    );
+}
+
+void MeshAsset::Draw(ID3D11DeviceContext* context)
+{
+    context->DrawIndexed(
+        (UINT)indices.size(),
+        0,
+        0
+    );
+}
+
+bool MeshAsset::IsReady() const
+{
+    return vertexBuffer != nullptr && indexBuffer != nullptr;
+}
+
+UINT MeshAsset::GetIndexCount() const
+{
+    return (UINT)indices.size();
 }
 
 void MeshAsset::Unload()

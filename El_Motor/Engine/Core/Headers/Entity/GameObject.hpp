@@ -57,6 +57,39 @@ namespace Engine {
             return nullptr;
         }
 
+        template<typename T>
+        bool HasComponent() const {
+            for (Component* c : components) {
+                if (dynamic_cast<T*>(c))
+                    return true;
+            }
+            return false;
+        }
+
+        template<typename T>
+        bool RemoveComponent() {
+            static_assert(std::is_base_of<Component, T>::value,
+                "T must inherit from Component");
+
+            // Empêcher suppression du Transform
+            if constexpr (std::is_same<T, Transform>::value) {
+                return false;
+            }
+
+            for (auto it = components.begin(); it != components.end(); ++it) {
+                if (auto* casted = dynamic_cast<T*>(*it)) {
+
+                    casted->OnDestroy();
+                    delete casted;
+
+                    components.erase(it);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         const std::vector<Component*>& GetAllComponents() const;
 
         // Shortcut Transform
