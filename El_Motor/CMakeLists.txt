@@ -16,8 +16,8 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
-    MathLib
-    GIT_REPOSITORY https://github.com/GamingCampus-MillieBourgois-25-26/3d-geometry-club-ceinture.git
+    MathLibrairy
+    GIT_REPOSITORY https://github.com/GamingCampus-MillieBourgois-25-26/MathLibrairy.git
     GIT_TAG gold
 )
 
