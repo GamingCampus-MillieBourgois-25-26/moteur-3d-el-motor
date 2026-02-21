@@ -44,6 +44,7 @@ target_include_directories(Editor PRIVATE
      External/imgui/src/Backend   
      External/ImGuiFileLog/includes/coreIncludes
      External/ImGuiFileLog/includes/dirent
+     External/Json
 )
 
 target_compile_definitions(Editor PRIVATE

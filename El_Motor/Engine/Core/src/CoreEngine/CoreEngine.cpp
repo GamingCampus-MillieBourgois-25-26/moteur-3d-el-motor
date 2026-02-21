@@ -15,7 +15,7 @@ void Engine::CoreEngine::run() {
 		timeManager.Update();
 		float dt = timeManager.GetDeltaTime();
 		inputManager.update();
-		getScene().Update(dt);
+		getScene()->Update(dt);
 }
 
 void Engine::CoreEngine::shutdown() {

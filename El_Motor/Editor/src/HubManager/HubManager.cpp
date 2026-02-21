@@ -2,6 +2,7 @@
 #include "External/imgui/includes/CoreIncludes/imgui.h"
 #include "External/imgui/includes/backend/imgui_impl_dx11.h"
 #include "External/imgui/includes/backend/imgui_impl_glfw.h"
+#include "ProjectManager/ProjectManager.hpp"
 
 Editor::HubManager::HubManager()
 {
@@ -17,7 +18,6 @@ void Editor::HubManager::Init()
 {
 	app.initApp();
 	guiLayer.Init(app.getWindowOpener().getMyWindow(),app.getD3D11()->GetDevice(),app.getD3D11()->GetContext(),app.getD3D11()->GetRenderTargetView());
-    Levels.emplace_back(coreEditor.GetEngine().getScene());
 }
 
 void Editor::HubManager::HubRun()
@@ -54,8 +54,9 @@ void Editor::HubManager::HubRun()
 
 void Editor::HubManager::CreateProject()
 {
+
     coreEditor.editorInit();
-    
+
 }
 
 void Editor::HubManager::LoadProject()
@@ -65,27 +66,26 @@ void Editor::HubManager::LoadProject()
 
 void Editor::HubManager::DrawHubUI()
 {
-    ImGui::SetNextWindowSize(ImVec2(420, 100), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(800, 200), ImGuiCond_Always);
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
     ImGui::SetNextWindowPos(ImVec2(windowSize.x / 2, windowSize.y / 2));
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
+    buttons.projectName();
 
-    
     if (buttons.createProject())
     {
         CreateProject();
+        Editor::ProjectManager::Get().createProject(buttons.GetSessionName(), coreEditor.GetEngine().getScene());
         SetEditorState(EditorState::Editor);
-        createNewLevel();
-    }
-    ImGui::SameLine();
 
-    if (buttons.loadProject())
-    {
-        LoadProject();
-        SetEditorState(EditorState::Editor);
     }
 
+    buttons.loadProject();
+    if (buttons.GetLoadReady()) {
+        Editor::ProjectManager::Get().loadProject(buttons.GetProjectPath(),coreEditor.GetEngine().getScene());
+        SetEditorState(EditorState::Editor);
+    }
     ImGui::End();
 }
 
@@ -109,23 +109,23 @@ void Editor::HubManager::DrawEditorUI()
     }
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
-        
+    if (buttons.saveProject()) 
+    {
+        Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
+    }
 
     ImGui::SameLine(0, 40);
     ImGui::SetCursorPosY(30);
     buttons.selectGO(coreEditor.GetEngine().getScene());
 
-    
-    
-
     ImGui::End(); 
 
-    buttons.showCmpnt(coreEditor.GetEngine().getScene());
+    buttons.showCmpnt();
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
 }
 
-void Editor::HubManager::createNewLevel()
-{
-    Engine::Scene level;
-    Levels.emplace_back(level);
-}
+//void Editor::HubManager::createNewLevel()
+//{
+//    Engine::Scene* level = new Engine::Scene();
+//    GetLevels().emplace_back(level);
+//}
