@@ -2,12 +2,11 @@
 
 #include <DirectXMath.h>
 #include "MathLibrary/Vector3D.h"
-#include "MathLibrary/Quaternions.h"
+#include "MathLibrary/Quaternions.h"  
 #include "MathLibrary/Matrice4x4.h"
 #include "Input_Manager/InputManager.hpp"
 
-class Camera
-{
+class Camera {
 protected:
     Maths::Vct3D<float> position;
     Maths::Quat<float> rotation;
@@ -53,4 +52,5 @@ public:
     Camera();
 
     virtual void Update(Engine::InputManager& input) = 0;
+	float ConvertToRadians(float degrees) const { return degrees * (Maths::Quat<float>::PI / 180.0f); }
 };

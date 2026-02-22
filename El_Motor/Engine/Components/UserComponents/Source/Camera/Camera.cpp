@@ -42,7 +42,7 @@ void Camera::FowardUpdate()
     XMVECTOR fwdV = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotV);
     XMStoreFloat3(&forward, fwdV);*/
 
-    forward = Maths::Quat<float>(0.0f, 0.0f, 1.0f, 0.0f) * rotation;
+    forward = Maths::Vct3D<float>(0.0f, 0.0f, 1.0f) * rotation;
 }
 
 void Camera::RightUpdate()
@@ -51,7 +51,7 @@ void Camera::RightUpdate()
     XMVECTOR rightV = XMVector3Rotate(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), rotV);
     XMStoreFloat3(&right, rightV);*/
 
-    right = Maths::Quat<float>(1.0f, 0.0f, 0.0f, 0.0f) * rotation;
+    right = Maths::Vct3D<float>(1.0f, 0.0f, 0.0f) * rotation;
 }
 
 void Camera::UpUpdate()
@@ -76,7 +76,7 @@ Camera::Camera() : projection(), view(), VP()
     nearPlane = 0.01f;
     farPlane = 150.0f;
 
-	fov = 90.0f * (XM_PI / 180.0f); // A RAJOUTER CONSTANTE PI
+	fov = 90.0f * (Maths::Quat<float>::PI / 180.0f); // A RAJOUTER CONSTANTE PI
 }
 
 ///////// CALCUL DE MATRICES //////////
@@ -99,7 +99,6 @@ void Camera::ViewMatrix()
     XMStoreFloat4x4(&view, view);*/
 
 	Maths::Matrix4<float> viewM = Maths::Matrix4<float>::lookAt4x4(position, position + forward, up); ///// A VOIR ADD
-	XMStoreFloat4x4(&view, XMLoadFloat4x4(&viewM));
 }
 
 void Camera::VPMatrix()
@@ -147,31 +146,28 @@ void Camera::MouseUpdate(Engine::InputManager& input)
     if (pitch < -89.0f)
         pitch = -89.0f;
 
-    float radYaw = XMConvertToRadians(yaw);
+    /*float radYaw = XMConvertToRadians(yaw);
     float radPitch = XMConvertToRadians(pitch);
-
-    ////////// A CHANGER //////////
     XMVECTOR direction = XMVectorSet(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch), 0.0f);
-
     direction = XMVector3Normalize(direction);
-    ////////// A CHANGER //////////
+    XMStoreFloat3(&forward, direction);*/
 
-    XMStoreFloat3(&forward, direction);
+	float radYaw = ConvertToRadians(yaw);
+    float radPitch = ConvertToRadians(pitch);
 
+	Maths::Vct3D<T> direction = Maths::Vct3D<float>(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch));
+	direction = Maths::Vct3D<float>::normalized(direction);
 
 }
 
 void Camera::MoveUpdate(Engine::InputManager& input) {
     // accumulate movement delta, apply once
-    ////////// A CHANGER //////////
-    DirectX::XMVECTOR moveDelta = DirectX::XMVectorZero();
-    ////////// A CHANGER //////////
+    /*DirectX::XMVECTOR moveDelta = DirectX::XMVectorZero();
 
     DirectX::XMVECTOR fwdV = XMLoadFloat3(&forward);
     DirectX::XMVECTOR rightV = XMLoadFloat3(&right);
     DirectX::XMVECTOR upV = XMLoadFloat3(&up);
 
-    ////////// A CHANGER //////////
     if (input.isKeyPressed(Engine::KeyCode::Z))
         moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(fwdV, moveSpeed));
     if (input.isKeyPressed(Engine::KeyCode::S))
@@ -183,18 +179,33 @@ void Camera::MoveUpdate(Engine::InputManager& input) {
     if (input.isKeyPressed(Engine::KeyCode::SPACE))
         moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(upV, moveSpeed));
     if (input.isKeyPressed(Engine::KeyCode::ESCAPE))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(upV, -moveSpeed));
+        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(upV, -moveSpeed));*/
+
+    Maths::Vct3D<float> moveDelta = Maths::Vct3D<float>::zero();
+
+    if (input.isKeyPressed(Engine::KeyCode::Z))
+		moveDelta = Maths::Vct3D<float>::AddVector(moveDelta, forward.Scale(moveSpeed));
+    if (input.isKeyPressed(Engine::KeyCode::S))
+        moveDelta = Maths::Vct3D<float>::AddVector(moveDelta, forward.Scale(-moveSpeed);
+    if (input.isKeyPressed(Engine::KeyCode::Q))
+		moveDelta = Maths::Vct3D<float>::AddVector(moveDelta, right.Scale(moveSpeed);
+    if (input.isKeyPressed(Engine::KeyCode::D))
+        moveDelta = Maths::Vct3D<float>::AddVector(moveDelta, right.Scale(-moveSpeed);
+    /*if (input.isKeyPressed(Engine::KeyCode::SPACE))
+        moveDelta = Maths::Vct3D<float>::AddVector(moveDelta, up.Scale(moveSpeed);
+    if (input.isKeyPressed(Engine::KeyCode::ESCAPE))
+        moveDelta = Maths::Vct3D<float>::AddVector(moveDelta, up.Scale(-moveSpeed);*/
 
     // apply movement if any
-    if (!DirectX::XMVector3Equal(moveDelta, DirectX::XMVectorZero()))
+    /*if (!DirectX::XMVector3Equal(moveDelta, DirectX::XMVectorZero()))
     {
         DirectX::XMVECTOR posV = DirectX::XMLoadFloat3(&position);
-
-        ////////// A CHANGER //////////
         posV = DirectX::XMVectorAdd(posV, moveDelta);
-        ////////// A CHANGER //////////
-
         DirectX::XMStoreFloat3(&position, posV);
+    }*/
+
+    if (!moveDelta == Maths::Vct3D<float>::zero()) {
+		position = Maths::Vct3D<float>::AddVector(position, moveDelta);
     }
 
     if (input.isMousePressed(Engine::MouseButton::Left))
