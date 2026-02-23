@@ -63,7 +63,7 @@ void Editor::Buttons::loadProject() {
 
                 // Appelle ton ProjectManager avec ce dossier
                 SetProjectPath(folderPath);
-                SetLoadReady(true);
+                SetLoadProjReady(true);
             }
 
             ImGuiFileDialog::Instance()->Close();
