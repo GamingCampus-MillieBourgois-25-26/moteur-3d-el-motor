@@ -115,10 +115,21 @@ void PhysicSystem::Init(){
 	mSystem = new JPH::PhysicsSystem();
 	mSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, BroadPhaseLayerInterface, ObjectVSBroadphaseLayerFilter, ObjectVSObjectLayerFilter);
 
-	MyContactListener contactListener;
 	mSystem.SetContactListener(&contactListener);
 
 	mBodyInterface = &mSystem->GetBodyInterface();
 
 	mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers);
+}
+
+void PhysicSystem::OnEnd()
+{
+	delete contactListener;
+	delete mJobSystem;
+	delete mSystem;
+
+	JPH::Factory::sInstance = nullptr;
+	delete JPH::Factory::sInstance;
+
+	JPH::UnregisterTypes();
 }

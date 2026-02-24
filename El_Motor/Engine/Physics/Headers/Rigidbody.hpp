@@ -4,11 +4,12 @@
 
 
 class RigidBody{
-private:
-    JPH::Body mBody;
-
 public:
 	RigidBody() = default;
 
-	
+	void Create(); // Body creation;
+
+	JPH::Body* GetBody() const { return mBody; }
+private:
+	JPH::Body* mBody;
 };

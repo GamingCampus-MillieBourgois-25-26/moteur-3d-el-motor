@@ -29,11 +29,15 @@ namespace Layers
 class PhysicSystem {
 public:
 	void Init();
+	void OnEnd();
 
-	JPH::BodyInterface getBodyInterface();
+	JPH::BodyInterface* getBodyInterface() { return mBodyInterface};
 
 private:
 	JPH::PhysicsSystem* mSystem;
 	JPH::BodyInterface* mBodyInterface;
 	JPH::JobSystemThreadPool* mJobSystem;
+
+	BroadPhaseLayerInterfaceImpl* mBroadPhaseLayer;
+	MyContactListener* mContactListener;
 };
