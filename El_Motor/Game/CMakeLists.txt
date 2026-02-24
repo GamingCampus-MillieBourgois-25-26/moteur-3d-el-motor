@@ -15,7 +15,7 @@ add_library(Game
 
 target_include_directories(Game
     PUBLIC
-    #${CMAKE_CURRENT_SOURCE_DIR}/includes
+    ${CMAKE_CURRENT_SOURCE_DIR}/includes
 )
 
 

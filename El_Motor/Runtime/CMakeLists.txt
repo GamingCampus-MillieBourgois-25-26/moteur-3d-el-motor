@@ -6,7 +6,7 @@ file(GLOB_RECURSE RUNTIME_SOURCES
 
 file(GLOB_RECURSE RUNTIME_HEADERS
 	EngineBridge/Headers/*.hpp
-     Shader/**/*.hlsl
+    Shader/**/*.hlsl
 )
 
 
