@@ -107,48 +107,59 @@ bool Editor::Buttons::startRuntime()
 
 void Editor::Buttons::loadAssets(AssetManager& manager)
 {
-    IGFD::FileDialogConfig config;
-    config.path = "Assets";
-    ImGuiFileDialog::Instance()->OpenDialog(
-        "LoadAssetKey",
-        "Choose Asset",
-        ".png,.jpg,.obj,.fbx",
-        config
-    );
 
-    if (ImGuiFileDialog::Instance()->Display("LoadAssetKey", ImGuiWindowFlags_None, ImVec2(1500,500)))
+
+    if (ImGui::Button("Load Assets", ImVec2(50, 50)))
     {
-
-
-
-        if (ImGuiFileDialog::Instance()->IsOk())
-        {
-            std::string filePath =
-                ImGuiFileDialog::Instance()->GetFilePathName();
-
-            std::string extension =
-                std::filesystem::path(filePath).extension().string();
-
-            if (extension == ".png" || extension == ".jpg")
-            {
-                std::cout << "asset loaded" << std::endl;
-            }
-            else if (extension == ".obj" || extension == ".fbx")
-            {
-                manager.Load<MeshAsset>(filePath);
-                std::cout << "ok load";
-            }
-            else
-            {
-                Engine::LoggerManager::Get().LogError(
-                    "Unsupported asset type : " + extension
-                );
-            }
-        }
-
-        ImGuiFileDialog::Instance()->Close();
+        SetLoadAsset(true);
     }
+ 
 
+
+    if (GetLoadAsset() == true) {
+
+        IGFD::FileDialogConfig config;
+        config.path = "Assets";
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "LoadAssetKey",
+            "Choose Asset",
+            ".png,.jpg,.obj,.fbx",
+            config
+        );
+
+        if (ImGuiFileDialog::Instance()->Display("LoadAssetKey", ImGuiWindowFlags_None, ImVec2(1500, 500)))
+        {
+
+
+
+            if (ImGuiFileDialog::Instance()->IsOk())
+            {
+                std::string filePath =
+                    ImGuiFileDialog::Instance()->GetFilePathName();
+
+                std::string extension =
+                    std::filesystem::path(filePath).extension().string();
+
+                if (extension == ".png" || extension == ".jpg")
+                {
+                    std::cout << "asset loaded" << std::endl;
+                }
+                else if (extension == ".obj" || extension == ".fbx")
+                {
+                    manager.Load<MeshAsset>(filePath);
+                    std::cout << "ok load";
+                }
+                else
+                {
+                    Engine::LoggerManager::Get().LogError(
+                        "Unsupported asset type : " + extension
+                    );
+                }
+            }
+            SetLoadAsset(false);
+            ImGuiFileDialog::Instance()->Close();
+        }
+    }
 }
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)

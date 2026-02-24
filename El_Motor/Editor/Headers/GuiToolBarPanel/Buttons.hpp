@@ -16,6 +16,7 @@ namespace Editor
 		//Bool
 		bool LoadProjectDial = false;
 		bool LoadProjReady = false;
+		bool LoadAsset = false;
 		//Session name / error
 		std::string sessionName = "Null";
 		std::string sessionNameStatus = "Type a project name, then press Enter to confirm";
@@ -78,11 +79,13 @@ namespace Editor
 		bool GetLoadProject() const { return LoadProjectDial; }
 		std::string GetProjectPath() const {return projectPath;}
 		bool GetLoadProjReady() const { return LoadProjReady; }
+		bool GetLoadAsset() const { return LoadAsset; }
 		//Setter
 		void SetSessionName(std::string session) { sessionName = session; }
 		void SetSessionNameStatus(std::string txt) { sessionNameStatus = txt; }
 		void SetLoadSession(bool activated) { LoadProjectDial = activated; }
 		void SetProjectPath(std::string path) { projectPath = path; }
 		void SetLoadProjReady(bool ready) { LoadProjReady = ready; }
+		void SetLoadAsset(bool load) { LoadAsset = load; }
 	};
 }
