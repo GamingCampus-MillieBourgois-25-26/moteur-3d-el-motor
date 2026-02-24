@@ -1,12 +1,14 @@
 #pragma once
 
+#include <Jolt/Jolt.h>
+
+
 class RigidBody{
 private:
-    JPH::BodyID m_ID;
+    JPH::Body mBody;
 
 public:
 	RigidBody() = default;
-	RigidBody(const JPH::BodyID& id) : m_ID(id) {}
 
-	JPH::BodyID GetID() const { return m_ID; }
+	
 };
