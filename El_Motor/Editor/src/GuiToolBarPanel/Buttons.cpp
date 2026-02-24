@@ -109,7 +109,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
 {
 
 
-    if (ImGui::Button("Load Assets", ImVec2(50, 50)))
+    if (ImGui::Button("Load Assets", ImVec2(80, 25)))
     {
         SetLoadAsset(true);
     }
