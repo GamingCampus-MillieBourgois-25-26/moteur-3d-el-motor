@@ -7,7 +7,7 @@
 class ScriptManager
 {
 private:
-	std::vector<std::filesystem::path> files;
+	std::vector<std::unique_ptr<Script>> scripts;
 
 public:
 	ScriptManager(){}
@@ -16,8 +16,13 @@ public:
 	 
 
 
-	void createScript(std::string scriptName);
+	void createScript(std::string scriptName , std::filesystem::path& directory);
+	void StartAll();
 	void updateScripts(float deltatime);
 	void destroyScript(std::string scriptName);
+
+	void RegisterScript(std::unique_ptr<Script> script);
+
+
 
 };
