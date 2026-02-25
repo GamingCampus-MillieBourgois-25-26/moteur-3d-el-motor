@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 #include <string>
 #include <d3d11.h>

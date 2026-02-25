@@ -3,6 +3,7 @@
 file(GLOB_RECURSE ENGINE_SOURCES
     Core/src/**/*.cpp 
     Components/UserComponents/**/*.cpp
+    Externals/**/*.cpp
 
 )
 
