@@ -75,4 +75,5 @@ namespace Maths {
         Quat operator*(const Quat<T>& q) const;
 		bool operator==(const Quat<T>& q) const;
     };
+    using Quatf = Quat<float>;
 }

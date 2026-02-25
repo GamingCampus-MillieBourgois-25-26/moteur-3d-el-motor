@@ -6,7 +6,7 @@
 #include <iomanip>
 
 #include "MVec3.hpp"
-#include "MQuaternions.hpp"
+#include "MQuaternion.hpp"
 
 namespace Maths {
 	template<typename T = float>
@@ -70,4 +70,5 @@ namespace Maths {
 		//////// OPERATOR ////////
 		Mat4 operator*(const Mat4& other) const;
 	};
+	using Mat4f = Mat4<float>;
 }

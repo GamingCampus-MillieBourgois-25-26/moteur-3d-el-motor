@@ -81,4 +81,5 @@ namespace Maths {
 		bool operator==(const Vec2& other) const;
 		bool operator!=(const Vec2& other) const;
 	};
+	using Vec2f = Vec2<float>;
 }
