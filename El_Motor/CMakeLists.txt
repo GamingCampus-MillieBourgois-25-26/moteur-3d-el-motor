@@ -14,12 +14,6 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
-    glm
-    GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG 0.9.9.8  
-)
-
-FetchContent_Declare(
     JoltPhysics
     GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
     GIT_TAG master
@@ -29,7 +23,7 @@ set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw JoltPhysics glm)
+FetchContent_MakeAvailable(glfw JoltPhysics)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)
