@@ -14,8 +14,9 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
-    MathStaticLibrary
-    GIT_REPOSITORY https://github.com/GamingCampus-MillieBourgois-25-26/MathStaticLibrary.git
+    glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG 0.9.9.8  
 )
 
 FetchContent_Declare(
@@ -28,7 +29,7 @@ set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw JoltPhysics MathStaticLibrary)
+FetchContent_MakeAvailable(glfw JoltPhysics glm)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)

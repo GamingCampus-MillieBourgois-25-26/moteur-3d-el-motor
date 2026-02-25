@@ -1,19 +1,20 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include "MathLibrary/Vector3D.h"
-#include "MathLibrary/Quaternions.h"  
-#include "MathLibrary/Matrice4x4.h"
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/mat4x4.hpp>
 #include "Input_Manager/InputManager.hpp"
 
 class Camera {
 protected:
-    Maths::Vct3D<float> position;
-    Maths::Quat<float> rotation;
+    glm::vec3 position;
+    glm::quat rotation;
 
-    Maths::Vct3D<float> forward;
-    Maths::Vct3D<float> right;
-    Maths::Vct3D<float> up;
+    glm::vec3 forward;
+    glm::vec3 right;
+    glm::vec3 up;
 
     float aspectRatio;
     float nearPlane;
@@ -25,9 +26,9 @@ protected:
 
     bool firstMousePos = true;
 
-    Maths::Matrix4<float> projection;
-    Maths::Matrix4<float> view;
-    Maths::Matrix4<float> VP;
+    glm::mat4x4 projection;
+    glm::mat4x4 view;
+    glm::mat4x4 VP;
 
     void RotationUpdate(Engine::InputManager& input);
     void FowardUpdate();
@@ -44,13 +45,12 @@ protected:
 
     //////// GETTERS //////////
 
-    Maths::Matrix4<float> Getprojection() const;
-    Maths::Matrix4<float> Getview() const;
-    Maths::Matrix4<float> GetVP() const;
+    glm::mat4x4 Getprojection() const;
+    glm::mat4x4 Getview() const;
+    glm::mat4x4 GetVP() const;
 
 public:
     Camera();
 
     virtual void Update(Engine::InputManager& input) = 0;
-	float ConvertToRadians(float degrees) const { return degrees * (Maths::Quat<float>::PI / 180.0f); }
 };
