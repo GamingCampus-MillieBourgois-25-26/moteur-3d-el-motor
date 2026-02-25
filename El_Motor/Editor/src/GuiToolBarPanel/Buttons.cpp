@@ -305,7 +305,7 @@ bool Editor::Buttons::saveProject()
 
 void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 {
-    if (ImGui::Button("create", ImVec2(100, 50)))
+    if (ImGui::Button("Create GameObject", ImVec2(150, 50)))
     {
        scene->CreateGameObject();
     }
@@ -313,7 +313,7 @@ void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 
 void Editor::Buttons::delGO(std::shared_ptr<Engine::Scene>& scene)
 {
-    if (ImGui::Button("delete", ImVec2(100, 50)))
+    if (ImGui::Button("Delete GameObject", ImVec2(150, 50)))
     {
         
         scene->DestroyGameObject(selectedEntity);

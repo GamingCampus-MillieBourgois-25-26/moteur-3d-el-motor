@@ -18,7 +18,7 @@ void GuiLayer::Init(GLFWwindow* window, ID3D11Device* device, ID3D11DeviceContex
 
     ImGui::StyleColorsDark();
 
-    // Initialisation backends
+    // Initialisation backends 
     ImGui_ImplGlfw_InitForOther(window, true); // GLFW
     ImGui_ImplDX11_Init(device, context);      // DX11
 }

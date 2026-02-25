@@ -7,7 +7,7 @@
 class ScriptManager
 {
 private:
-	std::vector<std::unique_ptr<UserScript*>> scripts;
+	std::vector<std::filesystem::path> files;
 
 public:
 	ScriptManager(){}
