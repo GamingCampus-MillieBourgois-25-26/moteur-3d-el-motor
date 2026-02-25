@@ -64,6 +64,14 @@ namespace Engine
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24,D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
+
+		D3D11_BUFFER_DESC bd = {};
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(ObjectColorBuffer);
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+
 		hr = pDevice->CreateInputLayout(
 			layout,
 			(UINT)std::size(layout),
@@ -74,24 +82,30 @@ namespace Engine
 		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
 	}
 
-	IDXGIAdapter1* D3D11::searchForAdapters() {
-		wrl::ComPtr<IDXGIFactory1> pFactory = nullptr; // Pointeur pour la factory DXGI
-		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
+	IDXGIAdapter1* D3D11::searchForAdapters()
+	{
+		wrl::ComPtr<IDXGIFactory1> pFactory = nullptr;
+		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory);
 
 		IDXGIAdapter1* pAdapter = nullptr;
 		IDXGIAdapter1* bestAdapter = nullptr;
 		SIZE_T maxVRam = 0;
 
-		for (UINT i = 0; pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i) {
+		for (UINT i = 0; pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i)
+		{
 			DXGI_ADAPTER_DESC1 desc;
 			pAdapter->GetDesc1(&desc);
+
 			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-				continue; // Ignore les adaptateurs logiciels
-			if (desc.DedicatedVideoMemory > maxVRam) {
+				continue;
+
+			if (desc.DedicatedVideoMemory > maxVRam)
+			{
 				maxVRam = desc.DedicatedVideoMemory;
-				bestAdapter = pAdapter; // Met à jour le meilleur adaptateur trouvé jusqu'à présent
+				bestAdapter = pAdapter;
 			}
 		}
+
 		return bestAdapter;
 	}
 
@@ -123,8 +137,8 @@ namespace Engine
 
 	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
 		float clearColor[] = { r, g, b, 1.0f }; // Couleur de nettoyage (RGBA)
-		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 		if (!pTarget) return;
+		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 	}
 
 	void D3D11::DrawShape(const MeshAsset& mesh)
@@ -138,6 +152,26 @@ namespace Engine
 
 		// === MESH BIND (MeshAsset) ===
 		mesh.Bind(pContext.Get());
+
+		// === CONSTANT BUFFER COULEUR ===
+		ObjectColorBuffer buffer;
+		buffer.objColor = mesh.GetColor();
+		buffer.padding = 0.0f;
+
+		pContext->UpdateSubresource(
+			mObjectColorBuffer.Get(),
+			0,
+			nullptr,
+			&buffer,
+			0,
+			0
+		);
+
+		pContext->PSSetConstantBuffers(
+			0,
+			1,
+			mObjectColorBuffer.GetAddressOf()
+		);
 
 		// === RENDER TARGET ===
 		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();

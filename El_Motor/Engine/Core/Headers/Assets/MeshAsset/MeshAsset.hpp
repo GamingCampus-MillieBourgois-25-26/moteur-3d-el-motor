@@ -4,8 +4,11 @@
 #include <string>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <wrl.h>
 
 #include "Assets/Asset.hpp"
+
+namespace wrl = Microsoft::WRL;
 
 struct Vertex
 {
@@ -16,13 +19,22 @@ struct Vertex
 
 class MeshAsset : public Asset
 {
+private:
+    DirectX::XMFLOAT3 mColor;
 public:
+
+
+    //MeshAsset(const std::string& path,
+    //    const DirectX::XMFLOAT3& color = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f));
 
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
 
-    ID3D11Buffer* vertexBuffer = nullptr;
-    ID3D11Buffer* indexBuffer = nullptr;
+    wrl::ComPtr<ID3D11Buffer> vertexBuffer = nullptr;
+    wrl::ComPtr<ID3D11Buffer> indexBuffer = nullptr;
+
+	const DirectX::XMFLOAT3& GetColor() const { return mColor; } 
+	void SetColor(const DirectX::XMFLOAT3& newColor) { mColor = newColor; }
 
     void Load() override;
     void Unload() override;
@@ -32,8 +44,6 @@ public:
     void CreateBuffers(ID3D11Device* device);
 
     void Bind(ID3D11DeviceContext* context) const;
-
-    void Draw(ID3D11DeviceContext* context);
 
     bool IsReady() const;
     UINT GetIndexCount() const;

@@ -8,6 +8,7 @@
 #include <dxgi.h>
 #include <vector>
 #include <wrl.h>
+#include <DirectXMath.h>
 
 #include <Windows.h> // pour HWND et API Windows
 #include "Window/IWindow.hpp"
@@ -16,7 +17,16 @@ class MeshAsset;
 
 namespace wrl = Microsoft::WRL;
 
+
+
 namespace Engine {
+
+	struct ObjectColorBuffer
+	{
+		DirectX::XMFLOAT3 objColor;
+		float padding;
+	};
+
 	class D3D11 {
 	public:
 		D3D11(IWindow& window);
@@ -38,6 +48,8 @@ namespace Engine {
 		wrl::ComPtr <ID3D11DeviceContext> pContext = nullptr;
 		wrl::ComPtr <IDXGISwapChain> pSwapChain = nullptr;
 		wrl::ComPtr <ID3D11RenderTargetView> pTarget = nullptr;
+
+		wrl::ComPtr<ID3D11Buffer> mObjectColorBuffer;
 
 		wrl::ComPtr<ID3D11VertexShader> mVertexShader;
 		wrl::ComPtr<ID3D11PixelShader>  mPixelShader;
