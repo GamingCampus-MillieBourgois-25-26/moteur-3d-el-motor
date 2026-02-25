@@ -111,7 +111,7 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
         throw std::runtime_error("Failed to create index buffer");
 }
 
-void MeshAsset::Bind(ID3D11DeviceContext* context)
+void MeshAsset::Bind(ID3D11DeviceContext* context) const
 {
     UINT stride = sizeof(Vertex);
     UINT offset = 0;

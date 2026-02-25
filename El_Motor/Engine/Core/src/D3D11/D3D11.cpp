@@ -1,4 +1,5 @@
 #include "D3D11/D3D11.hpp"
+#include "Assets/MeshAsset/MeshAsset.hpp"
 
 #include <d3dcompiler.h>
 #include <wrl.h>
@@ -28,15 +29,14 @@ namespace Engine
 			nullptr,// Feature Level
 			&pContext
 		);
-		ID3D11Resource* pBackBuffer = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
 		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
 		if (pDevice != nullptr) {
-			pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
 		}
-		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
 
 		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
-		Microsoft::WRL::ComPtr<ID3DBlob> blob;
+		wrl::ComPtr<ID3DBlob> blob;
 
 		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &blob);
 		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
@@ -59,8 +59,9 @@ namespace Engine
 		// === INPUT LAYOUT (basé sur le VS) ===
 		const D3D11_INPUT_ELEMENT_DESC layout[] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,
-			  D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24,D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
 		hr = pDevice->CreateInputLayout(
@@ -74,7 +75,7 @@ namespace Engine
 	}
 
 	IDXGIAdapter1* D3D11::searchForAdapters() {
-		Microsoft::WRL::ComPtr<IDXGIFactory1> pFactory = nullptr; // Pointeur pour la factory DXGI
+		wrl::ComPtr<IDXGIFactory1> pFactory = nullptr; // Pointeur pour la factory DXGI
 		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
 
 		IDXGIAdapter1* pAdapter = nullptr;
@@ -126,7 +127,7 @@ namespace Engine
 		if (!pTarget) return;
 	}
 
-	void D3D11::DrawShape(UINT indexCount)
+	void D3D11::DrawShape(const MeshAsset& mesh)
 	{
 		// === SHADERS ===
 		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
@@ -136,13 +137,11 @@ namespace Engine
 		pContext->IASetInputLayout(mInputLayout.Get());
 
 		// === MESH BIND (MeshAsset) ===
-		// mesh.Bind(context);
-		//  -> IASetVertexBuffers
-		//  -> IASetIndexBuffer
-		//  -> IASetPrimitiveTopology
+		mesh.Bind(pContext.Get());
 
 		// === RENDER TARGET ===
-		pContext->OMSetRenderTargets(1, &pTarget, nullptr);
+		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
+		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), nullptr);
 
 		// === VIEWPORT ===
 		RECT rect;
@@ -159,8 +158,7 @@ namespace Engine
 		pContext->RSSetViewports(1, &viewport);
 
 		// === DRAW ===
-		// indexCount = mesh.GetIndexCount()
-		pContext->DrawIndexed(indexCount, 0, 0);
+		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
 
 }

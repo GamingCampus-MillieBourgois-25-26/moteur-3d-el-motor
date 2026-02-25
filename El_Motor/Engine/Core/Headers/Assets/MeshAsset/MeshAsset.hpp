@@ -31,7 +31,7 @@ public:
 
     void CreateBuffers(ID3D11Device* device);
 
-    void Bind(ID3D11DeviceContext* context);
+    void Bind(ID3D11DeviceContext* context) const;
 
     void Draw(ID3D11DeviceContext* context);
 

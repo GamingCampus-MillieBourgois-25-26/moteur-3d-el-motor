@@ -14,8 +14,6 @@ public:
 	~ScriptManager(){}
 
 	 
-
-
 	void createScript(std::string scriptName);
 	void updateScripts(float deltatime);
 	void destroyScript(std::string scriptName);
