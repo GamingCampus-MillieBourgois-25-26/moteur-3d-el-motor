@@ -115,11 +115,15 @@ void Editor::HubManager::DrawEditorUI()
 
     ImGui::SameLine(0, 40);
     ImGui::SetCursorPosY(30);
+
     buttons.selectGO(coreEditor.GetEngine().getScene());
 
-    ImGui::End();
+
 
     buttons.showCmpnt();
+    ImGui::End();
+
+    
 }
     
 

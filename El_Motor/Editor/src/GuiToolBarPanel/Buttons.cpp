@@ -200,12 +200,6 @@ void Editor::Buttons::showCmpnt()
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
-    ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Always);
-    ImGui::SetNextWindowPos(ImVec2(500, 0)); 
-
-    const std::string windowName = "Components";
-	ImGui::Begin(windowName.c_str(), nullptr, ImGuiWindowFlags_NoResize);
-
   
 
 	ImGui::BeginChild("ComponentList", ImVec2(0, 0), true);//Component list child
@@ -235,7 +229,6 @@ void Editor::Buttons::showCmpnt()
     }
     editComponent();
     ImGui::EndChild();
-    ImGui::End();
 }
 
 void Editor::Buttons::addComponent()

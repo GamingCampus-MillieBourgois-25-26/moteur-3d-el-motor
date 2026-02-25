@@ -11,6 +11,7 @@ UserScript::UserScript(std::string ScriptName)
 UserScript::~UserScript()
 {
 
+
 }
 
 //This funtion is called when the script is first loaded, and is used to initialize any variables or set up any necessary components for the script to function properly. It is typically called once at the beginning of the script's lifecycle.
