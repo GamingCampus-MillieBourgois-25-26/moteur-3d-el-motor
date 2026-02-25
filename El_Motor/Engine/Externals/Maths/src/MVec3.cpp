@@ -185,13 +185,42 @@ Maths::Vec3<T> Maths::Vec3<T>::Max(Vec3<T>& a, Vec3<T>& b) {
 template <typename T>
 T Maths::Vec3<T>::SignedAngle(Vec3<T> from, Vec3<T> to, Vec3<T> axis) { 
 	T angle = Angle(from, to);
-	Vector3 cross = Cross(from, to);
+	Vec3<T> cross = Cross(from, to);
 	return (Dot(axis, cross) < 0) ? -angle : angle;
 }
 
+template <typename T>
+T Maths::Vec3<T>::Distance(Vec3<T>& a, Vec3<T>& b) { 
+	return Vec3<T>(a - b).Magnitude();
+}
+
+template <typename T>
+T Maths::Vec3<T>::Angle(Vec3<T> a, Vec3<T> b) { 
+	T dotProduct = Dot(a, b);
+	T MagA = a.Magnitude();
+	T MagB = b.Magnitude();
+	T cosAngle = std::clamp(dotProduct / (MagA * MagB), -1.0f, 1.0f);
+	return acos(cosAngle);
+}
+
+template <typename T>
+T Maths::Vec3<T>::Dot(Vec3<T>& a, Vec3<T>& b) {
+	return (a.m_x * b.m_x + a.m_y * b.m_y + a.m_z * b.m_z);
+}
 
 
+template <typename T>
+void Maths::Vec3<T>::OrthoNormalize(Vec3<T>& normal, Vec3<T>& tangent) {
+	normal.Normalize();
+	tangent = tangent - (normal * Dot(normal, tangent));
+	tangent.Normalize();
+}
 
+template <typename T>
+void Maths::Vec3<T>::Normalize() { 
+	T mag = (*this).Magnitude();
+	m_x = m_x / mag; m_y = m_y / mag; m_z = m_z / mag;
+}
 
 
 //////// OPERATOR ////////
