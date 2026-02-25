@@ -3,8 +3,8 @@
 template <typename T>
 Maths::Vec2<T>::Vec2(T m_x, T m_y) : m_x(m_x), m_y(m_y) {}
 
-//////// STATIC PORPRETIES ////////
 
+//////// STATIC PORPRETIES ////////
 template <typename T>
 static Maths::Vec2<T> Maths::Vec2<T>::Down() { return Maths::Vec2<T>(static_cast<T>(0), static_cast<T>(-1)); }
 
@@ -43,7 +43,7 @@ Maths::Vec2<T> Maths::Vec2<T>::Normalized() {
 
 template <typename T>
 T Maths::Vec2<T>::SqrtMagnitude() {
-    T mag = Magnitude();
+    T mag = (*this).Magnitude();
     return std::pow((mag), 2);
 }
 
@@ -52,8 +52,8 @@ T Maths::Vec2<T>::Magnitude() { return std::sqrt(m_x * m_x + m_y * m_y); }
 
 template <typename T>
 T Maths::Vec2<T>::This(int i) { 
-    if (i == 0) return x;
-    else if (i == 1) return y;
+    if (i == 0) return m_x;
+    else if (i == 1) return m_y;
 }
 
 
