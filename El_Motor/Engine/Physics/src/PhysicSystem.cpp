@@ -115,7 +115,7 @@ void PhysicSystem::Init(){
 	mSystem = new JPH::PhysicsSystem();
 	mSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, BroadPhaseLayerInterface, ObjectVSBroadphaseLayerFilter, ObjectVSObjectLayerFilter);
 
-	mSystem.SetContactListener(&contactListener);
+	&mSystem.SetContactListener(&contactListener);
 
 	mBodyInterface = &mSystem->GetBodyInterface();
 
@@ -132,4 +132,16 @@ void PhysicSystem::OnEnd()
 	delete JPH::Factory::sInstance;
 
 	JPH::UnregisterTypes();
+}
+
+void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
+	const float cDeltaTime = 1.0f / 60.0f;
+	JPH::uint step = 0;
+	while() {
+		++step;
+
+		const int cCollisionSteps = 1;
+
+		&mSystem->Update(cDeltaTime, cCollisionSteps, , &mJobSystem);
+	}
 }

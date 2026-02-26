@@ -14,7 +14,8 @@
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Body/BodyActivationListener.h>
+
+#include "Scene/Scene.hpp"
 
 class MyContactListener;
 class BroadPhaseLayerInterfaceImpl;
@@ -30,6 +31,8 @@ class PhysicSystem {
 public:
 	void Init();
 	void OnEnd();
+
+	void Update(Engine::Scene& scene, float deltaTime);
 
 	JPH::BodyInterface* getBodyInterface() { return mBodyInterface};
 

@@ -6,8 +6,7 @@
 
 using namespace DirectX;
 
-void Camera::RotationUpdate(Engine::InputManager& input)
-{
+void Camera::RotationUpdate(Engine::InputManager& input){
     float dx = input.getMouseDelta().x;
     float dy = input.getMouseDelta().y;
 
