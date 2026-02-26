@@ -4,6 +4,7 @@
 #include "ImGuiLayer/ImGuiLayer.hpp"
 #include "Application/App.hpp"
 #include "GuiToolBarPanel/Buttons.hpp"
+#include "ScriptManager/ScriptManager.hpp"
 #include <vector>
 
 namespace Editor
@@ -15,7 +16,8 @@ namespace Editor
 		enum EditorState
 		{
 			Hub,
-			Editor
+			Editor,
+			Run
 		};
 		Engine::Application app;
 	private:
@@ -27,6 +29,8 @@ namespace Editor
 		GuiLayer guiLayer;
 		EditorState editorState = Hub;
 		Engine::LoggerManager logger;
+		ScriptManager scriptManager;
+
 		//std::vector<Engine::Scene*> Levels;
 		//std::shared_ptr<Engine::Scene>* currentLevel = &coreEditor.GetEngine().getScene();
 	

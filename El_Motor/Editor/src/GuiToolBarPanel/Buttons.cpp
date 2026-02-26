@@ -5,6 +5,7 @@
 #include "External/ImGuiFileLog/includes/coreIncludes/ImGuiFileDialog.h"
 #include "Assets/MeshAsset/MeshAsset.hpp"
 #include "Entity/Component/MeshComponent.hpp"
+#include "ScriptManager/ScriptManager.hpp"
 
 #include "Logger/Logger.hpp"
 #include <iostream>
@@ -92,6 +93,82 @@ void Editor::Buttons::projectName()
         }
     }
 }
+
+void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
+{
+	ImGui::BeginChild("ScriptMenu", ImVec2(250, 0), true);
+    ImGui::Text("Scripts");
+    ImGui::Separator();
+    showScripts(scriptM);
+    AddScript(scriptM, "NewScript");
+
+}
+
+void Editor::Buttons::deleteScript(ScriptManager& scriptM) const
+{
+
+}
+
+void Editor::Buttons::editScript(ScriptManager& scriptM)
+{
+}
+
+void Editor::Buttons::AddScript(ScriptManager& scriptM , std::string name)
+{
+	scriptM.createScript(name);
+}
+
+void Editor::Buttons::showScripts(ScriptManager& scriptM)
+{
+    ImGui::BeginChild("ScriptList", ImVec2(250, 0), true);
+
+    auto& scripts = scriptM.GetScripts();
+
+    for (size_t i = 0; i < scripts.size(); i++)
+    {
+        const std::string& name = scripts[i]->GetName();
+
+        ImGui::PushID(static_cast<int>(i));
+
+        bool isSelected = (selectedScript == name);
+
+        if (ImGui::Selectable(name.c_str(), isSelected))
+        {
+            selectedScript = name;
+        }
+
+        ImGui::PopID();
+    }
+
+    ImGui::EndChild();
+}
+
+bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
+{
+ //   if (IsCpp) 
+ //   {
+ //       if (str.empty() || str.ends_with(".cpp") || all_of(str.begin(), str.end(),
+ //           [](unsigned char c) {
+ //               return std::isspace(c);
+ //           }))
+ //       
+ //   }
+ //   else if (!IsCpp)
+ //   {
+ //       if (str.empty() || str.ends_with(".hpp") || all_of(str.begin(), str.end(),
+ //           [](unsigned char c) {
+ //               return std::isspace(c);
+ //           }
+	//}
+
+ //   else
+ //   {
+ //       SetSessionNameStatus("Type a script name, then press Enter to confirm");
+	//}
+	return false;
+}
+
+
 
 bool Editor::Buttons::startRuntime()
 {

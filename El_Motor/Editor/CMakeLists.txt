@@ -44,6 +44,7 @@ add_executable(Editor ${EDITOR_SOURCES}
 )
 
 target_link_libraries(Editor PRIVATE
+    Game
     Engine
     glfw
     d3d11
