@@ -41,6 +41,7 @@ namespace Editor
 		};
 
 		void init();
+		void update(AssetManager& manager);
 		
 		//Hub Buttons
 		bool createProject();

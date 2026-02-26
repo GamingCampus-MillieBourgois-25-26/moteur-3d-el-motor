@@ -13,7 +13,7 @@ private:
 public:
 	//Constructor and destructor
 	UserScript(std::string ScriptName);
-	~UserScript();
+	~UserScript() = default;
 
 
 	//begin play and tick functions
