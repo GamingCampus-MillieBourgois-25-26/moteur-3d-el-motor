@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <algorithm>
 #include "MVec3.hpp"
 
 namespace Maths {
@@ -59,7 +60,7 @@ namespace Maths {
         static Quat FromEuler(const Vec3<T>& eulerRad);
         static Quat Slerp(const Quat<T>& b, T t);
         static Quat Lerp(const Quat<T>& b, T t);
-        static Quat Inverse();
+        static void Inverse();
         static Quat Cross(const Quat<T>& b);
         
 
@@ -74,7 +75,7 @@ namespace Maths {
 
         //////// OPERATOR ////////
         Quat operator*(const Quat<T>& q) const;
-		bool operator==(const Quat<T>& q) const;
+		bool operator==(const Maths::Quat<T>& q) const;
     };
     using Quatf = Quat<float>;
 }

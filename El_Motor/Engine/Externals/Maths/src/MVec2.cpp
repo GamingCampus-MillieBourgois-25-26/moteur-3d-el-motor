@@ -1,4 +1,4 @@
-#include "MVec2.hpp"
+#include "Maths/Headers/MVec2.hpp"
 
 template <typename T>
 Maths::Vec2<T>::Vec2(T m_x, T m_y) : m_x(m_x), m_y(m_y) {}
@@ -24,10 +24,10 @@ template <typename T>
 static Maths::Vec2<T> Maths::Vec2<T>::Zero() { return Maths::Vec2<T>(static_cast<T>(0), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec2<T> Maths::Vec2<T>::PositiveInfinity() { return Maths::Vec2<T>(std::numeric_limits<T>::infinity()), std::numeric_limits<T>::infinity()); }
+static Maths::Vec2<T> Maths::Vec2<T>::PositiveInfinity() { return Maths::Vec2<T>(std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity()); }
 
 template <typename T>
-static Maths::Vec2<T> Maths::Vec2<T>::NegativeInfinity() { return Maths::Vec2<T>(-std::numeric_limits<T>::infinity()), -std::numeric_limits<T>::infinity()); }
+static Maths::Vec2<T> Maths::Vec2<T>::NegativeInfinity() { return Maths::Vec2<T>(-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()); }
 
 
 //////// PORPRETIES ////////
@@ -78,7 +78,7 @@ static Maths::Vec2<T> Maths::Vec2<T>::MoveTowards(Vec2<T> current, Vec2<T> targe
     T distance = direction.Magnitude();
     if (distance == 0 || (maxDistanceDelta >= 0 && distance <= maxDistanceDelta)) { return target; }
 
-    return current + toVec / distance * maxDistanceDelta;
+    return current + target / distance * maxDistanceDelta;
 }
 
 template <typename T>
@@ -139,7 +139,7 @@ static T Maths::Vec2<T>::Angle(Vec2<T> a, Vec2<T> b) {
     float lenA = a.Magnitude();
     float lenB = b.Magnitude();
     T cosAngle = std::clamp(dotProd / (lenA * lenB), -1.0f, 1.0f);
-    return std::acos(cosAngle) // retourne en radians
+    return std::acos(cosAngle); // retourne en radians
 
 }
 
@@ -194,7 +194,7 @@ template <typename T>
 Maths::Vec2<T> Maths::Vec2<T>::operator/(const Vec2<T>& other) const {
 
     T newX = (other.m_x != 0.0f) ? (m_x / other.m_x) : 0.0f;
-    T newY = (other.m_y != 0.0f) ? (m_ >y / other.m_y) : 0.0f;
+    T newY = (other.m_y != 0.0f) ? (m_y / other.m_y) : 0.0f;
     return Vec2<T>(newX, newY);
 }
 

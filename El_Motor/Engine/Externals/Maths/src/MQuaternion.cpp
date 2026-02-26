@@ -1,4 +1,4 @@
-#include "MQuaternion.hpp"
+#include "Maths/Headers/MQuaternion.hpp"
 
 
 template<typename T>
@@ -545,7 +545,7 @@ static void Maths::Quat<T>::Normalize()
     T mag = std::sqrt(w() * w() + x() * x() + y() * y() + z() * z());
 
     if (mag > std::numeric_limits<T>::epsilon()) {
-        SetW(GetW() / mag);
+        SetW(w() / mag);
         SetX(x() / mag);
         SetY(y() / mag);
         SetZ(z() / mag);

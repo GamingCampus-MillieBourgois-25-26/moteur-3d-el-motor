@@ -1,4 +1,4 @@
-#include "MVec3.hpp"
+#include "Maths/Headers/MVec3.hpp"
 
 template <typename T>
 Maths::Vec3<T>::Vec3(T m_x, T m_y, T m_z) : m_x(m_x), m_y(m_y), m_z(m_z) {}
@@ -30,10 +30,10 @@ template <typename T>
 static Maths::Vec3<T> Maths::Vec3<T>::Zero() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::PositiveInfinity() { return Maths::Vec3<T>(std::numeric_limits<T>::infinity()), std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity()); }
+static Maths::Vec3<T> Maths::Vec3<T>::PositiveInfinity() { return Maths::Vec3<T>(std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity()); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::NegativeInfinity() { return Maths::Vec3<T>(-std::numeric_limits<T>::infinity()), -std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()); }
+static Maths::Vec3<T> Maths::Vec3<T>::NegativeInfinity() { return Maths::Vec3<T>(-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()); }
 
 
 //////// PORPRETIES ////////

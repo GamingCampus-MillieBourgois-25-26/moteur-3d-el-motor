@@ -12,6 +12,7 @@ file(GLOB_RECURSE ENGINE_HEADERS
     Core/Headers/**/*.hpp
     Components/UserComponents/**/*.hpp
     Externals/**/*.h
+     Externals/**/*.hpp
 )
 
 add_library(Engine
