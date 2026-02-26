@@ -49,3 +49,10 @@ void Editor::EditorCore::InputUpdate(Engine::Application& app)
 	glfwGetCursorPos(window, &x, &y);
 	input.setMousePosition({ (float)getMouseEditorX(), (float)getMouseEditorY() });
 }
+
+
+void  Editor::EditorCore::startRuntime() {
+
+
+
+}

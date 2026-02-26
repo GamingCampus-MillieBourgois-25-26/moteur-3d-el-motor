@@ -6,13 +6,7 @@ file(GLOB_RECURSE RUNTIME_SOURCES
 
 file(GLOB_RECURSE RUNTIME_HEADERS
 	EngineBridge/Headers/*.hpp
-     Shader/**/*.hlsl
-)
-
-add_custom_target(copy_assets ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/Runtime/Shader"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/Shader" "${CMAKE_BINARY_DIR}/Runtime/Shader"
-    COMMENT "Copy ${CMAKE_CURRENT_SOURCE_DIR}/Shader to ${CMAKE_BINARY_DIR}/Runtime/Shader"
+    Shader/**/*.hlsl
 )
 
 

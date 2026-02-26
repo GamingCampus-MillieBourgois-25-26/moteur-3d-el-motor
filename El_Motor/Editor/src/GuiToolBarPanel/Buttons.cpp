@@ -2,6 +2,11 @@
 #include "External/imgui/includes/CoreIncludes/imgui.h"
 #include "External/imgui/includes/backend/imgui_impl_dx11.h"
 #include "External/imgui/includes/backend/imgui_impl_glfw.h"
+#include "External/ImGuiFileLog/includes/coreIncludes/ImGuiFileDialog.h"
+#include "Assets/MeshAsset/MeshAsset.hpp"
+#include "Entity/Component/MeshComponent.hpp"
+
+#include "Logger/Logger.hpp"
 #include <iostream>
 
 
@@ -16,22 +21,74 @@ void Editor::Buttons::init()
 
 bool Editor::Buttons::createProject()
 {
+
     if (ImGui::Button("Create Project", ImVec2(200, 50)))
     {
+        if(GetSessionName() != "Null")
         return true;
+
+        else
+        SetSessionNameStatus("Incorrect project name , try again");
     }
     return false;
 
 }
 
-bool Editor::Buttons::loadProject() {
+void Editor::Buttons::loadProject() {
 
     if (ImGui::Button("Load Project", ImVec2(200, 50)))
     {
-        return true;
+        SetLoadSession(true);
     }
-    return false;
 
+    if (GetLoadProject())
+    {
+        IGFD::FileDialogConfig config;
+        config.path = "Projects";
+
+        // Ouvre le dialog pour sélectionner un dossier
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "LoadProjectKey",          // key
+            "Choose Project Folder",   // title
+            nullptr,                   // filter null pour dossier
+            config                 // dossier de départ
+        );
+
+        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(200, 50)))
+        {
+            if (ImGuiFileDialog::Instance()->IsOk())
+            {
+                std::string folderPath = ImGuiFileDialog::Instance()->GetCurrentPath();
+                std::cout << "Selected project folder: " << folderPath << std::endl;
+
+                // Appelle ton ProjectManager avec ce dossier
+                SetProjectPath(folderPath);
+                SetLoadProjReady(true);
+            }
+
+            ImGuiFileDialog::Instance()->Close();
+            SetLoadSession(false); // reset toggle
+        }
+
+    }
+}
+
+void Editor::Buttons::projectName()
+{
+    static char bufferSessionName[256] = "";
+    ImGui::Text(GetSessionNameStatus().c_str());
+    if (ImGui::InputText("Project Name", bufferSessionName, sizeof(bufferSessionName), ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        if (CheckGoNameValid(bufferSessionName))
+        {
+            strncpy(bufferSessionName,"", sizeof(bufferSessionName));
+            bufferSessionName[sizeof(bufferSessionName) - 1] = '\0';
+            SetSessionNameStatus("Incorrect project name , try again");
+        }
+        else {
+            SetSessionName(bufferSessionName);
+        }
+    }
 }
 
 
@@ -51,14 +108,66 @@ bool Editor::Buttons::startRuntime()
 void Editor::Buttons::loadAssets(AssetManager& manager)
 {
 
+
+    if (ImGui::Button("Load Assets", ImVec2(80, 25)))
+    {
+        SetLoadAsset(true);
+    }
+ 
+
+
+    if (GetLoadAsset() == true) {
+
+        IGFD::FileDialogConfig config;
+        config.path = "Assets";
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "LoadAssetKey",
+            "Choose Asset",
+            ".png,.jpg,.obj,.fbx",
+            config
+        );
+
+        if (ImGuiFileDialog::Instance()->Display("LoadAssetKey", ImGuiWindowFlags_None, ImVec2(1500, 500)))
+        {
+
+
+
+            if (ImGuiFileDialog::Instance()->IsOk())
+            {
+                std::string filePath =
+                    ImGuiFileDialog::Instance()->GetFilePathName();
+
+                std::string extension =
+                    std::filesystem::path(filePath).extension().string();
+
+                if (extension == ".png" || extension == ".jpg")
+                {
+                    std::cout << "asset loaded" << std::endl;
+                }
+                else if (extension == ".obj" || extension == ".fbx")
+                {
+                    manager.Load<MeshAsset>(filePath);
+                    std::cout << "ok load";
+                }
+                else
+                {
+                    Engine::LoggerManager::Get().LogError(
+                        "Unsupported asset type : " + extension
+                    );
+                }
+            }
+            SetLoadAsset(false);
+            ImGuiFileDialog::Instance()->Close();
+        }
+    }
 }
 
-void Editor::Buttons::selectEntity(Engine::Scene& scene)
+void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {
     ImGui::BeginChild("Hierarchy", ImVec2(250, 0), true);
-    auto& currentSelected = scene.GetRootObjects();
+    auto& currentSelected = scene->GetRootObjects();
 
-    for (int i = 0; i < scene.GetRootObjects().size() ; i++)
+    for (int i = 0; i < scene->GetRootObjects().size() ; i++)
     {
        
         Engine::GameObject* go = currentSelected[i];
@@ -67,7 +176,7 @@ void Editor::Buttons::selectEntity(Engine::Scene& scene)
 
 
         ImGui::PushID(i);
-        std::string label = "Entity " + std::to_string(i); //Name des entité
+        std::string label = go->GetName();//Name des entité
         bool IsSelected = (selectedEntity == go);
 
 
@@ -84,24 +193,18 @@ void Editor::Buttons::selectEntity(Engine::Scene& scene)
     ImGui::EndChild();
 }
 
-void Editor::Buttons::showCmpnt(Engine::Scene& scene)
+void Editor::Buttons::showCmpnt()
 {
     if (!selectedEntity)
         return;
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
-    ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Always);
-    ImGui::SetNextWindowPos(ImVec2(800, 0)); 
-
-    const std::string windowName = "Components";
-	ImGui::Begin(windowName.c_str(), nullptr, ImGuiWindowFlags_NoResize);
-
   
 
 	ImGui::BeginChild("ComponentList", ImVec2(0, 0), true);//Component list child
 	addComponent();//Button to add component to the selected entity
-
+    ChangeGOName();
     auto& components = selectedEntity->GetAllComponents();
 
     for (size_t i = 0; i < components.size(); i++)
@@ -118,14 +221,14 @@ void Editor::Buttons::showCmpnt(Engine::Scene& scene)
         if (ImGui::Selectable(label.c_str(), isSelected))
         {
             selectedComponent = comp;
+            
         }
-
+        
         ImGui::PopID();
-		editComponent();//Show the component's editable properties if it's selected
+		//Show the component's editable properties if it's selected
     }
-
+    editComponent();
     ImGui::EndChild();
-    ImGui::End();
 }
 
 void Editor::Buttons::addComponent()
@@ -159,7 +262,8 @@ void Editor::Buttons::addComponent()
     {
         switch (currentItem)
         {
-        case 0: /* Add MeshRenderer */ break;
+        case 0: selectedEntity->AddComponent<Engine::MeshComponent>();
+            break;
         case 1: /* Add Camera */ break;
         case 2: /* Add Light */ break;
         }
@@ -171,7 +275,7 @@ void Editor::Buttons::delComponent()
 {
     if (selectedEntity->GetComponent<Engine::Transform>() != selectedComponent && selectedComponent && ImGui::Button("del"))
     {
-		//fonction pour del selectedComponent;
+		
 		
 	}
 }
@@ -180,33 +284,81 @@ void Editor::Buttons::editComponent()
 {
     if (!selectedComponent)
         return;
-    if(selectedComponent->gameObject->GetComponent<Engine::Transform>() == selectedComponent)
+
+    if (auto* transform = dynamic_cast<Engine::Transform*>(selectedComponent))
     {
-        Engine::Transform* transform = selectedComponent->gameObject->GetComponent<Engine::Transform>();
         ImGui::DragFloat3("Position", &transform->position.x, 0.1f);
         ImGui::DragFloat3("Rotation", &transform->rotation.x, 0.1f);
         ImGui::DragFloat3("Scale", &transform->scale.x, 0.1f);
-	}
-}
-
-
-void Editor::Buttons::createEntity(Engine::Scene& scene)
-{
-    if (ImGui::Button("create", ImVec2(100, 50)))
-    {
-       scene.CreateGameObject();
     }
 }
 
-void Editor::Buttons::delEntity(Engine::Scene& scene)
+bool Editor::Buttons::saveProject()
+{
+    if (ImGui::Button("Save", ImVec2(200, 50)))
+    {
+            return true;
+    }
+    return false;
+}
+
+
+void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
+{
+    if (ImGui::Button("create", ImVec2(100, 50)))
+    {
+       scene->CreateGameObject();
+    }
+}
+
+void Editor::Buttons::delGO(std::shared_ptr<Engine::Scene>& scene)
 {
     if (ImGui::Button("delete", ImVec2(100, 50)))
     {
         
-        scene.DestroyGameObject(selectedEntity);
+        scene->DestroyGameObject(selectedEntity);
         selectedEntity = nullptr;
         currentEntityLabel = "  ";
     }
+}
+
+void Editor::Buttons::ChangeGOName()
+{
+    if (!selectedEntity)
+        return;
+static char buffer[256] = "";
+    
+    Engine::GameObject* previousGO = nullptr;
+    
+
+    if (selectedEntity != previousGO)
+    {
+        strncpy(buffer, selectedEntity->GetName().c_str(), sizeof(buffer));
+        buffer[sizeof(buffer) - 1] = '\0';
+        previousGO = selectedEntity;
+    }
+
+
+    if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
+    {
+        if (CheckGoNameValid(buffer))//true if there is only spaces in the buffer
+        {
+            selectedEntity->SetName("GameObject");
+        }
+        else
+        {
+            selectedEntity->SetName(buffer);
+        }
+    }
+}
+
+bool Editor::Buttons::CheckGoNameValid(const std::string& str)
+{
+    return std::all_of(str.begin(), str.end(),
+        [](unsigned char c)
+        {
+            return std::isspace(c);
+        });
 }
 
 

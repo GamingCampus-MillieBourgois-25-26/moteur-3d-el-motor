@@ -27,4 +27,5 @@ FetchContent_MakeAvailable(glfw JoltPhysics)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)
-add_subdirectory(Runtime) 
+add_subdirectory(Runtime)
+add_subdirectory(Game)

@@ -1,16 +1,19 @@
 #include "D3D11/D3D11.hpp"
+#include "Assets/MeshAsset/MeshAsset.hpp"
 
 #include <d3dcompiler.h>
 #include <wrl.h>
 #include <memory>
 #include <iostream>
 
+
 #pragma comment(lib, "d3dcompiler.lib")
 
 namespace Engine
 {
-	D3D11::D3D11(GLFWwindow* window) {
-		myWindow = glfwGetWin32Window(window); // Récupère le handle de la fenêtre à partir de GLFW
+	D3D11::D3D11(IWindow& window)
+	{
+		myWindow = static_cast<HWND>(window.GetNativeWindow());
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = initSwapChainDesc(); // variable locale pour la description du swap chain, initialisée avec les paramètres souhaités
 
 		D3D11CreateDeviceAndSwapChain(
@@ -26,40 +29,83 @@ namespace Engine
 			nullptr,// Feature Level
 			&pContext
 		);
-		ID3D11Resource* pBackBuffer = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
 		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
 		if (pDevice != nullptr) {
-			pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
 		}
-		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
+
+		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
+		wrl::ComPtr<ID3DBlob> blob;
+
+		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &blob);
+		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
+
+		hr = pDevice->CreateVertexShader(blob->GetBufferPointer(),
+			blob->GetBufferSize(),
+			nullptr,
+			&mVertexShader);
+		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
+
+		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", &blob);
+		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
+
+		hr = pDevice->CreatePixelShader(blob->GetBufferPointer(),
+			blob->GetBufferSize(),
+			nullptr,
+			&mPixelShader);
+		if (FAILED(hr)) { std::cout << "CreatePixelShader failed\n"; return; }
+
+		// === INPUT LAYOUT (basé sur le VS) ===
+		const D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24,D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+
+		D3D11_BUFFER_DESC bd = {};
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(ObjectColorBuffer);
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+
+		hr = pDevice->CreateInputLayout(
+			layout,
+			(UINT)std::size(layout),
+			blob->GetBufferPointer(),
+			blob->GetBufferSize(),
+			&mInputLayout);
+
+		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
 	}
 
-	D3D11::~D3D11() {
-		if (pSwapChain != nullptr) pSwapChain->Release(); // Libère le swap chain
-		if (pContext != nullptr) pContext->Release(); // Libère le contexte de rendu
-		if (pDevice != nullptr) pDevice->Release(); // Libère le device
-		if (pTarget != nullptr) pTarget->Release(); // Libère la vue de rendu
-	}
-
-
-	IDXGIAdapter1* D3D11::searchForAdapters() {
-		IDXGIFactory1* pFactory = nullptr; // Pointeur pour la factory DXGI
-		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
+	IDXGIAdapter1* D3D11::searchForAdapters()
+	{
+		wrl::ComPtr<IDXGIFactory1> pFactory = nullptr;
+		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory);
 
 		IDXGIAdapter1* pAdapter = nullptr;
 		IDXGIAdapter1* bestAdapter = nullptr;
 		SIZE_T maxVRam = 0;
 
-		for (UINT i = 0; pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i) {
+		for (UINT i = 0; pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i)
+		{
 			DXGI_ADAPTER_DESC1 desc;
 			pAdapter->GetDesc1(&desc);
+
 			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-				continue; // Ignore les adaptateurs logiciels
-			if (desc.DedicatedVideoMemory > maxVRam) {
+				continue;
+
+			if (desc.DedicatedVideoMemory > maxVRam)
+			{
 				maxVRam = desc.DedicatedVideoMemory;
-				bestAdapter = pAdapter; // Met à jour le meilleur adaptateur trouvé jusqu'à présent
+				bestAdapter = pAdapter;
 			}
 		}
+
 		return bestAdapter;
 	}
 
@@ -91,92 +137,62 @@ namespace Engine
 
 	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
 		float clearColor[] = { r, g, b, 1.0f }; // Couleur de nettoyage (RGBA)
-		pContext->ClearRenderTargetView(pTarget, clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
+		if (!pTarget) return;
+		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 	}
 
-
-	void Engine::D3D11::DrawTriangleTest()
+	void D3D11::DrawShape(const MeshAsset& mesh)
 	{
-		namespace wrl = Microsoft::WRL;
-		HRESULT hr;
+		// === SHADERS ===
+		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+		pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-		struct Vertex {
-			float x, y;
-		};
+		// === INPUT LAYOUT ===
+		pContext->IASetInputLayout(mInputLayout.Get());
 
-		// Triangle centré, bien visible
-		const Vertex vertices[] = {
-			{ 0.0f,  0.9f },
-			{ 0.9f, -0.9f },
-			{-0.9f, -0.9f }
-		};
+		// === MESH BIND (MeshAsset) ===
+		mesh.Bind(pContext.Get());
 
-		// --- Vertex buffer ---
-		ID3D11Buffer* pVertexBuffer = nullptr;
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(vertices);
-		bufferDesc.StructureByteStride = sizeof(Vertex);
+		// === CONSTANT BUFFER COULEUR ===
+		ObjectColorBuffer buffer;
+		buffer.objColor = mesh.GetColor();
+		buffer.padding = 0.0f;
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = vertices;
+		pContext->UpdateSubresource(
+			mObjectColorBuffer.Get(),
+			0,
+			nullptr,
+			&buffer,
+			0,
+			0
+		);
 
-		hr = pDevice->CreateBuffer(&bufferDesc, &initData, &pVertexBuffer);
-		if (FAILED(hr)) { std::cout << "Failed to create vertex buffer\n"; return; }
+		pContext->PSSetConstantBuffers(
+			0,
+			1,
+			mObjectColorBuffer.GetAddressOf()
+		);
 
-		const UINT stride = sizeof(Vertex);
-		const UINT offset = 0;
-		pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+		// === RENDER TARGET ===
+		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
+		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), nullptr);
 
-		// --- Shaders ---
-		ID3DBlob* pBlob = nullptr;
-		ID3D11PixelShader* pPixelShader = nullptr;
-		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", &pBlob);
-		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
-		hr = pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-		if (FAILED(hr)) { std::cout << "CreatePixelShader failed\n"; return; }
-		pContext->PSSetShader(pPixelShader, nullptr, 0);
-
-		ID3D11VertexShader* pVertexShader = nullptr;
-		hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &pBlob);
-		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
-		hr = pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
-		pContext->VSSetShader(pVertexShader, nullptr, 0);
-
-		// --- Input layout ---
-		ID3D11InputLayout* pInputLayout = nullptr;
-		const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		hr = pDevice->CreateInputLayout(inputElementDesc, (UINT)std::size(inputElementDesc),
-			pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout);
-		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
-		pContext->IASetInputLayout(pInputLayout);
-
-		// --- Bind render target ---
-		pContext->OMSetRenderTargets(1, &pTarget, nullptr);
-		pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// --- Viewport dynamique ---
+		// === VIEWPORT ===
 		RECT rect;
 		GetClientRect(myWindow, &rect);
-		float width = static_cast<float>(rect.right - rect.left);
-		float height = static_cast<float>(rect.bottom - rect.top);
 
 		D3D11_VIEWPORT viewport = {};
-		viewport.Width = width;
-		viewport.Height = height;
+		viewport.Width = float(rect.right - rect.left);
+		viewport.Height = float(rect.bottom - rect.top);
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
+
 		pContext->RSSetViewports(1, &viewport);
 
-		// --- Draw call ---
-		pContext->Draw((UINT)std::size(vertices), 0);
-
+		// === DRAW ===
+		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
 
 }

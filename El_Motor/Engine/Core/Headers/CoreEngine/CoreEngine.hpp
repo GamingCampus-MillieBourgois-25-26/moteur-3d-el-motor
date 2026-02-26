@@ -12,13 +12,12 @@ namespace Engine
 
     class CoreEngine {
     private:
-		// Besoin d'ajouter les autres syst�mes comme le rendu, la gestion des sc�nes, etc.
+		// Besoin d'ajouter les autres systemes comme le rendu, la gestion des scenes, etc.
         InputManager inputManager;
         TimeManager timeManager;
 		LoggerManager loggerManager;
 		AssetManager assetManager;
-		Scene scene;
-
+		std::shared_ptr<Scene> defaultScene;
         //.... assetManager;
 
         bool running = false;
@@ -40,7 +39,11 @@ namespace Engine
 		/*WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
 		Application& getApplication() { return application; }*/
 		AssetManager& getAssetManager() { return assetManager; }
-		Scene& getScene() { return scene; }
+		std::shared_ptr<Scene>& getScene() { return defaultScene; }
+		
+
+
+		void SetScene(std::shared_ptr<Scene> scene) { defaultScene = scene; }
 
 
     };

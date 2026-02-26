@@ -3,14 +3,21 @@
 
 namespace Engine {
     // Constructor
-    GameObject::GameObject() {
+    GameObject::GameObject(const std::string& name)
+        : name(name)
+    {
         AddComponent<Transform>();
-        Engine::LoggerManager::Get().LogInfo("GameObject created");
+
+        Engine::LoggerManager::Get().LogInfo(
+            "GameObject created: " + this->name
+        );
     }
 
     // Destructor
     GameObject::~GameObject() {
-        Engine::LoggerManager::Get().LogInfo("GameObject destroyed");
+        Engine::LoggerManager::Get().LogInfo(
+            "GameObject destroyed: " + name
+        );
 
         // Destroy components
         for (Component* c : components) {
@@ -44,6 +51,19 @@ namespace Engine {
 
         for (GameObject* child : children)
             child->Update(dt);
+    }
+
+    // Name
+    const std::string& GameObject::GetName() const {
+        return name;
+    }
+
+    void GameObject::SetName(const std::string& newName) {
+        name = newName;
+
+        Engine::LoggerManager::Get().LogInfo(
+            "GameObject renamed to: " + name
+        );
     }
 
     // Hierarchy

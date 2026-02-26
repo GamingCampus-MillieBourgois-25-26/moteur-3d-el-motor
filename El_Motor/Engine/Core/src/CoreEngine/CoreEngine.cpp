@@ -6,6 +6,7 @@ void Engine::CoreEngine::init() {
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	
+
 	running = true;
 
 }
@@ -14,7 +15,7 @@ void Engine::CoreEngine::run() {
 		timeManager.Update();
 		float dt = timeManager.GetDeltaTime();
 		inputManager.update();
-		scene.Update(dt);
+		getScene()->Update(dt);
 }
 
 void Engine::CoreEngine::shutdown() {

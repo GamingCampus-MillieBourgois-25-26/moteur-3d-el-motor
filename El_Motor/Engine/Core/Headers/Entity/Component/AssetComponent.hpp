@@ -11,36 +11,38 @@ namespace Engine {
 
     class AssetComponent : public Component {
     private:
-        Asset* m_asset = nullptr;
+        std::shared_ptr<Asset> m_asset;
 
     public:
         AssetComponent() = default;
 
         template<typename T>
-        T* GetAsset() const {
-            return dynamic_cast<T*>(m_asset);
+        std::shared_ptr<T> GetAsset() const {
+            return std::dynamic_pointer_cast<T>(m_asset);
         }
 
-        Asset* GetRawAsset() const {
+        std::shared_ptr<Asset> GetRawAsset() const {
             return m_asset;
         }
 
         template<typename T>
         void LoadAsset(const std::string& path) {
-            static_assert(std::is_base_of<Asset, T>::value, "T doit hériter de Asset");
-            auto asset = AssetManager::Get().Load<T>(path);
-            m_asset = asset.get();
+            static_assert(std::is_base_of<Asset, T>::value,
+                "T doit hériter de Asset");
+
+            m_asset = AssetManager::Get().Load<T>(path);
         }
 
-        void SetAsset(Asset* asset) {
+        void SetAsset(const std::shared_ptr<Asset>& asset) {
             m_asset = asset;
         }
 
         void Start() override {}
         void Update(float dt) override {}
+
         void OnDestroy() override {
-            m_asset = nullptr;
+            m_asset.reset();
         }
     };
 
-} // namespace Engine
+}

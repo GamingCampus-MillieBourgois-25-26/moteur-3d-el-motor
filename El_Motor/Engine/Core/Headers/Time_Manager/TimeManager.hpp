@@ -22,6 +22,6 @@ namespace Engine
 
 		Clock::time_point lastTime;
 		float deltaTime = 0.0f;
-		float fps;
+		float fps = 0;
 	};
 }
