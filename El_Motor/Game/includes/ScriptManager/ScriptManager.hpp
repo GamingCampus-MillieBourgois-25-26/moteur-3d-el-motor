@@ -15,12 +15,11 @@ public:
 	ScriptManager(){}
 	~ScriptManager(){}
 
-	 
-
 
 	void createScript(std::string scriptName , std::filesystem::path& directory);
 
 	void StartAll();
+
 
 	void updateScripts(float deltatime);
 

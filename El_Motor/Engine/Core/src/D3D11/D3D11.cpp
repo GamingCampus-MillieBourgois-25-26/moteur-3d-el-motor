@@ -1,4 +1,5 @@
 #include "D3D11/D3D11.hpp"
+#include "Assets/MeshAsset/MeshAsset.hpp"
 
 #include <d3dcompiler.h>
 #include <wrl.h>
@@ -28,15 +29,14 @@ namespace Engine
 			nullptr,// Feature Level
 			&pContext
 		);
-		ID3D11Resource* pBackBuffer = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
 		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
 		if (pDevice != nullptr) {
-			pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
 		}
-		pBackBuffer->Release(); // Libère le buffer de rendu arrière, car il n'est plus nécessaire après la création de la vue de rendu
 
 		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
-		Microsoft::WRL::ComPtr<ID3DBlob> blob;
+		wrl::ComPtr<ID3DBlob> blob;
 
 		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &blob);
 		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
@@ -59,9 +59,18 @@ namespace Engine
 		// === INPUT LAYOUT (basé sur le VS) ===
 		const D3D11_INPUT_ELEMENT_DESC layout[] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,
-			  D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24,D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
+
+
+		D3D11_BUFFER_DESC bd = {};
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(ObjectColorBuffer);
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
 
 		hr = pDevice->CreateInputLayout(
 			layout,
@@ -73,24 +82,30 @@ namespace Engine
 		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
 	}
 
-	IDXGIAdapter1* D3D11::searchForAdapters() {
-		Microsoft::WRL::ComPtr<IDXGIFactory1> pFactory = nullptr; // Pointeur pour la factory DXGI
-		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory); // On créé une instance de la factory DXGI pour pouvoir énumérer les adaptateurs disponibles
+	IDXGIAdapter1* D3D11::searchForAdapters()
+	{
+		wrl::ComPtr<IDXGIFactory1> pFactory = nullptr;
+		CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory);
 
 		IDXGIAdapter1* pAdapter = nullptr;
 		IDXGIAdapter1* bestAdapter = nullptr;
 		SIZE_T maxVRam = 0;
 
-		for (UINT i = 0; pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i) {
+		for (UINT i = 0; pFactory->EnumAdapters1(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i)
+		{
 			DXGI_ADAPTER_DESC1 desc;
 			pAdapter->GetDesc1(&desc);
+
 			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-				continue; // Ignore les adaptateurs logiciels
-			if (desc.DedicatedVideoMemory > maxVRam) {
+				continue;
+
+			if (desc.DedicatedVideoMemory > maxVRam)
+			{
 				maxVRam = desc.DedicatedVideoMemory;
-				bestAdapter = pAdapter; // Met à jour le meilleur adaptateur trouvé jusqu'à présent
+				bestAdapter = pAdapter;
 			}
 		}
+
 		return bestAdapter;
 	}
 
@@ -122,11 +137,11 @@ namespace Engine
 
 	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
 		float clearColor[] = { r, g, b, 1.0f }; // Couleur de nettoyage (RGBA)
-		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 		if (!pTarget) return;
+		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
 	}
 
-	void D3D11::DrawShape(UINT indexCount)
+	void D3D11::DrawShape(const MeshAsset& mesh)
 	{
 		// === SHADERS ===
 		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
@@ -136,13 +151,31 @@ namespace Engine
 		pContext->IASetInputLayout(mInputLayout.Get());
 
 		// === MESH BIND (MeshAsset) ===
-		// mesh.Bind(context);
-		//  -> IASetVertexBuffers
-		//  -> IASetIndexBuffer
-		//  -> IASetPrimitiveTopology
+		mesh.Bind(pContext.Get());
+
+		// === CONSTANT BUFFER COULEUR ===
+		ObjectColorBuffer buffer;
+		buffer.objColor = mesh.GetColor();
+		buffer.padding = 0.0f;
+
+		pContext->UpdateSubresource(
+			mObjectColorBuffer.Get(),
+			0,
+			nullptr,
+			&buffer,
+			0,
+			0
+		);
+
+		pContext->PSSetConstantBuffers(
+			0,
+			1,
+			mObjectColorBuffer.GetAddressOf()
+		);
 
 		// === RENDER TARGET ===
-		pContext->OMSetRenderTargets(1, &pTarget, nullptr);
+		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
+		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), nullptr);
 
 		// === VIEWPORT ===
 		RECT rect;
@@ -159,8 +192,7 @@ namespace Engine
 		pContext->RSSetViewports(1, &viewport);
 
 		// === DRAW ===
-		// indexCount = mesh.GetIndexCount()
-		pContext->DrawIndexed(indexCount, 0, 0);
+		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
 
 }

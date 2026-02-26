@@ -5,6 +5,13 @@
 #include <stdexcept>
 #include <cstdio>
 
+
+//MeshAsset::MeshAsset(const std::string& path,const DirectX::XMFLOAT3& color): mColor(color)
+//{
+//    this->path = path;
+//}
+
+
 void MeshAsset::Load()
 {
     std::ifstream file(path);
@@ -84,15 +91,20 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
     if (!device)
         throw std::runtime_error("Device is null");
 
+    if (vertices.empty() || indices.empty())
+        return;
+
     D3D11_BUFFER_DESC vbd{};
     vbd.Usage = D3D11_USAGE_DEFAULT;
     vbd.ByteWidth = UINT(vertices.size() * sizeof(Vertex));
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
+
+
     D3D11_SUBRESOURCE_DATA vinit{};
     vinit.pSysMem = vertices.data();
 
-    HRESULT hr = device->CreateBuffer(&vbd, &vinit, &vertexBuffer);
+    HRESULT hr = device->CreateBuffer(&vbd, &vinit, vertexBuffer.GetAddressOf());
 
     if (FAILED(hr))
         throw std::runtime_error("Failed to create vertex buffer");
@@ -105,13 +117,13 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
     D3D11_SUBRESOURCE_DATA iinit{};
     iinit.pSysMem = indices.data();
 
-    hr = device->CreateBuffer(&ibd, &iinit, &indexBuffer);
+    hr = device->CreateBuffer(&ibd, &iinit, indexBuffer.GetAddressOf());
 
     if (FAILED(hr))
         throw std::runtime_error("Failed to create index buffer");
 }
 
-void MeshAsset::Bind(ID3D11DeviceContext* context)
+void MeshAsset::Bind(ID3D11DeviceContext* context) const
 {
     UINT stride = sizeof(Vertex);
     UINT offset = 0;
@@ -119,13 +131,13 @@ void MeshAsset::Bind(ID3D11DeviceContext* context)
     context->IASetVertexBuffers(
         0,
         1,
-        &vertexBuffer,
+        vertexBuffer.GetAddressOf(),
         &stride,
         &offset
     );
 
     context->IASetIndexBuffer(
-        indexBuffer,
+        indexBuffer.Get(),
         DXGI_FORMAT_R32_UINT,
         0
     );
@@ -135,18 +147,10 @@ void MeshAsset::Bind(ID3D11DeviceContext* context)
     );
 }
 
-void MeshAsset::Draw(ID3D11DeviceContext* context)
-{
-    context->DrawIndexed(
-        (UINT)indices.size(),
-        0,
-        0
-    );
-}
 
 bool MeshAsset::IsReady() const
 {
-    return vertexBuffer != nullptr && indexBuffer != nullptr;
+    return vertexBuffer && indexBuffer;
 }
 
 UINT MeshAsset::GetIndexCount() const
@@ -156,18 +160,9 @@ UINT MeshAsset::GetIndexCount() const
 
 void MeshAsset::Unload()
 {
-    if (vertexBuffer)
-    {
-        vertexBuffer->Release();
-        vertexBuffer = nullptr;
-    }
-
-    if (indexBuffer)
-    {
-        indexBuffer->Release();
-        indexBuffer = nullptr;
-    }
-
     vertices.clear();
     indices.clear();
+
+    vertexBuffer.Reset();
+    indexBuffer.Reset();
 }

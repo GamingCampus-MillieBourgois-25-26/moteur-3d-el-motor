@@ -3,7 +3,6 @@
 file(GLOB_RECURSE ENGINE_SOURCES
     Core/src/**/*.cpp 
     Components/UserComponents/**/*.cpp
-
 )
 
 
@@ -30,5 +29,5 @@ target_link_libraries(Engine PRIVATE
     glfw
     d3d11
     dxgi
-    d3dcompiler    
+    d3dcompiler
 )

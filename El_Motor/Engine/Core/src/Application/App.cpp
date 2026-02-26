@@ -12,7 +12,7 @@ namespace Engine
 		if (d3d11) {
 
 			d3d11->ClearBackBuffer(0.f, 0.f, 1.f); // Nettoie le back buffer avec une couleur grise (à modifier)
-			//d3d11->DrawShape(); // Dessine un triangle de test (à remplacer par le rendu réel du moteur)
+			// Ici ajout des appels pour dessiner les formes ou objets 3D en utilisant d3d11->DrawShape() 
 			d3d11->Present(); // Appelle la méthode Present de D3D11 pour présenter le swap chain à l'écran
 		}
 	}
