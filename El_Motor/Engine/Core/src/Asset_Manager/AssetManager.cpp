@@ -23,7 +23,7 @@ void AssetManager::Reload(const std::string& path)
 
         if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(it->second))
         {
-            mesh->CreateBuffers(m_device);
+            mesh->CreateBuffers(m_device.Get());
         }
     }
 }
