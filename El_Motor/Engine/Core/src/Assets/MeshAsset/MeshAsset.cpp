@@ -125,6 +125,7 @@ void MeshAsset::LoadTestCube()
         4,0,3,
         4,3,7
     };
+    this->SetColor(1.0f, 0.0f, 0.0f);
 
     indices.assign(std::begin(ind), std::end(ind));
 }
@@ -135,7 +136,7 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
         throw std::runtime_error("Device is null");
 
     if (vertices.empty() || indices.empty())
-        return;
+        throw std::runtime_error("Cannot create buffers");
 
     D3D11_BUFFER_DESC vbd{};
     vbd.Usage = D3D11_USAGE_DEFAULT;

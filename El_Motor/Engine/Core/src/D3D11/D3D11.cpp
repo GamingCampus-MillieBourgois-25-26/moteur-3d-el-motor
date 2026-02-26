@@ -24,15 +24,15 @@ namespace Engine
 			nullptr, 0, // Feature Levels
 			D3D11_SDK_VERSION,
 			&swapChainDesc, // Utilise la variable locale, qui est une l-value
-			&pSwapChain,
-			&pDevice,
+			pSwapChain.GetAddressOf(),
+			pDevice.GetAddressOf(),
 			nullptr,// Feature Level
-			&pContext
+			pContext.GetAddressOf()
 		);
 		Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
 		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
 		if (pDevice != nullptr) {
-			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget); // Crée une vue de rendu à partir du buffer de rendu arrière
+			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.GetAddressOf()); // Crée une vue de rendu à partir du buffer de rendu arrière
 		}
 
 		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
@@ -59,18 +59,18 @@ namespace Engine
 		// === INPUT LAYOUT (basé sur le VS) ===
 		const D3D11_INPUT_ELEMENT_DESC layout[] =
 		{
-				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24,D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position),D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal),D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv),D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
 
-		D3D11_BUFFER_DESC bd = {};
+		/*D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.ByteWidth = sizeof(ObjectColorBuffer);
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());*/
 
 		hr = pDevice->CreateInputLayout(
 			layout,
@@ -158,7 +158,7 @@ namespace Engine
 		buffer.objColor = mesh.GetColor();
 		buffer.padding = 0.0f;
 
-		pContext->UpdateSubresource(
+		/*pContext->UpdateSubresource(
 			mObjectColorBuffer.Get(),
 			0,
 			nullptr,
@@ -171,7 +171,7 @@ namespace Engine
 			0,
 			1,
 			mObjectColorBuffer.GetAddressOf()
-		);
+		);*/
 
 		// === RENDER TARGET ===
 		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
