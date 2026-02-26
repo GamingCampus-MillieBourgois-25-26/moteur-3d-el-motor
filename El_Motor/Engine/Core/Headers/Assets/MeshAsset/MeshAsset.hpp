@@ -41,9 +41,9 @@ public:
 
     
 
-    void CreateBuffers(ID3D11Device* device);
+    void CreateBuffers(ID3D11Device* device) override;
 
-    void Bind(ID3D11DeviceContext* context) const;
+    void Bind(ID3D11DeviceContext* context) const override;
 
     bool IsReady() const;
     UINT GetIndexCount() const;

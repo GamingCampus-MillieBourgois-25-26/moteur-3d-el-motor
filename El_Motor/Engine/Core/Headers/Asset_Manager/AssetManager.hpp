@@ -6,6 +6,11 @@
 #include <iostream>
 #include <d3d11.h>
 #include "Assets/Asset.hpp"
+#include "Assets/MeshAsset/MeshAsset.hpp"
+#include <wrl.h>
+
+
+namespace wrl = Microsoft::WRL;
 
 class AssetManager {
 public:
@@ -23,16 +28,19 @@ public:
         std::shared_ptr<T> asset = std::make_shared<T>();
         asset->path = path;
         asset->Load();
+        if (m_device)
+            asset->CreateBuffers(m_device.Get());
 
         m_assets[path] = asset;
         return asset;
     }
-    
+    void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
     void Reload(const std::string& path);
     void UnloadAll();
 
     const std::unordered_map<std::string, std::shared_ptr<Asset>>& GetAssets() const { return m_assets; }
-
+    ID3D11Device* GetDevice() const { return m_device.Get(); }
+    ID3D11DeviceContext* GetContext() const { return m_context.Get(); }
     AssetManager() = default;
     ~AssetManager();
 
@@ -42,6 +50,7 @@ public:
 private:
     std::unordered_map<std::string, std::shared_ptr<Asset>> m_assets;
 
-
+    wrl::ComPtr<ID3D11Device> m_device = nullptr;
+    wrl::ComPtr<ID3D11DeviceContext> m_context = nullptr;
    
 };
