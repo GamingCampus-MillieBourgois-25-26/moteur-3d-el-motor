@@ -1,4 +1,19 @@
-float4 main(float2 pos : POSITION) : SV_Position
+struct VSOut
 {
-    return float4(pos.x , pos.y, 0.0f, 1.0f);
+    float4 pos : SV_POSITION;
+    float3 normal : NORMAL;
+    float2 uv : TEXCOORD0;
+};
+
+VSOut main(float3 position : POSITION,
+           float3 normal : NORMAL,
+           float2 uv : TEXCOORD0)
+{
+    VSOut output;
+
+    output.pos = float4(position, 1.0f);
+    output.normal = normal;
+    output.uv = uv;
+
+    return output;
 }

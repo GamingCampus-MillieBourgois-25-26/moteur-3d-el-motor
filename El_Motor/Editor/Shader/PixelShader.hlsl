@@ -1,5 +1,9 @@
+cbuffer ObjectColor : register(b0)
+{
+    float3 objColor;
+};
+
 float4 main() : SV_Target
 {
-    return float4(1.0f, 0.0f, 0.0f, 1.0f);
-
+    return float4(objColor, 1.0f);
 }
