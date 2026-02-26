@@ -1,5 +1,9 @@
 #include "MMatrix4.hpp"
 
+
+template<typename T>
+Maths::Mat4<T>::Mat4() { tabMat.fill(static_cast<T>(0)); }
+
 template<typename T>
 Maths::Mat4<T>::Mat4(T u, T d, T t, T q, T c, T si, T se, T h, T n, T di, T on, T dou, T tre, T qua, T qui, T sei)
 {
@@ -471,7 +475,7 @@ Maths::Mat4<T> Maths::Mat4<T>::TRS( const Maths::Vec3<T>& position, const Maths:
 }
 
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, Maths::Vec3<T>& to, Maths::Vec3<T>& up)
+Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3<T>& to, Maths::Vec3<T>& up)
 {
 	// forward = direction vers la cible
 	Maths::Vec3<T> forward = (to - from);

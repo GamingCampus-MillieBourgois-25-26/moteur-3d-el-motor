@@ -375,6 +375,15 @@ static void Maths::Quat<T>::Inverse()
 
 
 template<typename T>
+static Maths::Vec3<T> Maths::Quat<T>::MulltiplyQuatVec(const Vec3<T> v, const Maths::Quat<T>& q) {
+    Maths::Quat<T> vQuat = Maths::Quat<T>(v.x(), v.y(), v.z(), 0.0f);
+
+    Maths::Quat<T> result = q * vQuat * q.Inverse();
+    return Maths::Vec3<T>(result.x, result.y, result.z);
+}
+
+
+template<typename T>
 static T Maths::Quat<T>::Angle(const Quat<T>& a, const Quat<T>& b) { // Renvoie l'angle entre deux quaternions en radians
     T d = absValue(Dot(a.Normalized(), b.Normalized()));
     d = minValue(d, static_cast<T>(1));

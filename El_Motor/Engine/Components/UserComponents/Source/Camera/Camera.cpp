@@ -1,6 +1,9 @@
 #include "Camera/Camera.hpp"
 #include "Input_Manager/InputManager.hpp"
 
+float ToRadians(float degree) {
+    return degree * Maths::Quatf::PI / 180;
+}
 
 void Camera::RotationUpdate(Engine::InputManager& input)
 {
@@ -12,17 +15,19 @@ void Camera::RotationUpdate(Engine::InputManager& input)
     float yaw = dx * mouseSensitivity;
     float pitch = dy * mouseSensitivity;
 
-    //Maths::Quatf qYaw = Maths::angleAxis(yaw, Maths::Vec3f(0.0f, 1.0f, 0.0f));
-    //Maths::Quatf qPitch = glm::angleAxis(pitch, right);
+    Maths::Quatf qYaw = Maths::Quatf::AngleAxis(yaw, Maths::Quatf(0.0f, 1.0f, 0.0f, 0.0f));
 
-    //rotation = qPitch * qYaw * rotation;
+    Maths::Quatf QuatR = Maths::Quatf::FromEuler(right);
+    Maths::Quatf qPitch = Maths::Quatf::AngleAxis(pitch, QuatR);
+
+    rotation = qPitch * qYaw * rotation;
 }
 
-void Camera::FowardUpdate(){ /*forward = Maths::Vec3f(0.0f, 0.0f, 1.0f) * rotation;*/ }
+void Camera::FowardUpdate() { forward = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 0.0f, 1.0f), rotation); }
 
-void Camera::RightUpdate(){ /*right = Maths::Vec3f(1.0f, 0.0f, 0.0f) * rotation;*/ }
+void Camera::RightUpdate(){ right = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(1.0f, 0.0f, 0.0f), rotation); }
 
-void Camera::UpUpdate(){ /*up = Maths::Vec3f(0.0f, 1.0f, 0.0f) * rotation;*/ }
+void Camera::UpUpdate(){ up = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 1.0f, 0.0f), rotation); }
 
 Camera::Camera() : projection(), view(), VP()
 {
@@ -37,14 +42,14 @@ Camera::Camera() : projection(), view(), VP()
     nearPlane = 0.01f;
     farPlane = 150.0f;
 
-    fov = 0 /*glm::radians(90.0f)*/;
+    fov = ToRadians(90.0f);
 }
 
 ///////// CALCUL DE MATRICES //////////
 
-void Camera::ProjectionMatrix(){ /*Maths::Mat4f proj = XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);*/ }
+void Camera::ProjectionMatrix(){ Maths::Mat4f proj = Maths::Mat4f::Perspective4x4(fov, aspectRatio, nearPlane, farPlane); }
 
-void Camera::ViewMatrix(){ /*Maths::Mat4f viewM = glm::lookAtLH(position, position + forward, up);*/ }
+void Camera::ViewMatrix(){ Maths::Mat4f viewM = Maths::Mat4f::LookAt4x4(position, position + forward, up); }
 
 void Camera::VPMatrix(){ Maths::Mat4f viewMP = view * projection; }
 
@@ -83,11 +88,11 @@ void Camera::MouseUpdate(Engine::InputManager& input)
     if (pitch < -89.0f)
         pitch = -89.0f;
 
-	//float radYaw = glm::radians(yaw);
-    //float radPitch = glm::radians(pitch);
+	float radYaw = ToRadians(yaw);
+    float radPitch = ToRadians(pitch);
 
-	//Maths::Vec3f direction = Maths::Vec3f(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch));
-	//direction = glm::normalize(direction);
+	Maths::Vec3f direction = Maths::Vec3f(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch));
+	direction = direction.Normalized();
 
 }
 

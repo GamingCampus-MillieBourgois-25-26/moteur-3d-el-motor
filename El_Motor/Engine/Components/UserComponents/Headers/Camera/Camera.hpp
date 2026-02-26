@@ -52,4 +52,5 @@ public:
     Camera();
 
     virtual void Update(Engine::InputManager& input) = 0;
+    float ToRadians(float degree);
 };

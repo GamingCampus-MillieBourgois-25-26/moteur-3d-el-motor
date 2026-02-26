@@ -63,6 +63,7 @@ namespace Maths {
         static Quat Cross(const Quat<T>& b);
         
 
+        static Vec3<T> MulltiplyQuatVec(const Vec3<T> v, const Quat<T>& q);
         static T Angle(const Quat& a, const Quat& b);
         static T Dot(const Quat& a, const Quat& b);
 

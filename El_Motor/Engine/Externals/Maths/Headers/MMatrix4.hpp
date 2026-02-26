@@ -17,8 +17,8 @@ namespace Maths {
 		float deg2rad = 3.14159265f / 180.f;
 
 	public:
+		Mat4();
 		Mat4(T u, T d, T t, T q, T c, T si, T se, T h, T n, T di, T on, T dou, T tre, T qua, T qui, T sei);
-		Mat4() = default;
 		~Mat4() = default;
 
 		//////// STATIC PORPRETIES ////////
@@ -57,7 +57,7 @@ namespace Maths {
 		/////// STATIC METHODS ////////
 
 		static Mat4 TRS(const Maths::Vec3<T>& position, const Maths::Vec3<T>& rotationEuler, const Maths::Vec3<T>& scale);
-		static Mat4 LookAt4x4(Maths::Vec3<T>& from, Maths::Vec3<T>& to, Maths::Vec3<T>& up);
+		static Mat4 LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3<T>& to, Maths::Vec3<T>& up);
 		static Mat4 Ortho4x4(T left, T right, T bottom, T top, T zNear, T zFar);
 		static Mat4 Perspective4x4(T fovY, T aspect, T near, T far);
 		static Mat4 TranslateVec4x4(const Maths::Vec3<T>& t);
