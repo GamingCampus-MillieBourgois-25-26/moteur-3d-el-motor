@@ -36,6 +36,7 @@ public:
 	void SetColor(const DirectX::XMFLOAT3& newColor) { mColor = newColor; }
 
     void Load() override;
+    void LoadTestCube();
     void Unload() override;
 
     
