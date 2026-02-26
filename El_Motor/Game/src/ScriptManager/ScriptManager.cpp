@@ -1,7 +1,7 @@
 #include "ScriptManager/ScriptManager.hpp"
 #include "UserScript/UserScript.hpp"
 #include <fstream>
-#include <filesystem>
+
 
 void ScriptManager::createScript(std::string scriptName, std::filesystem::path& directory) {
 
@@ -52,9 +52,9 @@ void ScriptManager::destroyScript(std::string scriptName) {
 }
 
 
-void ScriptManager::RegisterScript(std::unique_ptr<Script> script)
+void ScriptManager::RegisterScript (std::unique_ptr<Script> script)
 {
-    scripts.push_back(std::move(script));
+   GetScripts().push_back(std::move(script));
 }
 
 void ScriptManager::StartAll()

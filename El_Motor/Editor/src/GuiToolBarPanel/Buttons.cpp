@@ -16,7 +16,9 @@ void Editor::Buttons::init()
 
 }
 
+void Editor::Buttons::update(AssetManager& manager) {
 
+}
 
 
 bool Editor::Buttons::createProject()
@@ -91,10 +93,6 @@ void Editor::Buttons::projectName()
     }
 }
 
-
-
-
-
 bool Editor::Buttons::startRuntime()
 {
     if (ImGui::Button("Run", ImVec2(50, 50)))
@@ -156,6 +154,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
                     );
                 }
             }
+            
             SetLoadAsset(false);
             ImGuiFileDialog::Instance()->Close();
         }

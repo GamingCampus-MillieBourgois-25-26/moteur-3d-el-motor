@@ -42,6 +42,7 @@ void Editor::HubManager::HubRun()
         {
             DrawEditorUI();
             coreEditor.editorRun(app);
+            //ICI L'UPDATE
         }
         break;
         }
