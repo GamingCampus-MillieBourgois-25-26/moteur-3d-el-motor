@@ -44,7 +44,6 @@ void ScriptManager::updateScripts(float deltatime) {
         script->Update(deltatime);
     }
         
-
 }
 
 void ScriptManager::destroyScript(std::string scriptName) {
