@@ -1,46 +1,33 @@
 #pragma once
 
 #include "Entity/Component.hpp"
-#include "Assets/MeshAsset/MeshAsset.hpp"
 #include "Asset_Manager/AssetManager.hpp"
-
-#include <memory>
+#include "Assets/MeshAsset/MeshAsset.hpp"
 #include <string>
 
 namespace Engine {
 
     class MeshComponent : public Component {
     private:
-        std::shared_ptr<MeshAsset> m_mesh;
+        MeshAsset* m_mesh = nullptr;
 
     public:
         MeshComponent() = default;
 
-        // Charger un mesh depuis un fichier
+        MeshAsset* GetMesh() const { return m_mesh; }
+
         void LoadMesh(const std::string& path) {
-            m_mesh = AssetManager::Get().Load<MeshAsset>(path);
+            auto assetPtr = AssetManager::Get().Load<MeshAsset>(path);
+            m_mesh = assetPtr.get();
         }
 
-        // Accès au mesh
-        std::shared_ptr<MeshAsset> GetMesh() const {
-            return m_mesh;
-        }
+        void SetMesh(MeshAsset* mesh) { m_mesh = mesh; }
 
-        MeshAsset* GetMeshRaw() const {
-            return m_mesh.get();
-        }
+        void Start() override {}
+        void Update(float dt) override {}
+        void OnDestroy() override { m_mesh = nullptr; }
 
-        void SetMesh(const std::shared_ptr<MeshAsset>& mesh) {
-            m_mesh = mesh;
-        }
-
-        void OnDestroy() override {
-            m_mesh.reset();
-        }
-
-        std::string GetTypeName() const override {
-            return "MeshRenderer";
-        }
+        std::string GetTypeName() const override { return "MeshRenderer"; }
     };
 
 }
