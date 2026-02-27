@@ -81,7 +81,7 @@ void Editor::Buttons::projectName()
     ImGui::Text(GetSessionNameStatus().c_str());
     if (ImGui::InputText("Project Name", bufferSessionName, sizeof(bufferSessionName), ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        if (CheckGoNameValid(bufferSessionName) || CheckCaraterValid(bufferSessionName))
+        if (CheckGoNameValid(bufferSessionName) || !CheckCaraterValid(bufferSessionName))
         {
             strncpy(bufferSessionName,"", sizeof(bufferSessionName));
             bufferSessionName[sizeof(bufferSessionName) - 1] = '\0';
@@ -440,7 +440,7 @@ bool Editor::Buttons::CheckCaraterValid(const std::string& str)
 {
         return std::ranges::all_of(str, [](unsigned char c)
             {
-                return std::isalnum(c) || c == '_';
+                return std::isalnum(c);
             });
 }
 
