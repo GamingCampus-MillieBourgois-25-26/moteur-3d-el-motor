@@ -43,6 +43,7 @@ void Editor::HubManager::HubRun()
         {
             DrawEditorUI();
             coreEditor.editorRun(app);
+            //camera.Update(coreEditor.GetEngine().getInputManager());
 			//ICI l'UPDATE DE L'EDITOR
             break;
         }

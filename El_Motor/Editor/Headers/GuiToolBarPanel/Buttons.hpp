@@ -63,6 +63,8 @@ namespace Editor
 		void delGO(std::shared_ptr<Engine::Scene>& scene);// delete GO
 		void ChangeGOName();//Change the name of the GO selected
 		bool CheckGoNameValid(const std::string& str);//Check if the GO name isn't only composed of spaces
+		bool CheckCaraterValid(const std::string& str);
+
 
 		//Editor Component Buttons
 		void showCmpnt();//show all the component of a selected GO

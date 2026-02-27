@@ -6,7 +6,6 @@
 #include "Assets/MeshAsset/MeshAsset.hpp"
 #include "Entity/Component/MeshComponent.hpp"
 #include "ScriptManager/ScriptManager.hpp"
-
 #include "Logger/Logger.hpp"
 #include <iostream>
 
@@ -82,7 +81,7 @@ void Editor::Buttons::projectName()
     ImGui::Text(GetSessionNameStatus().c_str());
     if (ImGui::InputText("Project Name", bufferSessionName, sizeof(bufferSessionName), ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        if (CheckGoNameValid(bufferSessionName))
+        if (CheckGoNameValid(bufferSessionName) || CheckCaraterValid(bufferSessionName))
         {
             strncpy(bufferSessionName,"", sizeof(bufferSessionName));
             bufferSessionName[sizeof(bufferSessionName) - 1] = '\0';
@@ -417,7 +416,7 @@ static char buffer[256] = "";
 
     if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        if (CheckGoNameValid(buffer))//true if there is only spaces in the buffer
+        if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
             selectedEntity->SetName("GameObject");
         }
@@ -435,6 +434,14 @@ bool Editor::Buttons::CheckGoNameValid(const std::string& str)
         {
             return std::isspace(c);
         });
+}
+
+bool Editor::Buttons::CheckCaraterValid(const std::string& str)
+{
+        return std::ranges::all_of(str, [](unsigned char c)
+            {
+                return std::isalnum(c) || c == '_';
+            });
 }
 
 
