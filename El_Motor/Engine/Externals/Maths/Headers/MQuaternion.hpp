@@ -60,12 +60,11 @@ namespace Maths {
         static Quat<T> Cross(const Quat<T>& b);
         static Quat<T> Inverse(const Quat<T>& q);
         
-
         static Vec3<T> MulltiplyQuatVec(const Vec3<T> v, const Quat<T>& q);
         static T Angle(const Quat<T>& a, const Quat<T>& b);
         static T Dot(const Quat<T>& a, const Quat<T>& b);
 
-        static void LookRotation(const Quat<T>& forward, const Quat<T>& up);
+        static void LookRotation(const Vec3<T>& forward, const Vec3<T>& up);
         static void RotateTowards(const Quat<T>& to, T maxDegreesDelta);
         static void FromToRotation(const Quat<T>& to);
         void Normalize();

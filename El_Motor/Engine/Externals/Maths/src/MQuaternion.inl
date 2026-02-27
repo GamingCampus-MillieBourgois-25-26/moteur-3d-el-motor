@@ -381,113 +381,123 @@ T Maths::Quat<T>::Dot(const Quat& a, const Quat<T>& b)
 
 
 template<typename T>
-void Maths::Quat<T>::LookRotation(const Quat<T>& forward, const Quat<T>& up)
+void Maths::Quat<T>::LookRotation(const Vec3<T>& forward, const Vec3<T>& up)
 {
+    Vec3<T> f = forward.Normalized();
+    Vec3<T> u = up.Normalized();
 
-    Quat<T> f = forward;
-    f.Normalize();
+    // Right = forward x up
+    Vec3<T> r = f.Cross(u).Normalized();
 
-    Quat<T> u = up;
-    u.Normalize();
+    // Recompute orthogonal up
+    u = r.Cross(f);
 
-    // Calcul du vecteur droit (right)
-    Quat<T> r(
-        f.y() * u.z() - f.z() * u.y(),
-        f.z() * u.x() - f.x() * u.z(),
-        f.x() * u.y() - f.y() * u.x(),
-        0
-    );
-    r.Normalize();
-
-    // Recalcul du vecteur up
-    u = Quat<T>(
-        r.y() * f.z() - r.z() * f.y(),
-        r.z() * f.x() - r.x() * f.z(),
-        r.x() * f.y() - r.y() * f.x(),
-        0
-    );
-
-    // Matrice 3x3
-    T m00 = r.x(), m01 = r.y(), m02 = r.z();
-    T m10 = u.x(), m11 = u.y(), m12 = u.z();
-    T m20 = -f.x(), m21 = -f.y(), m22 = -f.z();
+    // 3x3 rotation matrix
+    T m00 = r.m_x, m01 = r.m_y, m02 = r.m_z;
+    T m10 = u.m_x, m11 = u.m_y, m12 = u.m_z;
+    T m20 = -f.m_x, m21 = -f.m_y, m22 = -f.m_z;
 
     T trace = m00 + m11 + m22;
-    if (trace > 0) {
-        T s = std::sqrt(trace + 1.0) * 2;
-        SetW(0.25 * s);
-        SetX((m21 - m12) / s);
-        SetY((m02 - m20) / s);
-        SetZ((m10 - m01) / s);
-    }
-    else if ((m00 > m11) && (m00 > m22)) {
-        T s = std::sqrt(1.0 + m00 - m11 - m22) * 2;
-        SetW((m21 - m12) / s);
-        SetX(0.25 * s);
-        SetY((m01 + m10) / s);
-        SetZ((m02 + m20) / s);
-    }
-    else if (m11 > m22) {
-        T s = std::sqrt(1.0 + m11 - m00 - m22) * 2;
-        SetW((m02 - m20) / s);
-        SetX((m01 + m10) / s);
-        SetY(0.25 * s);
-        SetZ((m12 + m21) / s);
-    }
-    else {
-        T s = std::sqrt(1.0 + m22 - m00 - m11) * 2;
-        SetW((m10 - m01) / s);
-        SetX((m02 + m20) / s);
-        SetY((m12 + m21) / s);
-        SetZ(0.25 * s);
-    }
 
+    if (trace > static_cast<T>(0))
+    {
+        T s = std::sqrt(trace + static_cast<T>(1)) * static_cast<T>(2);
+        w = static_cast<T>(0.25) * s;
+        x = (m21 - m12) / s;
+        y = (m02 - m20) / s;
+        z = (m10 - m01) / s;
+    }
+    else if (m00 > m11 && m00 > m22)
+    {
+        T s = std::sqrt(static_cast<T>(1) + m00 - m11 - m22) * static_cast<T>(2);
+        m_w = (m21 - m12) / s;
+        m_x = static_cast<T>(0.25) * s;
+        m_y = (m01 + m10) / s;
+        m_z = (m02 + m20) / s;
+    }
+    else if (m11 > m22)
+    {
+        T s = std::sqrt(static_cast<T>(1) + m11 - m00 - m22) * static_cast<T>(2);
+        m_w = (m02 - m20) / s;
+        m_x = (m01 + m10) / s;
+        m_y = static_cast<T>(0.25) * s;
+        m_z = (m12 + m21) / s;
+    }
+    else
+    {
+        T s = std::sqrt(static_cast<T>(1) + m22 - m00 - m11) * static_cast<T>(2);
+        m_w = (m10 - m01) / s;
+        m_x = (m02 + m20) / s;
+        m_y = (m12 + m21) / s;
+        m_z = static_cast<T>(0.25) * s;
+    }
     Normalize();
 }
 
 template<typename T>
 void Maths::Quat<T>::RotateTowards(const Quat<T>& to, T maxDegreesDelta)
 {
+    // Normaliser les deux quaternions (important)
+    Quat<T> from = this->Normalized();
+    Quat<T> target = to.Normalized();
 
-    T dot = w() * to.w() + x() * to.x() + y() * to.y() + z() * to.z();
+    // Dot product
+    T dot = from.m_w * target.m_w +
+        from.m_x * target.m_x +
+        from.m_y * target.m_y +
+        from.m_z * target.m_z;
 
-    T angle = std::acos(std::min(std::abs(dot), static_cast<T>(1.0))) * 2.0 * (180.0 / 3.14159265);
-
-    if (angle <= maxDegreesDelta)
+    // Chemin le plus court
+    if (dot < static_cast<T>(0))
     {
-        SetW(to.w());
-        SetX(to.x());
-        SetY(to.y());
-        SetZ(to.z());
+        dot = -dot;
+        target.m_w = -target.m_w;
+        target.m_x = -target.m_x;
+        target.m_y = -target.m_y;
+        target.m_z = -target.m_z;
+    }
+
+    dot = std::clamp(dot, static_cast<T>(-1), static_cast<T>(1));
+
+    // Angle total en radians
+    T angle = static_cast<T>(2) * std::acos(dot);
+
+    if (angle <= static_cast<T>(0))
+        return;
+
+    // Convertir maxDegreesDelta en radians
+    T maxRadiansDelta = maxDegreesDelta * (static_cast<T>(3.14159265358979323846) / static_cast<T>(180));
+
+    if (angle <= maxRadiansDelta)
+    {
+        *this = target;
         return;
     }
 
-    T t = maxDegreesDelta / angle;
+    T t = maxRadiansDelta / angle;
 
-    Quat<T> result;
+    // SLERP
     T theta = std::acos(dot);
     T sinTheta = std::sin(theta);
 
-    if (sinTheta > 1e-6) {
-        T ratioA = std::sin((1 - t) * theta) / sinTheta;
+    if (sinTheta > kEpsilon)
+    {
+        T ratioA = std::sin((static_cast<T>(1) - t) * theta) / sinTheta;
         T ratioB = std::sin(t * theta) / sinTheta;
 
-        result.SetW(w() * ratioA + to.w() * ratioB);
-        result.SetX(x() * ratioA + to.x() * ratioB);
-        result.SetY(y() * ratioA + to.y() * ratioB);
-        result.SetZ(z() * ratioA + to.z() * ratioB);
+        m_w = from.m_w * ratioA + target.m_w * ratioB;
+        m_x = from.m_x * ratioA + target.m_x * ratioB;
+        m_y = from.m_y * ratioA + target.m_y * ratioB;
+        m_z = from.m_z * ratioA + target.m_z * ratioB;
     }
-    else {
-        result.SetW(w() * (1 - t) + to.w() * t);
-        result.SetX(x() * (1 - t) + to.x() * t);
-        result.SetY(y() * (1 - t) + to.y() * t);
-        result.SetZ(z() * (1 - t) + to.z() * t);
+    else
+    {
+        // fallback lerp
+        m_w = from.m_w * (static_cast<T>(1) - t) + target.m_w * t;
+        m_x = from.m_x * (static_cast<T>(1) - t) + target.m_x * t;
+        m_y = from.m_y * (static_cast<T>(1) - t) + target.m_y * t;
+        m_z = from.m_z * (static_cast<T>(1) - t) + target.m_z * t;
     }
-
-    SetW(result.w());
-    SetX(result.x());
-    SetY(result.y());
-    SetZ(result.z());
 
     Normalize();
 }
@@ -511,13 +521,13 @@ void Maths::Quat<T>::FromToRotation(const Quat<T>& to)
         if (rotationAxis.Magnitude() < static_cast<T>(1e-6))
             rotationAxis = Quat<T>(1, 0, 0, 0).Cross(f);
         rotationAxis.Normalize();
-        Angle(static_cast<T>(PI), rotationAxis.x(), rotationAxis.y(), rotationAxis.z());
+        Angle(static_cast<T>(PI), rotationAxis.m_x, rotationAxis.m_y, rotationAxis.m_z);
         return;
     }
     rotationAxis = f.Cross(t);
     T angle = std::acos(std::clamp(cosTheta, static_cast<T>(-1), static_cast<T>(1)));
     rotationAxis.Normalize();
-    Angle(angle, rotationAxis.x(), rotationAxis.y(), rotationAxis.z());
+    Angle(angle, rotationAxis.m_x, rotationAxis.m_y, rotationAxis.m_z);
 }
 
 template<typename T>
