@@ -4,7 +4,6 @@ file(GLOB_RECURSE ENGINE_SOURCES
     Core/src/**/*.cpp 
     Components/UserComponents/**/*.cpp
     Externals/**/*.cpp
-
 )
 
 
@@ -13,6 +12,7 @@ file(GLOB_RECURSE ENGINE_HEADERS
     Core/Headers/**/*.hpp
     Components/UserComponents/**/*.hpp
     Externals/**/*.h
+     Externals/**/*.hpp
 )
 
 add_library(Engine
@@ -31,5 +31,5 @@ target_link_libraries(Engine PRIVATE
     glfw
     d3d11
     dxgi
-    d3dcompiler    
+    d3dcompiler
 )

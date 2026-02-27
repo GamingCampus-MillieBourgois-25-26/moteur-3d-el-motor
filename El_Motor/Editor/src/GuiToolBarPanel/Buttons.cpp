@@ -16,7 +16,9 @@ void Editor::Buttons::init()
 
 }
 
+void Editor::Buttons::update(AssetManager& manager) {
 
+}
 
 
 bool Editor::Buttons::createProject()
@@ -91,10 +93,6 @@ void Editor::Buttons::projectName()
     }
 }
 
-
-
-
-
 bool Editor::Buttons::startRuntime()
 {
     if (ImGui::Button("Run", ImVec2(50, 50)))
@@ -156,6 +154,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
                     );
                 }
             }
+            
             SetLoadAsset(false);
             ImGuiFileDialog::Instance()->Close();
         }
@@ -305,7 +304,7 @@ bool Editor::Buttons::saveProject()
 
 void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 {
-    if (ImGui::Button("create", ImVec2(100, 50)))
+    if (ImGui::Button("Create GameObject", ImVec2(150, 50)))
     {
        scene->CreateGameObject();
     }
@@ -313,7 +312,7 @@ void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 
 void Editor::Buttons::delGO(std::shared_ptr<Engine::Scene>& scene)
 {
-    if (ImGui::Button("delete", ImVec2(100, 50)))
+    if (ImGui::Button("Delete GameObject", ImVec2(150, 50)))
     {
         
         scene->DestroyGameObject(selectedEntity);

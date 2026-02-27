@@ -43,6 +43,7 @@ void Editor::HubManager::HubRun()
             DrawEditorUI();
             app.PresentDx();   // Dessine ton cube
             coreEditor.editorRun(app);
+            //ICI L'UPDATE
         }
         break;
         }

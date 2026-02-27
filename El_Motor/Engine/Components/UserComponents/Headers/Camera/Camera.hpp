@@ -1,17 +1,19 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "Maths/Headers/MVec3.hpp"
+#include "Maths/Headers/MQuaternion.hpp"
+#include "Maths/Headers/MMatrix4.hpp"
 #include "Input_Manager/InputManager.hpp"
 
-class Camera
-{
+class Camera {
 protected:
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT4 rotation;
+    Maths::Vec3f position;
+    Maths::Quatf rotation;
 
-    DirectX::XMFLOAT3 forward;
-    DirectX::XMFLOAT3 right;
-    DirectX::XMFLOAT3 up;
+    Maths::Vec3f forward;
+    Maths::Vec3f right;
+    Maths::Vec3f up;
 
     float aspectRatio;
     float nearPlane;
@@ -23,9 +25,9 @@ protected:
 
     bool firstMousePos = true;
 
-    DirectX::XMFLOAT4X4 projection;
-    DirectX::XMFLOAT4X4 view;
-    DirectX::XMFLOAT4X4 VP;
+    Maths::Mat4f projection;
+    Maths::Mat4f view;
+    Maths::Mat4f VP;
 
     void RotationUpdate(Engine::InputManager& input);
     void FowardUpdate();
@@ -42,12 +44,13 @@ protected:
 
     //////// GETTERS //////////
 
-    DirectX::XMFLOAT4X4 Getprojection() const;
-    DirectX::XMFLOAT4X4 Getview() const;
-    DirectX::XMFLOAT4X4 GetVP() const;
+    Maths::Mat4f Getprojection() const;
+    Maths::Mat4f Getview() const;
+    Maths::Mat4f GetVP() const;
 
 public:
     Camera();
 
     virtual void Update(Engine::InputManager& input) = 0;
+    float ToRadians(float degree);
 };
