@@ -136,9 +136,12 @@ void PhysicSystem::OnEnd()
 
 void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 	const float cDeltaTime = 1.0f / 60.0f;
-	JPH::uint step = 0;
 	while() {
-		++step;
+
+		// Broad Phase Update Prepare
+		// Broad Phase Update Finalize
+		// Apply Gravity
+		// Find Collisions
 
 		const int cCollisionSteps = 1;
 

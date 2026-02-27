@@ -1,11 +1,14 @@
 #include "Colliders.hpp"
 
-BoxCollider::BoxCollider(float side){
+BoxCollider::BoxCollider(float side) {
 	// JPH::BoxShapeSettings settings();
 	// settings.SetEmbedded();
 
 	// ShapeSettings::ShapeResult boxShapeResult = settings.Create();
+	// if (result.IsValid()){
 	// ShapeRefC result = boXShapeResult.get();
+    // }
+	// else ... Error handling
 }
 
 SphereCollider::SphereCollider(float radius){
@@ -13,7 +16,10 @@ SphereCollider::SphereCollider(float radius){
 	// settings.SetEmbedded();
 
 	// ShapeSettings::ShapeResult sphereShapeResult = settings.Create();
-	// ShapeRefC result = boXShapeResult.get();
+	// if (result.IsValid()){
+	// ShapeRefC result = sphereShapeResult.get();
+	// }
+	// else ... Error handling
 }
 
 CapsuleCollider::CapsuleCollider(float radius, float height){
@@ -21,5 +27,8 @@ CapsuleCollider::CapsuleCollider(float radius, float height){
 	// settings.SetEmbedded();
 
 	// ShapeSettings::ShapeResult capsuleShapeResult = settings.Create();
+	// if (result.IsValid()){
 	// ShapeRefC result = capsuleShapeResult.get();
+	// }
+	// else ... Error handling
 }
