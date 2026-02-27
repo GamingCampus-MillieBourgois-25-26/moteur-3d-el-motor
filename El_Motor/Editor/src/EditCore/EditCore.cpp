@@ -5,8 +5,8 @@
 #include "External/imgui/includes/backend/imgui_impl_dx11.h"
 #include "External/imgui/includes/backend/imgui_impl_glfw.h"
 
-void Editor::EditorCore::editorInit() {
-	coreEngine.init();
+void Editor::EditorCore::editorInit(Engine::Application& app) {
+	coreEngine.init(app);
 
 }
 

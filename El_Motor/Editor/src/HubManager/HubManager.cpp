@@ -41,13 +41,21 @@ void Editor::HubManager::HubRun()
         case EditorState::Editor:
         {
             DrawEditorUI();
-            app.PresentDx();   // Dessine ton cube
             coreEditor.editorRun(app);
-            //ICI L'UPDATE
         }
         break;
         }
 
+        // --- DESSIN DES MESHES ---
+        auto& assetManager = coreEditor.GetEngine().getAssetManager();
+        for (auto& [path, asset] : assetManager.GetAssets())
+        {
+            if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
+            {
+                std::cout << "[DEBUG] Drawing mesh: " << path << std::endl;
+                app.getD3D11()->DrawShape(*mesh);
+            }
+        }
 
         guiLayer.EndFrame();
         app.getD3D11()->Present();
@@ -57,7 +65,7 @@ void Editor::HubManager::HubRun()
 void Editor::HubManager::CreateProject()
 {
 
-    coreEditor.editorInit();
+    coreEditor.editorInit(app);
 
 }
 

@@ -10,6 +10,7 @@ void AssetManager::Initialize(ID3D11Device* device, ID3D11DeviceContext* context
 {
     m_device = device;
     m_context = context;
+    std::cout << "AssetManager Initialised" << std::endl;
 }
 
 void AssetManager::Reload(const std::string& path)

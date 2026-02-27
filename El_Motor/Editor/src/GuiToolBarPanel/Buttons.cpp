@@ -161,6 +161,16 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
     }
 }
 
+void Editor::Buttons::test()
+{
+    //auto& currentSelected = selectedEntity->GetAllComponents();
+    //for (int i = 0; selectedEntity->GetAllComponents().size(); i++) {
+    //    if (currentSelected[i] == AssetManager:: ) {
+
+    //    }
+    //}
+}
+
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {
     ImGui::BeginChild("Hierarchy", ImVec2(250, 0), true);

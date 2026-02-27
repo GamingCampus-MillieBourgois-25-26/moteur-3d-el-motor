@@ -1,11 +1,11 @@
 #include "CoreEngine/CoreEngine.hpp"
 
-void Engine::CoreEngine::init() {
+void Engine::CoreEngine::init(Engine::Application& app) {
 	// Initialisation des syst�mes de l'Engine , fen�tre, rendu, etc.
 	inputManager.init();
 	loggerManager.LogInitialize();
 	timeManager.Init();
-	
+	assetManager.Initialize(app.getD3D11()->GetDevice(), app.getD3D11()->GetContext());
 
 	running = true;
 

@@ -26,7 +26,7 @@ namespace Engine
 
 		CoreEngine() = default;
 
-		void init();         // initialisation du moteur
+		void init(Engine::Application& app);         // initialisation du moteur
         void run();         // boucle principale
 		void shutdown();   // shutdown du moteur
 		bool isRunning() const { return running; } // vérifie si le moteur est en cours d'exécution
