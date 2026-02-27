@@ -509,9 +509,12 @@ Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3
 	result.tabMat[11] = 0;
 
 	// colonne 3 → translation
-	result.tabMat[12] = -right.Dot(from);
-	result.tabMat[13] = -upCorrected.Dot(from);
-	result.tabMat[14] = forward.Dot(from); // note le signe selon convention
+	/*Maths::Vec3f rInverse = -1 * right;
+	Maths::Vec3f upInverse = -1 * upCorrected;*/
+
+	result.tabMat[12] = Maths::Vec3f::Dot(right, from);
+	result.tabMat[13] = Maths::Vec3f::Dot(upCorrected, from);
+	result.tabMat[14] = Maths::Vec3f::Dot(forward, from);
 	result.tabMat[15] = 1;
 
 	return result;

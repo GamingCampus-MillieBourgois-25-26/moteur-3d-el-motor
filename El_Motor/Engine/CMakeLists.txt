@@ -4,6 +4,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
     Core/src/**/*.cpp 
     Components/UserComponents/**/*.cpp
     Externals/**/*.cpp
+    Externals/**/*.inl
 )
 
 
@@ -12,7 +13,7 @@ file(GLOB_RECURSE ENGINE_HEADERS
     Core/Headers/**/*.hpp
     Components/UserComponents/**/*.hpp
     Externals/**/*.h
-     Externals/**/*.hpp
+    Externals/**/*.hpp
 )
 
 add_library(Engine

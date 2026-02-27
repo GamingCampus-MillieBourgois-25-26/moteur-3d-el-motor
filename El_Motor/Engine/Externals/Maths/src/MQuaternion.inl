@@ -1,6 +1,3 @@
-#include "Maths/Headers/MQuaternion.hpp"
-
-
 template<typename T>
 static T clampValue(T v, T minVal, T maxVal) { // clamp v entre minVal et maxVal
     return (v < minVal) ? minVal : (v > maxVal ? maxVal : v);
@@ -30,7 +27,7 @@ Maths::Quat<T> Maths::Quat<T>::Identity() { // Renvoie le Quat identité
 
 //////// PORPRETIES ////////
 template<typename T>
-void Maths::Quat<T>::EulerAngles() {
+Maths::Vec3<T> Maths::Quat<T>::EulerAngles() {
     const T two = static_cast<T>(2);
 
     T pitch = std::atan2(two * (m_w * m_x + m_y * m_z), 1 - two * (m_x * m_x + m_y * m_y));
@@ -42,14 +39,14 @@ void Maths::Quat<T>::EulerAngles() {
 
 template<typename T>
 Maths::Quat<T> Maths::Quat<T>::Normalized() {
-    T len = this->Magnitude();
-    if (len < kEpsilon) return Quat<T>::Identity();
-    return Quat<T>(m_x / len, m_y / len, m_z / len, m_w / len);
+    Quat<T> q = *this;
+    q.Normalize();
+    return q;
 }
 
 template<typename T>
 T Maths::Quat<T>::Magnitude() {
-    return std::sqrt(w() * w() + x() * x() + y() * y() + z() * z());
+    return std::sqrt(m_w * m_w + m_x * m_x + m_y * m_y + m_z * m_z);
 }
 
 template <typename T>
@@ -199,21 +196,18 @@ std::string Maths::Quat<T>::ToString() {
 
 //////// STATIC METHODS ////////
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::AngleAxis(T angle, const Quat<T>& axis){
+Maths::Quat<T> Maths::Quat<T>::AngleAxis(T angle, const Quat<T>& axis){
 
     T halfAngle = angle / 2;
     T s = std::sin(halfAngle);
 
-    SetW(std::cos(halfAngle));
-    SetX(axis.x() * s);
-    SetY(axis.y() * s);
-    SetZ(axis.z() * s);
-
-    Normalize();
+    Maths::Quat<T> q = Maths::Quat<T>(axis.x() * s, axis.y() * s, axis.z() * s, std::cos(halfAngle));
+    q.Normalize();
+    return q;
 }
 
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::SlerpUnclamped(const Quat<T>& b, T t)
+Maths::Quat<T> Maths::Quat<T>::SlerpUnclamped(const Quat<T>& b, T t)
 {
     T dot = w() * b.w() + x() * b.x() + y() * b.y() + z() * b.z();
 
@@ -255,7 +249,7 @@ static Maths::Quat<T> Maths::Quat<T>::SlerpUnclamped(const Quat<T>& b, T t)
 }
 
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::LerpUnclamped(const Quat<T>& b, T t)
+Maths::Quat<T> Maths::Quat<T>::LerpUnclamped(const Quat<T>& b, T t)
 {
 
     T W = w() * (1 - t) + b.w() * t;
@@ -270,13 +264,13 @@ static Maths::Quat<T> Maths::Quat<T>::LerpUnclamped(const Quat<T>& b, T t)
 }
 
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::FromEuler(const Vec3<T>& eulerRad) {
-    T cx = std::cos(eulerRad.m_x / 2);
-    T sx = std::sin(eulerRad.m_x / 2);
-    T cy = std::cos(eulerRad.m_y / 2);
-    T sy = std::sin(eulerRad.m_y / 2);
-    T cz = std::cos(eulerRad.m_z / 2);
-    T sz = std::sin(eulerRad.m_z / 2);
+Maths::Quat<T> Maths::Quat<T>::FromEuler(const Vec3<T>& eulerRad) {
+    T cx = std::cos(eulerRad.x() / 2);
+    T sx = std::sin(eulerRad.x() / 2);
+    T cy = std::cos(eulerRad.y() / 2);
+    T sy = std::sin(eulerRad.y() / 2);
+    T cz = std::cos(eulerRad.z() / 2);
+    T sz = std::sin(eulerRad.z() / 2);
 
     T qw = cy * cz * cx + sy * sz * sx;
     T qx = cy * cz * sx - sy * sz * cx;
@@ -287,68 +281,53 @@ static Maths::Quat<T> Maths::Quat<T>::FromEuler(const Vec3<T>& eulerRad) {
 }
 
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::Lerp(const Quat<T>& b, T t)
-{
-    if (t < 0) t = 0;
-    if (t > 1) t = 1;
+Maths::Quat<T> Maths::Quat<T>::Lerp(const Quat<T>& a, const Quat<T>& b, T t){
+    t = std::clamp(t, static_cast<T>(0), static_cast<T>(1));
 
-    T W = w() * (1 - t) + b.w() * t;
-    T X = x() * (1 - t) + b.x() * t;
-    T Y = y() * (1 - t) + b.y() * t;
-    T Z = z() * (1 - t) + b.z() * t;
-
-    Quat<T> result(W, X, Y, Z);
+    Quat<T> result(
+        a.m_x * (1 - t) + b.m_x * t,
+        a.m_y * (1 - t) + b.m_y * t,
+        a.m_z * (1 - t) + b.m_z * t,
+        a.m_w * (1 - t) + b.m_w * t
+    );
     result.Normalize();
     return result;
 }
 
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::Slerp(const Quat<T>& b, T t)
-{
+Maths::Quat<T> Maths::Quat<T>::Slerp(const Quat<T>& a, const Quat<T>& b, T t){
+    t = std::clamp(t, static_cast<T>(0), static_cast<T>(1));
 
-    T dot = w() * b.w() + x() * b.x() + y() * b.y() + z() * b.z();
+    T dot = Dot(a, b);
+    Quat<T> end = b;
 
-
-    Quat<T> bCopy = b;
-    if (dot < 0.0f) {
+    if (dot < 0){
         dot = -dot;
-        bCopy = Quat<T>(-b.w(), -b.x(), -b.y(), -b.z());
+        end = Quat<T>(-b.m_x, -b.m_y, -b.m_z, -b.m_w);
     }
 
+    if (dot > static_cast<T>(0.9995))
+        return Lerp(a, end, t);
 
-    if (dot > 0.9995f) {
-        T W = w() + t * (bCopy.w() - w());
-        T X = x() + t * (bCopy.x() - x());
-        T Y = y() + t * (bCopy.y() - y());
-        T Z = z() + t * (bCopy.z() - z());
-        Quat<T> result(W, X, Y, Z);
-        result.Normalize();
-        return result;
-    }
+    T theta0 = std::acos(dot);
+    T theta = theta0 * t;
 
+    T sinTheta = std::sin(theta);
+    T sinTheta0 = std::sin(theta0);
 
-    T theta_0 = std::acos(dot);
-    T theta = theta_0 * t;
+    T s0 = std::cos(theta) - dot * sinTheta / sinTheta0;
+    T s1 = sinTheta / sinTheta0;
 
-
-    Quat<T> c(bCopy.w() - w() * dot,
-        bCopy.x() - x() * dot,
-        bCopy.y() - y() * dot,
-        bCopy.z() - z() * dot);
-    c.Normalize();
-
-    Quat<T> result(
-        w() * std::cos(theta) + c.w() * std::sin(theta),
-        x() * std::cos(theta) + c.x() * std::sin(theta),
-        y() * std::cos(theta) + c.y() * std::sin(theta),
-        z() * std::cos(theta) + c.z() * std::sin(theta)
+    return Quat<T>(
+        a.m_x * s0 + end.m_x * s1,
+        a.m_y * s0 + end.m_y * s1,
+        a.m_z * s0 + end.m_z * s1,
+        a.m_w * s0 + end.m_w * s1
     );
-
-    return result;
 }
 
 template<typename T>
-static Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b) {
+Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b) {
     // Produit vectoriel seulement sur x,y,z (ignore w)
     return Maths::Quat<T>(
         0,
@@ -359,48 +338,50 @@ static Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b) {
 }
 
 template<typename T>
-static void Maths::Quat<T>::Inverse()
+Maths::Quat<T> Maths::Quat<T>::Inverse(const Quat<T>& q)
 {
-    T normSq = w() * w() + x() * x() + y() * y() + z() * z();
-    if (normSq == 0) {
-        throw std::runtime_error("Impossible d'inverser un Quat nul");
-    }
+    T magSq = Dot(q, q);
 
-    SetW(w() / normSq);
-    SetX(-x() / normSq);
-    SetY(-y() / normSq);
-    SetZ(-z() / normSq);
+    if (magSq <= kEpsilon)
+        return Identity();
+
+    return Quat<T>(-q.m_x / magSq, -q.m_y / magSq, -q.m_z / magSq, q.m_w / magSq);
 }
 
 
 
 template<typename T>
-static Maths::Vec3<T> Maths::Quat<T>::MulltiplyQuatVec(const Vec3<T> v, const Maths::Quat<T>& q) {
+Maths::Vec3<T> Maths::Quat<T>::MulltiplyQuatVec(const Vec3<T> v, const Maths::Quat<T>& q) {
     Maths::Quat<T> vQuat = Maths::Quat<T>(v.x(), v.y(), v.z(), 0.0f);
 
-    Maths::Quat<T> result = q * vQuat * q.Inverse();
-    return Maths::Vec3<T>(result.x, result.y, result.z);
+
+    Maths::Quat<T> qInverse = Maths::Quat<T>::Inverse(q);
+    Maths::Quat<T> res = q * vQuat;
+    Maths::Quat<T> result = res * qInverse;
+
+    Maths::Vec3<T> qVec3 = result.EulerAngles();
+    return qVec3;
 }
 
 
 template<typename T>
-static T Maths::Quat<T>::Angle(const Quat<T>& a, const Quat<T>& b) { // Renvoie l'angle entre deux quaternions en radians
+T Maths::Quat<T>::Angle(const Quat<T>& a, const Quat<T>& b) { // Renvoie l'angle entre deux quaternions en radians
     T d = absValue(Dot(a.Normalized(), b.Normalized()));
     d = minValue(d, static_cast<T>(1));
     return static_cast<T>(2) * std::acos(d);
 }
 
 template<typename T>
-static T Maths::Quat<T>::Dot(const Quat& a, const Quat<T>& b)
+T Maths::Quat<T>::Dot(const Quat& a, const Quat<T>& b)
 {
-    return a.m_w * b.m_w + a.m_x * b.x + a.m_y * b.m_y + a.m_z * b.m_z;
+    return a.m_w * b.m_w + a.m_x * b.m_x + a.m_y * b.m_y + a.m_z * b.m_z;
 }
 
 
 
 
 template<typename T>
-static void Maths::Quat<T>::LookRotation(const Quat<T>& forward, const Quat<T>& up)
+void Maths::Quat<T>::LookRotation(const Quat<T>& forward, const Quat<T>& up)
 {
 
     Quat<T> f = forward;
@@ -465,7 +446,7 @@ static void Maths::Quat<T>::LookRotation(const Quat<T>& forward, const Quat<T>& 
 }
 
 template<typename T>
-static void Maths::Quat<T>::RotateTowards(const Quat<T>& to, T maxDegreesDelta)
+void Maths::Quat<T>::RotateTowards(const Quat<T>& to, T maxDegreesDelta)
 {
 
     T dot = w() * to.w() + x() * to.x() + y() * to.y() + z() * to.z();
@@ -512,7 +493,7 @@ static void Maths::Quat<T>::RotateTowards(const Quat<T>& to, T maxDegreesDelta)
 }
 
 template<typename T>
-static void Maths::Quat<T>::FromToRotation(const Quat<T>& to)
+void Maths::Quat<T>::FromToRotation(const Quat<T>& to)
 {
     Quat<T> f = this->normalized();
     Quat<T> t = to.normalized();
@@ -540,21 +521,18 @@ static void Maths::Quat<T>::FromToRotation(const Quat<T>& to)
 }
 
 template<typename T>
-static void Maths::Quat<T>::Normalize()
+void Maths::Quat<T>::Normalize()
 {
-    T mag = std::sqrt(w() * w() + x() * x() + y() * y() + z() * z());
+    T mag = std::sqrt(m_w * m_w + m_x * m_x + m_y * m_y + m_z * m_z);
 
     if (mag > std::numeric_limits<T>::epsilon()) {
-        SetW(w() / mag);
-        SetX(x() / mag);
-        SetY(y() / mag);
-        SetZ(z() / mag);
+        m_x /= mag;
+        m_y /= mag;
+        m_z /= mag;
+        m_w /= mag;
     }
     else {
-        SetW(T(1));
-        SetX(T(0));
-        SetY(T(0));
-        SetZ(T(0));
+        *this = Identity();
     }
 }
 

@@ -91,3 +91,5 @@ namespace Maths {
 	};
 	using Vec3f = Vec3<float>;
 }
+
+#include "Maths/src/MVec3.inl"

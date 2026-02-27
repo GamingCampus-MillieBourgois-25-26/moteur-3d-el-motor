@@ -1,5 +1,3 @@
-#include "Maths/Headers/MVec2.hpp"
-
 template <typename T>
 Maths::Vec2<T>::Vec2(T m_x, T m_y) : m_x(m_x), m_y(m_y) {}
 

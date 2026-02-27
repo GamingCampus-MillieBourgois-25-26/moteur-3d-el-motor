@@ -84,3 +84,5 @@ namespace Maths {
 	};
 	using Vec2f = Vec2<float>;
 }
+
+#include "Maths/src/MVec2.inl"

@@ -1,5 +1,3 @@
-#include "Maths/Headers/MVec3.hpp"
-
 template <typename T>
 Maths::Vec3<T>::Vec3(T m_x, T m_y, T m_z) : m_x(m_x), m_y(m_y), m_z(m_z) {}
 
@@ -241,7 +239,7 @@ Maths::Vec3<T> Maths::Vec3<T>::operator*(const Vec3<T>& other) const {
 
 template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::operator*(T scalar) const {
-	return Vec3<T>(m_x * scalar, m_y * scalar, m_z - scalar);
+	return Vec3<T>(m_x * scalar, m_y * scalar, m_z * scalar);
 }
 
 template <typename T>

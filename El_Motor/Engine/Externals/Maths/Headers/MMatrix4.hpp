@@ -72,3 +72,5 @@ namespace Maths {
 	};
 	using Mat4f = Mat4<float>;
 }
+
+#include "Maths/src/MMatrix4.inl"
