@@ -35,6 +35,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Hub:
         {
             DrawHubUI();
+            break;
         }
         break;
 
@@ -42,7 +43,19 @@ void Editor::HubManager::HubRun()
         {
             DrawEditorUI();
             coreEditor.editorRun(app);
-            //ICI L'UPDATE
+            //camera.Update(coreEditor.GetEngine().getInputManager());
+			//ICI l'UPDATE DE L'EDITOR
+            break;
+        }
+        case EditorState::Run:
+        {
+			float dt = coreEditor.GetEngine().getTimeManager().GetDeltaTime();
+
+            coreEditor.startRuntime();
+			scriptManager.updateScripts(dt);
+			//ICI L'UPDATE DU RUNTIME
+
+            break;
         }
         break;
         }
@@ -104,11 +117,12 @@ void Editor::HubManager::DrawEditorUI()
     if (buttons.startRuntime())
     {
         logger.LogInfo("RUN STARTED");
-        coreEditor.startRuntime();
+		SetEditorState(EditorState::Run);
     }
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+	buttons.showScriptMenu(scriptManager);
     if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
