@@ -2,8 +2,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <filesystem>
-#include "ScriptRoot/Script.hpp"
+
+#include <UserScript/UserScript.hpp>
 
 
 class ScriptManager

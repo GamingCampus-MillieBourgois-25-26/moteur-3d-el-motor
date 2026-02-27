@@ -41,6 +41,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Editor:
         {
             DrawEditorUI();
+            app.PresentDx();   // Dessine ton cube
             coreEditor.editorRun(app);
             //ICI L'UPDATE
         }

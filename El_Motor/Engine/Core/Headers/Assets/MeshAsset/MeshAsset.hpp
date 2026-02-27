@@ -19,7 +19,7 @@ struct Vertex
 class MeshAsset : public Asset
 {
 private:
-    DirectX::XMFLOAT3 mColor;
+    DirectX::XMFLOAT3 mColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 public:
 
 
@@ -33,7 +33,7 @@ public:
     wrl::ComPtr<ID3D11Buffer> indexBuffer = nullptr;
 
 	const DirectX::XMFLOAT3& GetColor() const { return mColor; } 
-	void SetColor(const DirectX::XMFLOAT3& newColor) { mColor = newColor; }
+    void SetColor(float r, float g, float b) { mColor = DirectX::XMFLOAT3(r, g, b); }
 
     void Load() override;
     void LoadTestCube();
