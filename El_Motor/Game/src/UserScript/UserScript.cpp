@@ -15,7 +15,7 @@ void UserScript::OnStart() {
 }
 
 
-
+//This function is called every frame, and is used to update the script's behavior based on the current state of the game. It is typically called once per frame, and can be used to implement any necessary logic or behavior for the script to function properly.
 void UserScript::Update(float deltatime) {
 
 }
