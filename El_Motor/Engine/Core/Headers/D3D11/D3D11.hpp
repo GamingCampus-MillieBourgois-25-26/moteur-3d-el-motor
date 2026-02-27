@@ -48,6 +48,7 @@ namespace Engine {
 		wrl::ComPtr <ID3D11DeviceContext> pContext = nullptr;
 		wrl::ComPtr <IDXGISwapChain> pSwapChain = nullptr;
 		wrl::ComPtr <ID3D11RenderTargetView> pTarget = nullptr;
+		wrl::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
 
 		wrl::ComPtr<ID3D11Buffer> mObjectColorBuffer;
 

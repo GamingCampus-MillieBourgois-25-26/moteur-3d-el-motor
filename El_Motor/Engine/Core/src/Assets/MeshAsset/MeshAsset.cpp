@@ -92,15 +92,17 @@ void MeshAsset::LoadTestCube()
 
     Vertex v[] =
     {
-        {{-0.5f, -0.5f, -0.5f}, {0,0,-1}, {0,1}},
-        {{ 0.5f, -0.5f, -0.5f}, {0,0,-1}, {1,1}},
-        {{ 0.5f,  0.5f, -0.5f}, {0,0,-1}, {1,0}},
-        {{-0.5f,  0.5f, -0.5f}, {0,0,-1}, {0,0}},
+        // Face avant (proche)
+        {{-0.5f, -0.5f, 0.0f}, {0,0,-1}, {0,1}},
+        {{ 0.5f, -0.5f, 0.0f}, {0,0,-1}, {1,1}},
+        {{ 0.5f,  0.5f, 0.0f}, {0,0,-1}, {1,0}},
+        {{-0.5f,  0.5f, 0.0f}, {0,0,-1}, {0,0}},
 
-        {{-0.5f, -0.5f,  0.5f}, {0,0,1}, {0,1}},
-        {{ 0.5f, -0.5f,  0.5f}, {0,0,1}, {1,1}},
-        {{ 0.5f,  0.5f,  0.5f}, {0,0,1}, {1,0}},
-        {{-0.5f,  0.5f,  0.5f}, {0,0,1}, {0,0}},
+        // Face arrière (plus loin, légèrement décalée pour “profil”)
+        {{-0.3f, -0.3f, 0.5f}, {0,0,1}, {0,1}},
+        {{ 0.7f, -0.3f, 0.5f}, {0,0,1}, {1,1}},
+        {{ 0.7f,  0.7f, 0.5f}, {0,0,1}, {1,0}},
+        {{-0.3f,  0.7f, 0.5f}, {0,0,1}, {0,0}},
     };
 
     vertices.assign(std::begin(v), std::end(v));
@@ -125,7 +127,7 @@ void MeshAsset::LoadTestCube()
         4,0,3,
         4,3,7
     };
-    this->SetColor(1.0f, 0.0f, 0.0f);
+    //this->SetColor(0.0f, 0.0f, 1.0f);
 
     indices.assign(std::begin(ind), std::end(ind));
 }
@@ -187,7 +189,7 @@ void MeshAsset::Bind(ID3D11DeviceContext* context) const
     );
 
     context->IASetPrimitiveTopology(
-        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
     );
 }
 

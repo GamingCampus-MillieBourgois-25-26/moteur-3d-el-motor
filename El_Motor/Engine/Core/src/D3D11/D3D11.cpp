@@ -35,23 +35,62 @@ namespace Engine
 			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.GetAddressOf()); // Crée une vue de rendu à partir du buffer de rendu arrière
 		}
 
-		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
-		wrl::ComPtr<ID3DBlob> blob;
+		// Récup taille de la fenêtre
+		RECT rect;
+		GetClientRect(myWindow, &rect);
+		UINT width = rect.right - rect.left;
+		UINT height = rect.bottom - rect.top;
 
-		HRESULT hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", &blob);
+		// Description de la texture depth
+		D3D11_TEXTURE2D_DESC depthDesc = {};
+		depthDesc.Width = width;
+		depthDesc.Height = height;
+		depthDesc.MipLevels = 1;
+		depthDesc.ArraySize = 1;
+		depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthDesc.SampleDesc.Count = 1;
+		depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		wrl::ComPtr<ID3D11Texture2D> depthTexture;
+		HRESULT hr = pDevice->CreateTexture2D(&depthDesc, nullptr, depthTexture.GetAddressOf());
+		if (FAILED(hr)) { std::cout << "Depth texture creation failed\n"; return; }
+
+		hr = pDevice->CreateDepthStencilView(
+			depthTexture.Get(),      
+			nullptr,                 
+			mDepthStencilView.GetAddressOf() 
+		);
+		if (FAILED(hr)) { std::cout << "DepthStencilView creation failed\n"; return; }
+
+		D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+		dsDesc.DepthEnable = TRUE;
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+		wrl::ComPtr<ID3D11DepthStencilState> depthState;
+		pDevice->CreateDepthStencilState(&dsDesc, depthState.GetAddressOf());
+		pContext->OMSetDepthStencilState(depthState.Get(), 0);
+
+
+		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
+		wrl::ComPtr<ID3DBlob> vsBlob;
+		wrl::ComPtr<ID3DBlob> psBlob;
+
+		hr = D3DReadFileToBlob(L"Shader/VertexShader.cso", vsBlob.GetAddressOf());
 		if (FAILED(hr)) { std::cout << "Vertex shader load failed\n"; return; }
 
-		hr = pDevice->CreateVertexShader(blob->GetBufferPointer(),
-			blob->GetBufferSize(),
+		hr = pDevice->CreateVertexShader(vsBlob->GetBufferPointer(),
+			vsBlob->GetBufferSize(),
 			nullptr,
 			&mVertexShader);
 		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
 
-		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", &blob);
+
+		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", psBlob.GetAddressOf());
 		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
 
-		hr = pDevice->CreatePixelShader(blob->GetBufferPointer(),
-			blob->GetBufferSize(),
+		hr = pDevice->CreatePixelShader(psBlob->GetBufferPointer(),
+			psBlob->GetBufferSize(),
 			nullptr,
 			&mPixelShader);
 		if (FAILED(hr)) { std::cout << "CreatePixelShader failed\n"; return; }
@@ -65,18 +104,18 @@ namespace Engine
 		};
 
 
-		/*D3D11_BUFFER_DESC bd = {};
+		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.ByteWidth = sizeof(ObjectColorBuffer);
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());*/
+		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
 
 		hr = pDevice->CreateInputLayout(
 			layout,
 			(UINT)std::size(layout),
-			blob->GetBufferPointer(),
-			blob->GetBufferSize(),
+			vsBlob->GetBufferPointer(),
+			vsBlob->GetBufferSize(),
 			&mInputLayout);
 
 		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
@@ -136,29 +175,56 @@ namespace Engine
 	}
 
 	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
-		float clearColor[] = { r, g, b, 1.0f }; // Couleur de nettoyage (RGBA)
+		float clearColor[] = { r, g, b, 1.0f };
 		if (!pTarget) return;
-		pContext->ClearRenderTargetView(pTarget.Get(), clearColor); // Nettoie la vue de rendu avec la couleur spécifiée
+		pContext->ClearRenderTargetView(pTarget.Get(), clearColor);
+
+		if (mDepthStencilView)
+			pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
 	void D3D11::DrawShape(const MeshAsset& mesh)
 	{
-		// === SHADERS ===
+		// Récupère le render target
+		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
+		if (!pTarget || !mDepthStencilView) return;
+
+		// 1. Bind le render target + depth stencil
+		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), mDepthStencilView.Get());
+
+		// 2. Clear la frame (couleur + depth)
+		float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f }; // couleur par défaut
+		pContext->ClearRenderTargetView(pTarget.Get(), clearColor);
+		pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+		// 3. Configure le viewport
+		RECT rect;
+		GetClientRect(myWindow, &rect);
+		D3D11_VIEWPORT viewport = {};
+		viewport.Width = float(rect.right - rect.left);
+		viewport.Height = float(rect.bottom - rect.top);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		pContext->RSSetViewports(1, &viewport);
+
+		// 4. Active les shaders
 		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
 		pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-		// === INPUT LAYOUT ===
+		// 5. Input layout
 		pContext->IASetInputLayout(mInputLayout.Get());
 
-		// === MESH BIND (MeshAsset) ===
+		// 6. Bind le mesh
 		mesh.Bind(pContext.Get());
 
-		// === CONSTANT BUFFER COULEUR ===
+		// 7. Constant buffer pour la couleur
 		ObjectColorBuffer buffer;
 		buffer.objColor = mesh.GetColor();
 		buffer.padding = 0.0f;
 
-		/*pContext->UpdateSubresource(
+		pContext->UpdateSubresource(
 			mObjectColorBuffer.Get(),
 			0,
 			nullptr,
@@ -171,28 +237,9 @@ namespace Engine
 			0,
 			1,
 			mObjectColorBuffer.GetAddressOf()
-		);*/
+		);
 
-		// === RENDER TARGET ===
-		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
-		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), nullptr);
-
-		// === VIEWPORT ===
-		RECT rect;
-		GetClientRect(myWindow, &rect);
-
-		D3D11_VIEWPORT viewport = {};
-		viewport.Width = float(rect.right - rect.left);
-		viewport.Height = float(rect.bottom - rect.top);
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-		viewport.TopLeftX = 0.0f;
-		viewport.TopLeftY = 0.0f;
-
-		pContext->RSSetViewports(1, &viewport);
-
-		// === DRAW ===
+		// 8. Draw le mesh
 		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
-
 }

@@ -1,6 +1,6 @@
 struct VSIn
 {
-    float4 position : POSITION;
+    float3 position : POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
 };
@@ -15,8 +15,10 @@ struct VSOut
 VSOut main(VSIn vs)
 {
     VSOut output;
-
-    output.pos = vs.position;
+    
+    // Fausse 3d
+    output.pos = float4(vs.position.x, vs.position.y, vs.position.z, 1.0f);
+    
     output.normal = vs.normal;
     output.uv = vs.uv;
 

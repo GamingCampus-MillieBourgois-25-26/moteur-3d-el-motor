@@ -19,7 +19,7 @@ struct Vertex
 class MeshAsset : public Asset
 {
 private:
-    DirectX::XMFLOAT3 mColor;
+    DirectX::XMFLOAT3 mColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 public:
 
 
