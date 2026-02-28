@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ScriptRoot/Script.hpp"
 #include <string>
 
@@ -7,7 +6,7 @@
 
 class UserScript : public Script
 {
-private:
+protected:
 	std::string name;
 
 public:
@@ -22,9 +21,9 @@ public:
 
 
 	//Setters
-	void SetName(std::string newName) { name = newName; }
+	void SetName(const std::string& newName) { name = newName; }
 
 
 	//Getters
-	std::string GetName() const { return name; }
+	const std::string& GetName() const { return name; }
 };

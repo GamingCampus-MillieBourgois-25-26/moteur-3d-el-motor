@@ -6,6 +6,7 @@
 #include <string>
 #include <filesystem>
 
+class ScriptManager;
 namespace Editor
 {
 	// GO = GameObject
@@ -26,11 +27,10 @@ namespace Editor
 		//Selected Entity pointeur + label
 		Engine::GameObject* selectedEntity = nullptr;
 		std::string currentEntityLabel;
+		std::string selectedScript;
 
 		//Selected Component pointer
 		Engine::Component* selectedComponent = nullptr;
-
-
 
 		
 	public:
@@ -48,7 +48,13 @@ namespace Editor
 		void loadProject();
 		void projectName();
 		
-
+		//Script Buttons
+		void showScriptMenu(ScriptManager& scriptM);
+		void AddScript(ScriptManager& scriptM , std::string name);
+		void deleteScript(ScriptManager& scriptM) const;
+		void editScript(ScriptManager& scriptM);
+		void showScripts(ScriptManager& scriptM);
+		bool CheckScriptNameValid(const std::string& str, bool IsCpp);
 
 
 		//Editor Entity Buttons
@@ -57,6 +63,8 @@ namespace Editor
 		void delGO(std::shared_ptr<Engine::Scene>& scene);// delete GO
 		void ChangeGOName();//Change the name of the GO selected
 		bool CheckGoNameValid(const std::string& str);//Check if the GO name isn't only composed of spaces
+		bool CheckCaraterValid(const std::string& str);
+
 
 		//Editor Component Buttons
 		void showCmpnt();//show all the component of a selected GO
@@ -69,8 +77,6 @@ namespace Editor
 
 
 		bool startRuntime();
-
-
 		void loadAssets(AssetManager& manager);
 		void test();
 

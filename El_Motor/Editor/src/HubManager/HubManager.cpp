@@ -35,6 +35,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Hub:
         {
             DrawHubUI();
+            break;
         }
         break;
 
@@ -101,7 +102,7 @@ void Editor::HubManager::DrawHubUI()
 
 void Editor::HubManager::DrawEditorUI()
 {
-    //Ligne pour lié la fenetre à la fenetre Dx11 , à ajouter quand la fenetre dx sera scale par rapport à l'écran de l'utilisateur (à rescale)
+    //Ligne pour liï¿½ la fenetre ï¿½ la fenetre Dx11 , ï¿½ ajouter quand la fenetre dx sera scale par rapport ï¿½ l'ï¿½cran de l'utilisateur (ï¿½ rescale)
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowViewport(viewport->ID);
@@ -113,11 +114,12 @@ void Editor::HubManager::DrawEditorUI()
     if (buttons.startRuntime())
     {
         logger.LogInfo("RUN STARTED");
-        coreEditor.startRuntime();
+		SetEditorState(EditorState::Run);
     }
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+	/*buttons.showScriptMenu(scriptManager);*/
     if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
