@@ -1,7 +1,7 @@
 #include "Camera/Camera.hpp"
 #include "Input_Manager/InputManager.hpp"
 
-float ToRadians(float degree) {
+float Camera::ToRadians(float degree) {
     return degree * Maths::Quatf::PI / 180;
 }
 

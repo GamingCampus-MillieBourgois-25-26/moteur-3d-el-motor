@@ -20,12 +20,12 @@ Maths::Mat4<T>::Mat4(T u, T d, T t, T q, T c, T si, T se, T h, T n, T di, T on, 
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Identity()
 {
-	Mat4 matrix;
+	Mat4<T> matrix;
 	matrix.tabMat = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
+		static_cast<T>(1), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(1), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(1), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)
 	};
 	return matrix;
 }
@@ -35,10 +35,10 @@ Maths::Mat4<T> Maths::Mat4<T>::Zero()
 {
 	Mat4<T> matrix;
 	matrix.tabMat = {
-		0,0,0,0,
-		0,0,0,0,
-		0,0,0,0,
-		0,0,0,0
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0)
 	};
 	return matrix;
 }
@@ -94,7 +94,7 @@ std::array<T, 16> Maths::Mat4<T>::Inverse4x4()
 {
 	const auto& m = this->tabMat;
 	T det = this->Det4x4();
-	if (std::abs(det) < 1e-6) { // verification pour savoir si elle est inversible
+	if (std::abs(det) < static_cast<T>(1e-6)) { // verification pour savoir si elle est inversible
 		return std::array<T, 16>{};
 	}
 
@@ -154,17 +154,17 @@ Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4()
 
 	// Colonne 0 → axe X transformé → sa longueur donne l’échelle sur X
 	// si on regarde sans la fonction at et length, on a :
-	scale.x(std::sqrt(
+	scale.SetX(std::sqrt(
 		(tabMat[0 * 4 + 0]) * (tabMat[0 * 4 + 0]) + // at(0,0)
 		(tabMat[1 * 4 + 0]) * (tabMat[1 * 4 + 0]) + // at(1,0)
 		(tabMat[2 * 4 + 0]) * (tabMat[2 * 4 + 0]))	// at(2,0)
 	);
 
 	// Colonne 1 → axe Y transformé → sa longueur donne l’échelle sur Y
-	scale.y(length(at(0, 1), at(1, 1), at(2, 1)));
+	scale.SetY(length(at(0, 1), at(1, 1), at(2, 1)));
 
 	// Colonne 2 → axe Z transformé → sa longueur donne l’échelle sur Z
-	scale.z(length(at(0, 2), at(1, 2), at(2, 2)));
+	scale.SetZ(length(at(0, 2), at(1, 2), at(2, 2)));
 
 	// donc avec les at et lenght c'est vachement plus simple et rapido :)
 
@@ -176,8 +176,8 @@ Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4()
 
 	// si le determinant est négatif alors on inverse le signe d'un axe
 	// c'est a dire que ca va faire un genre d'effet miroir chelou
-	if (det < 0)
-		scale.x(-scale.x());
+	if (det < static_cast<T>(0))
+		scale.SetX(-scale.x());
 
 	// enfin on retourne le vecteur de ses morts et paf ca fais des chocapics
 	return scale;
@@ -186,7 +186,7 @@ Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4()
 template<typename T>
 bool Maths::Mat4<T>::isIdentity4x4()
 {
-	const T eps = 1e-5;
+	const T eps = static_cast<T>(1e-6);
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == j) {
@@ -258,7 +258,7 @@ Maths::Vec3<T> Maths::Mat4<T>::MultiplyVector4x4(Maths::Vec3<T>& vect)
 	T resultW = at(3, 0) * x + at(3, 1) * y + at(3, 2) * z + at(3, 3);
 
 	// normalisation si besoin
-	if (resultW != 0 && resultW != 1) {
+	if (resultW != static_cast<T>(0) && resultW != static_cast<T>(1)) {
 		resultX /= resultW;
 		resultY /= resultW;
 		resultZ /= resultW;
@@ -298,7 +298,7 @@ Maths::Vec3<T> Maths::Mat4<T>::GetPosition4x4() const
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::SetTRS(const Maths::Vec3<T>& translation, const Maths::Vec3<T>& rotationEulerDeg, const Maths::Vec3<T>& scale) {
 	T rx = rotationEulerDeg.x() * static_cast<T>(deg2rad);
-	T ry = rotationEulerDeg.yy() * static_cast<T>(deg2rad);
+	T ry = rotationEulerDeg.y() * static_cast<T>(deg2rad);
 	T rz = rotationEulerDeg.z() * static_cast<T>(deg2rad);
 
 	Mat4<T> result = Mat4<T>::Identity();
@@ -368,7 +368,7 @@ void Maths::Mat4<T>::SetRow4x4(T rowNumber, T number1, T number2, T number3, T n
 template<typename T>
 void Maths::Mat4<T>::GetColumn4x4(T column)
 {
-	if (column < 0 || column > 3) {
+	if (column < static_cast<T>(0) || column > static_cast<T>(3)) {
 		std::cout << "Un mauvais numero a ete entre, il faut un numero entre 0 et 3.\n";
 		return;
 	}
@@ -383,7 +383,7 @@ void Maths::Mat4<T>::GetColumn4x4(T column)
 template<typename T>
 void Maths::Mat4<T>::GetRow4x4(T row)
 {
-	if (row < 0 || row > 3) {
+	if (row < static_cast<T>(0) || row > static_cast<T>(3)) {
 		std::cout << "Un mauvais numero a ete entre, il faut un numero entre 0 et 3.\n";
 		return;
 	}
@@ -399,7 +399,7 @@ void Maths::Mat4<T>::GetRow4x4(T row)
 
 template<typename T>
 bool Maths::Mat4<T>::ValidTRS() {
-	const T EPS = 1e-6;
+	const T EPS = static_cast<T>(1e-6);
 
 	T x0 = at(0, 0), x1 = at(1, 0), x2 = at(2, 0);
 	T y0 = at(0, 1), y1 = at(1, 1), y2 = at(2, 1);
@@ -494,28 +494,28 @@ Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3
 	result.tabMat[0] = right.x();
 	result.tabMat[1] = right.y();
 	result.tabMat[2] = right.z();
-	result.tabMat[3] = 0;
+	result.tabMat[3] = static_cast<T>(0);
 
 	// colonne 1 → axe up (Y)
 	result.tabMat[4] = upCorrected.x();
 	result.tabMat[5] = upCorrected.y();
 	result.tabMat[6] = upCorrected.z();
-	result.tabMat[7] = 0;
+	result.tabMat[7] = static_cast<T>(0);
 
 	// colonne 2 → -forward (Z)
 	result.tabMat[8] = -forward.x();
 	result.tabMat[9] = -forward.y();
 	result.tabMat[10] = -forward.z();
-	result.tabMat[11] = 0;
+	result.tabMat[11] = static_cast<T>(0);
 
 	// colonne 3 → translation
-	/*Maths::Vec3f rInverse = -1 * right;
-	Maths::Vec3f upInverse = -1 * upCorrected;*/
+	Maths::Vec3<T> rInverse = right * static_cast<T>(-1);
+	Maths::Vec3<T> upInverse = upCorrected * static_cast<T>(-1);
 
-	result.tabMat[12] = Maths::Vec3f::Dot(right, from);
-	result.tabMat[13] = Maths::Vec3f::Dot(upCorrected, from);
-	result.tabMat[14] = Maths::Vec3f::Dot(forward, from);
-	result.tabMat[15] = 1;
+	result.tabMat[12] = Maths::Vec3<T>::Dot(rInverse, from);
+	result.tabMat[13] = Maths::Vec3<T>::Dot(upInverse, from);
+	result.tabMat[14] = Maths::Vec3<T>::Dot(forward, from);
+	result.tabMat[15] = static_cast<T>(1);
 
 	return result;
 }
@@ -523,46 +523,46 @@ Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Ortho4x4(T left, T right, T bottom, T top, T zNear, T zFar)
 {
-	Mat4 matrix;
+	Mat4<T> matrix;
 
-	matrix.tabMat[0] = 2 / (right - left);
-	matrix.tabMat[1] = 0;
-	matrix.tabMat[2] = 0;
-	matrix.tabMat[3] = 0;
-	matrix.tabMat[4] = 0;
-	matrix.tabMat[5] = 2 / (top - bottom);
-	matrix.tabMat[6] = 0;
-	matrix.tabMat[7] = 0;
-	matrix.tabMat[8] = 0;
-	matrix.tabMat[9] = 0;
-	matrix.tabMat[10] = -2 / (zFar - zNear);
-	matrix.tabMat[11] = 0;
+	matrix.tabMat[0] = static_cast<T>(2) / (right - left);
+	matrix.tabMat[1] = static_cast<T>(0);
+	matrix.tabMat[2] = static_cast<T>(0);
+	matrix.tabMat[3] = static_cast<T>(0);
+	matrix.tabMat[4] = static_cast<T>(0);
+	matrix.tabMat[5] = static_cast<T>(2) / (top - bottom);
+	matrix.tabMat[6] = static_cast<T>(0);
+	matrix.tabMat[7] = static_cast<T>(0);
+	matrix.tabMat[8] = static_cast<T>(0);
+	matrix.tabMat[9] = static_cast<T>(0);
+	matrix.tabMat[10] = static_cast<T>(-2) / (zFar - zNear);
+	matrix.tabMat[11] = static_cast<T>(0);
 	matrix.tabMat[12] = -(right + left) / (right - left);
 	matrix.tabMat[13] = -(top + bottom) / (top - bottom);
 	matrix.tabMat[14] = -(zFar + zNear) / (zFar - zNear);
-	matrix.tabMat[15] = -1;
+	matrix.tabMat[15] = static_cast<T>(-1);
 
 	return matrix;
 }
 
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::Perspective4x4(T fovY, T aspect, T near, T far) {
+Maths::Mat4<T> Maths::Mat4<T>::Perspective4x4(T fovY, T aspect, T nearP, T farP) {
 
 	Mat4<T> result;
 
 	// Calcul du facteur f = 1 / tan(fov/2)
-	T f = 1 / std::tan(fovY * 0.5);
+	T f = static_cast<T>(1) / std::tan(fovY * static_cast<T>(0.5));
 
 	// Mise à zéro de la matrice
-	for (int i = 0; i < 16; ++i) result.tabMat[i] = 0;
+	for (int i = 0; i < 16; ++i) result.tabMat[i] = static_cast<T>(0);
 
 	// Remplissage des éléments
 	result.tabMat[0] = f / aspect;  // m00
 	result.tabMat[5] = f;           // m11
-	result.tabMat[10] = (far + near) / (near - far);  // m22
-	result.tabMat[11] = -1;          // m23
-	result.tabMat[14] = (2 * far * near) / (near - far); // m32
-	result.tabMat[15] = 0;           // m33
+	result.tabMat[10] = (farP + nearP) / (nearP - farP);  // m22
+	result.tabMat[11] = static_cast<T>(-1);          // m23
+	result.tabMat[14] = static_cast<T>(2) * (farP * nearP) / (nearP - farP); // m32
+	result.tabMat[15] = static_cast<T>(0);           // m33
 
 	return result;
 }
@@ -631,11 +631,11 @@ Maths::Mat4<T> Maths::Mat4<T>::ScaleVec4x4(const Maths::Vec3<T>& s)
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Translate4x4(T tx, T ty, T tz)
 {
-	Mat4 result = Identity();
+	Mat4<T> result = Identity();
 	result.at(0, 3) = tx;
 	result.at(1, 3) = ty;
 	result.at(2, 3) = tz;
-	result.at(3, 3) = 1;
+	result.at(3, 3) = static_cast<T>(1);
 	return result;
 }
 

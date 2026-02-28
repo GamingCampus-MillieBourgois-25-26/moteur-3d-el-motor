@@ -59,7 +59,7 @@ namespace Maths {
 		static Mat4 TRS(const Maths::Vec3<T>& position, const Maths::Vec3<T>& rotationEuler, const Maths::Vec3<T>& scale);
 		static Mat4 LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3<T>& to, Maths::Vec3<T>& up);
 		static Mat4 Ortho4x4(T left, T right, T bottom, T top, T zNear, T zFar);
-		static Mat4 Perspective4x4(T fovY, T aspect, T near, T far);
+		static Mat4 Perspective4x4(T fovY, T aspect, T nearP, T farP);
 		static Mat4 TranslateVec4x4(const Maths::Vec3<T>& t);
 		static Mat4 Rotate4x4(const Maths::Quat<T>& q);
 		static Mat4 ScaleVec4x4(const Maths::Vec3<T>& s);
