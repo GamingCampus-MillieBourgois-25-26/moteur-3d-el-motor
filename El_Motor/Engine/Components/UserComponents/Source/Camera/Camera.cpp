@@ -1,10 +1,9 @@
-#include <DirectXMath.h>
-#include <cmath>
-
 #include "Camera/Camera.hpp"
 #include "Input_Manager/InputManager.hpp"
 
-using namespace DirectX;
+float ToRadians(float degree) {
+    return degree * Maths::Quatf::PI / 180;
+}
 
 void Camera::RotationUpdate(Engine::InputManager& input){
     float dx = input.getMouseDelta().x;
@@ -15,81 +14,43 @@ void Camera::RotationUpdate(Engine::InputManager& input){
     float yaw = dx * mouseSensitivity;
     float pitch = dy * mouseSensitivity;
 
-    XMVECTOR rightV = XMLoadFloat3(&right);
-    XMVECTOR rotV = XMLoadFloat4(&rotation);
+    Maths::Quatf qYaw = Maths::Quatf::AngleAxis(yaw, Maths::Quatf(0.0f, 1.0f, 0.0f, 0.0f));
 
-    XMVECTOR qYaw = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), yaw); // World yaw
-    XMVECTOR qPitch = XMQuaternionRotationAxis(rightV, pitch); // Local pitch
+    Maths::Quatf QuatR = Maths::Quatf::FromEuler(right);
+    Maths::Quatf qPitch = Maths::Quatf::AngleAxis(pitch, QuatR);
 
-    XMVECTOR quaternionMultiply = XMQuaternionMultiply(qPitch, qYaw);
-
-    quaternionMultiply = XMQuaternionMultiply(quaternionMultiply, rotV);
-
-    XMVECTOR newRot = XMQuaternionNormalize(quaternionMultiply);
-    XMStoreFloat4(&rotation, newRot);
+    rotation = qPitch * qYaw * rotation;
 }
 
-void Camera::FowardUpdate()
-{
-    XMVECTOR rotV = XMLoadFloat4(&rotation);
-    XMVECTOR fwdV = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotV);
-    XMStoreFloat3(&forward, fwdV);
-}
+void Camera::FowardUpdate() { forward = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 0.0f, 1.0f), rotation); }
 
-void Camera::RightUpdate()
-{
-    XMVECTOR rotV = XMLoadFloat4(&rotation);
-    XMVECTOR rightV = XMVector3Rotate(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), rotV);
-    XMStoreFloat3(&right, rightV);
-}
+void Camera::RightUpdate(){ right = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(1.0f, 0.0f, 0.0f), rotation); }
 
-void Camera::UpUpdate()
-{
-    XMVECTOR rotV = XMLoadFloat4(&rotation);
-    XMVECTOR upV = XMVector3Rotate(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), rotV);
-    XMStoreFloat3(&up, upV);
-}
+void Camera::UpUpdate(){ up = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 1.0f, 0.0f), rotation); }
 
 Camera::Camera() : projection(), view(), VP()
 {
-    position = XMFLOAT3(0.0f, 0.0f, 3.0f);
-    rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+    position = Maths::Vec3f(0.0f, 0.0f, 3.0f);
+    rotation = Maths::Quatf(0.0f, 0.0f, 0.0f, 1.0f);
 
-    forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
-    right = XMFLOAT3(1.0f, 0.0f, 0.0f);
-    up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+    forward = Maths::Vec3f(0.0f, 0.0f, 1.0f);
+    right = Maths::Vec3f(1.0f, 0.0f, 0.0f);
+    up = Maths::Vec3f(0.0f, 1.0f, 0.0f);
 
     aspectRatio = 16.0f / 9.0f;
     nearPlane = 0.01f;
     farPlane = 150.0f;
-    fov = XMConvertToRadians(90.0f);
+
+    fov = ToRadians(90.0f);
 }
 
 ///////// CALCUL DE MATRICES //////////
 
-void Camera::ProjectionMatrix()
-{
-    XMMATRIX proj = XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);
-    XMStoreFloat4x4(&projection, proj);
-}
+void Camera::ProjectionMatrix(){ Maths::Mat4f proj = Maths::Mat4f::Perspective4x4(fov, aspectRatio, nearPlane, farPlane); }
 
-void Camera::ViewMatrix()
-{
-    XMVECTOR posV = XMLoadFloat3(&position);
-    XMVECTOR fwdV = XMLoadFloat3(&forward);
-    XMVECTOR upV = XMLoadFloat3(&up);
+void Camera::ViewMatrix(){ Maths::Mat4f viewM = Maths::Mat4f::LookAt4x4(position, position + forward, up); }
 
-    XMMATRIX viewM = XMMatrixLookAtLH(posV, XMVectorAdd(posV, fwdV), upV);
-    XMStoreFloat4x4(&view, viewM);
-}
-
-void Camera::VPMatrix()
-{
-    XMMATRIX viewM = XMLoadFloat4x4(&view);
-    XMMATRIX projM = XMLoadFloat4x4(&projection);
-    XMMATRIX vpM = viewM * projM;
-    XMStoreFloat4x4(&VP, vpM);
-}
+void Camera::VPMatrix(){ Maths::Mat4f viewMP = view * projection; }
 
 void Camera::MouseUpdate(Engine::InputManager& input)
 {
@@ -126,41 +87,30 @@ void Camera::MouseUpdate(Engine::InputManager& input)
     if (pitch < -89.0f)
         pitch = -89.0f;
 
-    float radYaw = XMConvertToRadians(yaw);
-    float radPitch = XMConvertToRadians(pitch);
+	float radYaw = ToRadians(yaw);
+    float radPitch = ToRadians(pitch);
 
-    XMVECTOR direction = XMVectorSet(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch), 0.0f);
+	Maths::Vec3f direction = Maths::Vec3f(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch));
+	direction = direction.Normalized();
 
-    direction = XMVector3Normalize(direction);
-    XMStoreFloat3(&forward, direction);
 }
 
 void Camera::MoveUpdate(Engine::InputManager& input) {
     // accumulate movement delta, apply once
-    DirectX::XMVECTOR moveDelta = DirectX::XMVectorZero();
-    DirectX::XMVECTOR fwdV = XMLoadFloat3(&forward);
-    DirectX::XMVECTOR rightV = XMLoadFloat3(&right);
-    DirectX::XMVECTOR upV = XMLoadFloat3(&up);
+    
+    Maths::Vec3f moveDelta = Maths::Vec3f(0.0f, 0.0f, 0.0f);
 
     if (input.isKeyPressed(Engine::KeyCode::Z))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(fwdV, moveSpeed));
+		moveDelta = moveDelta + forward * moveSpeed;
     if (input.isKeyPressed(Engine::KeyCode::S))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(fwdV, -moveSpeed));
+        moveDelta = moveDelta + forward * -moveSpeed;
     if (input.isKeyPressed(Engine::KeyCode::Q))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(rightV, moveSpeed));
+		moveDelta = moveDelta + right * moveSpeed;
     if (input.isKeyPressed(Engine::KeyCode::D))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(rightV, -moveSpeed));
-    if (input.isKeyPressed(Engine::KeyCode::SPACE))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(upV, moveSpeed));
-    if (input.isKeyPressed(Engine::KeyCode::ESCAPE))
-        moveDelta = DirectX::XMVectorAdd(moveDelta, DirectX::XMVectorScale(upV, -moveSpeed));
-
-    // apply movement if any
-    if (!DirectX::XMVector3Equal(moveDelta, DirectX::XMVectorZero()))
-    {
-        DirectX::XMVECTOR posV = DirectX::XMLoadFloat3(&position);
-        posV = DirectX::XMVectorAdd(posV, moveDelta);
-        DirectX::XMStoreFloat3(&position, posV);
+        moveDelta = moveDelta + right * -moveSpeed;
+    
+    if (moveDelta == Maths::Vec3f(0.0f, 0.0f, 0.0f)) {
+		position = position + moveDelta;
     }
 
     if (input.isMousePressed(Engine::MouseButton::Left))
@@ -183,17 +133,8 @@ void Camera::GlobalUpdate(Engine::InputManager& input)
 
 ////////// GETTERS //////////
 
-XMFLOAT4X4 Camera::Getprojection() const
-{
-    return projection;
-}
+Maths::Mat4f Camera::Getprojection() const { return projection; }
 
-XMFLOAT4X4 Camera::Getview() const
-{
-    return view;
-}
+Maths::Mat4f Camera::Getview() const { return view; }
 
-XMFLOAT4X4 Camera::GetVP() const
-{
-    return VP;
-}
+Maths::Mat4f Camera::GetVP() const { return VP; }

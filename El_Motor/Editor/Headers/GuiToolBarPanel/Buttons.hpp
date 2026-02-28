@@ -6,6 +6,7 @@
 #include <string>
 #include <filesystem>
 
+class ScriptManager;
 namespace Editor
 {
 	// GO = GameObject
@@ -15,7 +16,8 @@ namespace Editor
 
 		//Bool
 		bool LoadProjectDial = false;
-		bool LoadReady = false;
+		bool LoadProjReady = false;
+		bool LoadAsset = false;
 		//Session name / error
 		std::string sessionName = "Null";
 		std::string sessionNameStatus = "Type a project name, then press Enter to confirm";
@@ -25,11 +27,10 @@ namespace Editor
 		//Selected Entity pointeur + label
 		Engine::GameObject* selectedEntity = nullptr;
 		std::string currentEntityLabel;
+		std::string selectedScript;
 
 		//Selected Component pointer
 		Engine::Component* selectedComponent = nullptr;
-
-
 
 		
 	public:
@@ -40,13 +41,20 @@ namespace Editor
 		};
 
 		void init();
+		void update(AssetManager& manager);
 		
 		//Hub Buttons
 		bool createProject();
 		void loadProject();
 		void projectName();
 		
-
+		//Script Buttons
+		void showScriptMenu(ScriptManager& scriptM);
+		void AddScript(ScriptManager& scriptM , std::string name);
+		void deleteScript(ScriptManager& scriptM) const;
+		void editScript(ScriptManager& scriptM);
+		void showScripts(ScriptManager& scriptM);
+		bool CheckScriptNameValid(const std::string& str, bool IsCpp);
 
 
 		//Editor Entity Buttons
@@ -55,6 +63,8 @@ namespace Editor
 		void delGO(std::shared_ptr<Engine::Scene>& scene);// delete GO
 		void ChangeGOName();//Change the name of the GO selected
 		bool CheckGoNameValid(const std::string& str);//Check if the GO name isn't only composed of spaces
+		bool CheckCaraterValid(const std::string& str);
+
 
 		//Editor Component Buttons
 		void showCmpnt();//show all the component of a selected GO
@@ -67,8 +77,6 @@ namespace Editor
 
 
 		bool startRuntime();
-
-
 		void loadAssets(AssetManager& manager);
 
 
@@ -77,12 +85,14 @@ namespace Editor
 		std::string GetSessionNameStatus() const { return sessionNameStatus; }
 		bool GetLoadProject() const { return LoadProjectDial; }
 		std::string GetProjectPath() const {return projectPath;}
-		bool GetLoadReady() const { return LoadReady; }
+		bool GetLoadProjReady() const { return LoadProjReady; }
+		bool GetLoadAsset() const { return LoadAsset; }
 		//Setter
 		void SetSessionName(std::string session) { sessionName = session; }
 		void SetSessionNameStatus(std::string txt) { sessionNameStatus = txt; }
 		void SetLoadSession(bool activated) { LoadProjectDial = activated; }
 		void SetProjectPath(std::string path) { projectPath = path; }
-		void SetLoadReady(bool ready) { LoadReady = ready; }
+		void SetLoadProjReady(bool ready) { LoadProjReady = ready; }
+		void SetLoadAsset(bool load) { LoadAsset = load; }
 	};
 }

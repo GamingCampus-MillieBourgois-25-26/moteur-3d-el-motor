@@ -16,7 +16,7 @@ FetchContent_Declare(
 FetchContent_Declare(
     JoltPhysics
     GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
-    GIT_TAG v5.5.0   
+    GIT_TAG v5.5.0 
 )
 
 set(GLFW_BUILD_EXAMPLES OFF)
@@ -28,3 +28,4 @@ FetchContent_MakeAvailable(glfw JoltPhysics)
 add_subdirectory(Engine)
 add_subdirectory(Editor)
 add_subdirectory(Runtime)
+add_subdirectory(Game)

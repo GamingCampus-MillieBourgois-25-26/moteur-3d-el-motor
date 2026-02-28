@@ -35,13 +35,28 @@ void Editor::HubManager::HubRun()
         case EditorState::Hub:
         {
             DrawHubUI();
+            break;
         }
         break;
 
         case EditorState::Editor:
         {
             DrawEditorUI();
+            app.PresentDx();   // Dessine ton cube
             coreEditor.editorRun(app);
+            //camera.Update(coreEditor.GetEngine().getInputManager());
+			//ICI l'UPDATE DE L'EDITOR
+            break;
+        }
+        case EditorState::Run:
+        {
+			float dt = coreEditor.GetEngine().getTimeManager().GetDeltaTime();
+
+            coreEditor.startRuntime();
+			scriptManager.updateScripts(dt);
+			//ICI L'UPDATE DU RUNTIME
+
+            break;
         }
         break;
         }
@@ -82,7 +97,7 @@ void Editor::HubManager::DrawHubUI()
     }
 
     buttons.loadProject();
-    if (buttons.GetLoadReady()) {
+    if (buttons.GetLoadProjReady()) {
         Editor::ProjectManager::Get().loadProject(buttons.GetProjectPath(),coreEditor.GetEngine().getScene());
         SetEditorState(EditorState::Editor);
     }
@@ -92,37 +107,41 @@ void Editor::HubManager::DrawHubUI()
 void Editor::HubManager::DrawEditorUI()
 {
     //Ligne pour lié la fenetre à la fenetre Dx11 , à ajouter quand la fenetre dx sera scale par rapport à l'écran de l'utilisateur (à rescale)
-    //ImGuiViewport* viewport = ImGui::GetMainViewport();
-    //ImGui::SetNextWindowPos(viewport->Pos);
-    //ImGui::SetNextWindowSize(viewport->Size, ImGuiCond_Always);
-    //ImGui::SetNextWindowViewport(viewport->ID);
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowViewport(viewport->ID);
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
     ImGui::SetNextWindowSize(ImVec2(500, windowSize.y), ImGuiCond_Always);
-    ImGui::SetNextWindowPos(ImVec2(0,0));
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
-    if (buttons.startRuntime()) 
+    if (buttons.startRuntime())
     {
         logger.LogInfo("RUN STARTED");
-        coreEditor.startRuntime();
+		SetEditorState(EditorState::Run);
     }
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
-    if (buttons.saveProject()) 
+    buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+	/*buttons.showScriptMenu(scriptManager);*/
+    if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
     }
 
     ImGui::SameLine(0, 40);
     ImGui::SetCursorPosY(30);
+
     buttons.selectGO(coreEditor.GetEngine().getScene());
 
-    ImGui::End(); 
+
 
     buttons.showCmpnt();
-    buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+    ImGui::End();
+
+    
 }
+    
 
 //void Editor::HubManager::createNewLevel()
 //{

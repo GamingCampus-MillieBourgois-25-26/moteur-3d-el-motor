@@ -4,7 +4,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
     Core/src/**/*.cpp 
     Physics/src/**/*.cpp 
     Components/UserComponents/**/*.cpp
-
+    Externals/**/*.cpp
 )
 
 
@@ -14,6 +14,7 @@ file(GLOB_RECURSE ENGINE_HEADERS
     Physics/Headers/**/*.cpp 
     Components/UserComponents/**/*.hpp
     Externals/**/*.h
+     Externals/**/*.hpp
 )
 
 add_library(Engine

@@ -8,11 +8,25 @@
 #include <dxgi.h>
 #include <vector>
 #include <wrl.h>
+#include <DirectXMath.h>
 
 #include <Windows.h> // pour HWND et API Windows
 #include "Window/IWindow.hpp"
 
+class MeshAsset;
+
+namespace wrl = Microsoft::WRL;
+
+
+
 namespace Engine {
+
+	struct ObjectColorBuffer
+	{
+		DirectX::XMFLOAT3 objColor;
+		float padding;
+	};
+
 	class D3D11 {
 	public:
 		D3D11(IWindow& window);
@@ -27,17 +41,20 @@ namespace Engine {
 		ID3D11DeviceContext* GetContext() const noexcept { return pContext.Get(); }
 		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain.Get(); }
 		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget.Get(); }
-		void DrawShape(UINT indexCount);
+		void DrawShape(const MeshAsset& mesh);
 	private:
 		HWND myWindow;
-		Microsoft::WRL::ComPtr <ID3D11Device> pDevice = nullptr;
-		Microsoft::WRL::ComPtr <ID3D11DeviceContext> pContext = nullptr;
-		Microsoft::WRL::ComPtr <IDXGISwapChain> pSwapChain = nullptr;
-		Microsoft::WRL::ComPtr <ID3D11RenderTargetView> pTarget = nullptr;
+		wrl::ComPtr <ID3D11Device> pDevice = nullptr;
+		wrl::ComPtr <ID3D11DeviceContext> pContext = nullptr;
+		wrl::ComPtr <IDXGISwapChain> pSwapChain = nullptr;
+		wrl::ComPtr <ID3D11RenderTargetView> pTarget = nullptr;
+		wrl::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
 
-		Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader;
-		Microsoft::WRL::ComPtr<ID3D11PixelShader>  mPixelShader;
-		Microsoft::WRL::ComPtr<ID3D11InputLayout>  mInputLayout;
+		wrl::ComPtr<ID3D11Buffer> mObjectColorBuffer;
+
+		wrl::ComPtr<ID3D11VertexShader> mVertexShader;
+		wrl::ComPtr<ID3D11PixelShader>  mPixelShader;
+		wrl::ComPtr<ID3D11InputLayout>  mInputLayout;
 
 		IDXGIAdapter1* searchForAdapters(); // permet de rechercher les adaptateurs disponibles et de choisir le meilleur
 		DXGI_SWAP_CHAIN_DESC initSwapChainDesc(); // permet d'initialiser la description du swap chain avec les paramètres souhaités

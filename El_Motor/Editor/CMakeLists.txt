@@ -16,7 +16,14 @@ add_custom_target(copy_assets ALL
             "${CMAKE_SOURCE_DIR}/Editor/Shader"
             "${CMAKE_BINARY_DIR}/Runtime/Shader"
 
-    COMMENT "Copy Editor/Shader (contents) to build/x64-Debug/Runtime/Shader"
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            "${CMAKE_BINARY_DIR}/Editor/Shader"
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/Editor/Shader"
+            "${CMAKE_BINARY_DIR}/Editor/Shader"
+
+    COMMENT "Copy Editor/Shader to Runtime and Editor directories"
 )
 
 
@@ -37,6 +44,7 @@ add_executable(Editor ${EDITOR_SOURCES}
 )
 
 target_link_libraries(Editor PRIVATE
+    Game
     Engine
     glfw
     d3d11

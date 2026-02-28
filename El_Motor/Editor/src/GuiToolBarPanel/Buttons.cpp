@@ -5,7 +5,7 @@
 #include "External/ImGuiFileLog/includes/coreIncludes/ImGuiFileDialog.h"
 #include "Assets/MeshAsset/MeshAsset.hpp"
 #include "Entity/Component/MeshComponent.hpp"
-
+#include "ScriptManager/ScriptManager.hpp"
 #include "Logger/Logger.hpp"
 #include <iostream>
 
@@ -16,7 +16,9 @@ void Editor::Buttons::init()
 
 }
 
+void Editor::Buttons::update(AssetManager& manager) {
 
+}
 
 
 bool Editor::Buttons::createProject()
@@ -63,7 +65,7 @@ void Editor::Buttons::loadProject() {
 
                 // Appelle ton ProjectManager avec ce dossier
                 SetProjectPath(folderPath);
-                SetLoadReady(true);
+                SetLoadProjReady(true);
             }
 
             ImGuiFileDialog::Instance()->Close();
@@ -79,7 +81,7 @@ void Editor::Buttons::projectName()
     ImGui::Text(GetSessionNameStatus().c_str());
     if (ImGui::InputText("Project Name", bufferSessionName, sizeof(bufferSessionName), ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        if (CheckGoNameValid(bufferSessionName))
+        if (CheckGoNameValid(bufferSessionName) || !CheckCaraterValid(bufferSessionName))
         {
             strncpy(bufferSessionName,"", sizeof(bufferSessionName));
             bufferSessionName[sizeof(bufferSessionName) - 1] = '\0';
@@ -91,7 +93,79 @@ void Editor::Buttons::projectName()
     }
 }
 
+void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
+{
+	ImGui::BeginChild("ScriptMenu", ImVec2(250, 0), true);
+    ImGui::Text("Scripts");
+    ImGui::Separator();
+    showScripts(scriptM);
+    AddScript(scriptM, "NewScript");
 
+}
+
+void Editor::Buttons::deleteScript(ScriptManager& scriptM) const
+{
+
+}
+
+void Editor::Buttons::editScript(ScriptManager& scriptM)
+{
+}
+
+void Editor::Buttons::AddScript(ScriptManager& scriptM , std::string name)
+{
+	scriptM.createScript(name);
+}
+
+void Editor::Buttons::showScripts(ScriptManager& scriptM)
+{
+    ImGui::BeginChild("ScriptList", ImVec2(250, 0), true);
+
+    auto& scripts = scriptM.GetScripts();
+
+    for (size_t i = 0; i < scripts.size(); i++)
+    {
+        const std::string& name = scripts[i]->GetName();
+
+        ImGui::PushID(static_cast<int>(i));
+
+        bool isSelected = (selectedScript == name);
+
+        if (ImGui::Selectable(name.c_str(), isSelected))
+        {
+            selectedScript = name;
+        }
+
+        ImGui::PopID();
+    }
+
+    ImGui::EndChild();
+}
+
+bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
+{
+ //   if (IsCpp) 
+ //   {
+ //       if (str.empty() || str.ends_with(".cpp") || all_of(str.begin(), str.end(),
+ //           [](unsigned char c) {
+ //               return std::isspace(c);
+ //           }))
+ //       
+ //   }
+ //   else if (!IsCpp)
+ //   {
+ //       if (str.empty() || str.ends_with(".hpp") || all_of(str.begin(), str.end(),
+ //           [](unsigned char c) {
+ //               return std::isspace(c);
+ //           }
+	//}
+
+ //   else
+ //   {
+ //       SetSessionNameStatus("Type a script name, then press Enter to confirm");
+	//}
+	return false;
+}
 
 
 
@@ -107,48 +181,60 @@ bool Editor::Buttons::startRuntime()
 
 void Editor::Buttons::loadAssets(AssetManager& manager)
 {
-    IGFD::FileDialogConfig config;
-    config.path = "Assets";
-    ImGuiFileDialog::Instance()->OpenDialog(
-        "LoadAssetKey",
-        "Choose Asset",
-        ".png,.jpg,.obj,.fbx",
-        config
-    );
 
-    if (ImGuiFileDialog::Instance()->Display("LoadAssetKey", ImGuiWindowFlags_None, ImVec2(1500,500)))
+
+    if (ImGui::Button("Load Assets", ImVec2(80, 25)))
     {
-
-
-
-        if (ImGuiFileDialog::Instance()->IsOk())
-        {
-            std::string filePath =
-                ImGuiFileDialog::Instance()->GetFilePathName();
-
-            std::string extension =
-                std::filesystem::path(filePath).extension().string();
-
-            if (extension == ".png" || extension == ".jpg")
-            {
-                std::cout << "asset loaded" << std::endl;
-            }
-            else if (extension == ".obj" || extension == ".fbx")
-            {
-                manager.Load<MeshAsset>(filePath);
-                std::cout << "ok load";
-            }
-            else
-            {
-                Engine::LoggerManager::Get().LogError(
-                    "Unsupported asset type : " + extension
-                );
-            }
-        }
-
-        ImGuiFileDialog::Instance()->Close();
+        SetLoadAsset(true);
     }
+ 
 
+
+    if (GetLoadAsset() == true) {
+
+        IGFD::FileDialogConfig config;
+        config.path = "Assets";
+        ImGuiFileDialog::Instance()->OpenDialog(
+            "LoadAssetKey",
+            "Choose Asset",
+            ".png,.jpg,.obj,.fbx",
+            config
+        );
+
+        if (ImGuiFileDialog::Instance()->Display("LoadAssetKey", ImGuiWindowFlags_None, ImVec2(1500, 500)))
+        {
+
+
+
+            if (ImGuiFileDialog::Instance()->IsOk())
+            {
+                std::string filePath =
+                    ImGuiFileDialog::Instance()->GetFilePathName();
+
+                std::string extension =
+                    std::filesystem::path(filePath).extension().string();
+
+                if (extension == ".png" || extension == ".jpg")
+                {
+                    std::cout << "asset loaded" << std::endl;
+                }
+                else if (extension == ".obj" || extension == ".fbx")
+                {
+                    manager.Load<MeshAsset>(filePath);
+                    std::cout << "ok load";
+                }
+                else
+                {
+                    Engine::LoggerManager::Get().LogError(
+                        "Unsupported asset type : " + extension
+                    );
+                }
+            }
+            
+            SetLoadAsset(false);
+            ImGuiFileDialog::Instance()->Close();
+        }
+    }
 }
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
@@ -189,12 +275,6 @@ void Editor::Buttons::showCmpnt()
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
-    ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Always);
-    ImGui::SetNextWindowPos(ImVec2(500, 0)); 
-
-    const std::string windowName = "Components";
-	ImGui::Begin(windowName.c_str(), nullptr, ImGuiWindowFlags_NoResize);
-
   
 
 	ImGui::BeginChild("ComponentList", ImVec2(0, 0), true);//Component list child
@@ -224,7 +304,6 @@ void Editor::Buttons::showCmpnt()
     }
     editComponent();
     ImGui::EndChild();
-    ImGui::End();
 }
 
 void Editor::Buttons::addComponent()
@@ -301,7 +380,7 @@ bool Editor::Buttons::saveProject()
 
 void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 {
-    if (ImGui::Button("create", ImVec2(100, 50)))
+    if (ImGui::Button("Create GameObject", ImVec2(150, 50)))
     {
        scene->CreateGameObject();
     }
@@ -309,7 +388,7 @@ void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 
 void Editor::Buttons::delGO(std::shared_ptr<Engine::Scene>& scene)
 {
-    if (ImGui::Button("delete", ImVec2(100, 50)))
+    if (ImGui::Button("Delete GameObject", ImVec2(150, 50)))
     {
         
         scene->DestroyGameObject(selectedEntity);
@@ -337,7 +416,7 @@ static char buffer[256] = "";
 
     if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        if (CheckGoNameValid(buffer))//true if there is only spaces in the buffer
+        if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
             selectedEntity->SetName("GameObject");
         }
@@ -355,6 +434,14 @@ bool Editor::Buttons::CheckGoNameValid(const std::string& str)
         {
             return std::isspace(c);
         });
+}
+
+bool Editor::Buttons::CheckCaraterValid(const std::string& str)
+{
+        return std::ranges::all_of(str, [](unsigned char c)
+            {
+                return std::isalnum(c);
+            });
 }
 
 
