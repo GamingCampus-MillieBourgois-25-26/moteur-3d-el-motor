@@ -1,5 +1,3 @@
-
-
 file(GLOB_RECURSE EDITOR_SOURCES
 	src/**/*.cpp
 )
@@ -41,6 +39,7 @@ list(APPEND EDITOR_SOURCES
 
 add_executable(Editor ${EDITOR_SOURCES} 
                       ${EDITOR_HEADERS}
+                      ${SCRIPT_SOURCES}
 )
 
 target_link_libraries(Editor PRIVATE
@@ -53,8 +52,8 @@ target_link_libraries(Editor PRIVATE
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
                                          /Headers
+                                         
 )
-
 
 target_include_directories(Editor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Headers

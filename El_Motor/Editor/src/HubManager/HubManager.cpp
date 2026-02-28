@@ -18,6 +18,7 @@ void Editor::HubManager::Init()
 {
 	app.initApp();
 	guiLayer.Init(app.getWindowOpener().getMyWindow(),app.getD3D11()->GetDevice(),app.getD3D11()->GetContext(),app.getD3D11()->GetRenderTargetView());
+    
 }
 
 void Editor::HubManager::HubRun()
@@ -98,6 +99,7 @@ void Editor::HubManager::DrawHubUI()
 
     buttons.loadProject();
     if (buttons.GetLoadProjReady()) {
+
         Editor::ProjectManager::Get().loadProject(buttons.GetProjectPath(),coreEditor.GetEngine().getScene());
         SetEditorState(EditorState::Editor);
     }
@@ -118,6 +120,8 @@ void Editor::HubManager::DrawEditorUI()
     if (buttons.startRuntime())
     {
         logger.LogInfo("RUN STARTED");
+        scriptManager.Initialize();
+        scriptManager.StartAll();
 		SetEditorState(EditorState::Run);
     }
     buttons.createGO(coreEditor.GetEngine().getScene());
@@ -127,6 +131,7 @@ void Editor::HubManager::DrawEditorUI()
     if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
+        std::cout<<std::endl<<scriptManager.GetScripts().size();
     }
 
     ImGui::SameLine(0, 40);

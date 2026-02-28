@@ -1,17 +1,20 @@
 #include "ScriptManager/ScriptManager.hpp"
 #include "UserScript/UserScript.hpp"
 #include "ScriptRegister/ScriptRegister.hpp"
+#include <thread>
 #include <fstream>
 #include <algorithm>
+#include <windows.h>
 
-void ScriptManager::createScript(std::string scriptName) {
-
-    std::filesystem::path directory = "Scripts/" + scriptName;
+void ScriptManager::createScript(std::string scriptName, std::string projectName) {
+    std::filesystem::path project = "Projects/" + projectName;
+    std::filesystem::path directory = project/("Scripts/" + scriptName);
     std::filesystem::create_directories(directory);
 
     std::filesystem::path headerPath = directory / ("Headers/" + scriptName + ".hpp");
     std::filesystem::path cppPath = directory / ("src/" + scriptName + ".cpp");
-
+    std::filesystem::create_directories(headerPath.parent_path());
+    std::filesystem::create_directories(cppPath.parent_path());
 
 
     std::ofstream headerFile(headerPath);
@@ -30,20 +33,21 @@ void ScriptManager::createScript(std::string scriptName) {
 
     std::ofstream cppFile(cppPath);
     cppFile <<
-        "#include \"" << scriptName << ".hpp\"\n"
+        "#include \"../Headers/" << scriptName << ".hpp\"\n"
         "#include \"MacroAutoRegister/AutoRegister.hpp\"\n"
         "#include <iostream>\n\n"
+
         "void " << scriptName << "::OnStart()\n"
         "{\n"
         "    std::cout << \"" << scriptName << " Started\" << std::endl;\n"
         "}\n\n"
+
         "void " << scriptName << "::Update(float deltaTime)\n"
         "{\n"
         "}\n\n"
-        "REGISTER_SCRIPT(" << scriptName << ")\n";
+
+        "REGISTER_SCRIPT(" << scriptName << ");\n";
     cppFile.close();
-
-
 }
 
 
@@ -102,4 +106,15 @@ void ScriptManager::updateScripts(float deltaTime)
 {
     for (auto& script : scripts)
         script->Update(deltaTime);
+}
+
+void ScriptManager::Restart()
+{
+    std::string projectRoot = "C:/Users/Aracno/Documents/GitHub/moteur-3d-el-motor/El_Motor"; // temporaire pour test
+
+    std::string configureCmd = "cmake -S \"" + projectRoot + "\" -B \"" + projectRoot + "/out/build\"";
+    std::system(configureCmd.c_str());
+
+    std::string buildCmd = "cmake --build \"" + projectRoot + "/out/build\" --config Debug";
+    std::system(buildCmd.c_str());
 }
