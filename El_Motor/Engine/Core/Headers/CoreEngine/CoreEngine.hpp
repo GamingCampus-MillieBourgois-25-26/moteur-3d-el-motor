@@ -23,6 +23,7 @@ namespace Engine
         //.... assetManager;
 
         bool running = false;
+		float dt = 0.0f;
 
     public:
 
@@ -43,11 +44,11 @@ namespace Engine
 		AssetManager& getAssetManager() { return assetManager; }
 		std::shared_ptr<Scene>& getScene() { return defaultScene; }
 		EditorCamera& getCamera() { return camera; }
-		
+		float getDeltaTime() const { return dt; }
 
 
 		void SetScene(std::shared_ptr<Scene> scene) { defaultScene = scene; }
-
+		void SetDeltaTime(float delta) { dt = delta; }
 
     };
 }

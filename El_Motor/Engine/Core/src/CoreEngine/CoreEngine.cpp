@@ -13,10 +13,10 @@ void Engine::CoreEngine::init() {
 
 void Engine::CoreEngine::run() {
 		timeManager.Update();
-		float dt = timeManager.GetDeltaTime();
+		SetDeltaTime(timeManager.GetDeltaTime());
 		inputManager.update();
 		getCamera().Update(inputManager);
-		getScene()->Update(dt);
+		getScene()->Update(getDeltaTime());
 }
 
 void Engine::CoreEngine::shutdown() {
