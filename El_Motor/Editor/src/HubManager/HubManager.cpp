@@ -127,7 +127,9 @@ void Editor::HubManager::DrawEditorUI()
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
-	/*buttons.showScriptMenu(scriptManager);*/
+	buttons.showScriptMenu(scriptManager);
+
+
     if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());

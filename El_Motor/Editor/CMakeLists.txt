@@ -39,7 +39,6 @@ list(APPEND EDITOR_SOURCES
 
 add_executable(Editor ${EDITOR_SOURCES} 
                       ${EDITOR_HEADERS}
-                      ${SCRIPT_SOURCES}
 )
 
 target_link_libraries(Editor PRIVATE

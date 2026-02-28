@@ -185,61 +185,57 @@ namespace Engine
 
 	void D3D11::DrawShape(const MeshAsset& mesh)
 	{
-		// Récupère le render target
-		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
-		if (!pTarget || !mDepthStencilView) return;
+		//// Récupère le render target
+		//wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
+		//if (!pTarget || !mDepthStencilView) return;
 
-		// 1. Bind le render target + depth stencil
-		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), mDepthStencilView.Get());
+		//// 1. Bind le render target + depth stencil
+		//pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), mDepthStencilView.Get());
 
-		// 2. Clear la frame (couleur + depth)
-		float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f }; // couleur par défaut
-		pContext->ClearRenderTargetView(pTarget.Get(), clearColor);
-		pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		//// 2. Clear la frame (couleur + depth)
+		//float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		//pContext->ClearRenderTargetView(pTarget.Get(), clearColor);
+		//pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-		// 3. Configure le viewport
-		RECT rect;
-		GetClientRect(myWindow, &rect);
-		D3D11_VIEWPORT viewport = {};
-		viewport.Width = float(rect.right - rect.left);
-		viewport.Height = float(rect.bottom - rect.top);
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-		viewport.TopLeftX = 0.0f;
-		viewport.TopLeftY = 0.0f;
-		pContext->RSSetViewports(1, &viewport);
+		//// 3. Configure le viewport
+		//RECT rect;
+		//GetClientRect(myWindow, &rect);
+		//D3D11_VIEWPORT viewport = {};
+		//viewport.Width = float(rect.right - rect.left);
+		//viewport.Height = float(rect.bottom - rect.top);
+		//viewport.MinDepth = 0.0f;
+		//viewport.MaxDepth = 1.0f;
+		//viewport.TopLeftX = 0.0f;
+		//viewport.TopLeftY = 0.0f;
+		//pContext->RSSetViewports(1, &viewport);
 
-		// 4. Active les shaders
-		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
-		pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
+		//// 4. Active les shaders
+		//pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+		//pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-		// 5. Input layout
-		pContext->IASetInputLayout(mInputLayout.Get());
+		//// 5. Input layout
+		//pContext->IASetInputLayout(mInputLayout.Get());
 
-		// 6. Bind le mesh
-		mesh.Bind(pContext.Get());
+		//// 6. Bind le mesh
+		//mesh.Bind(pContext.Get());
 
-		// 7. Constant buffer pour la couleur
-		ObjectColorBuffer buffer;
-		buffer.objColor = mesh.GetColor();
-		buffer.padding = 0.0f;
+		//// 7. Constant buffer pour la couleur
+		//ObjectColorBuffer buffer;
+		//buffer.objColor = mesh.GetColor();
+		//buffer.padding = 0.0f;
 
-		pContext->UpdateSubresource(
-			mObjectColorBuffer.Get(),
-			0,
-			nullptr,
-			&buffer,
-			0,
-			0
-		);
+		//pContext->UpdateSubresource(
+		//	mObjectColorBuffer.Get(),
+		//	0,
+		//	nullptr,
+		//	&buffer,
+		//	0,
+		//	0
+		//);
 
-		pContext->PSSetConstantBuffers(
-			0,
-			1,
-			mObjectColorBuffer.GetAddressOf()
-		);
+		//pContext->PSSetConstantBuffers(0, 1, mObjectColorBuffer.GetAddressOf());
 
-		// 8. Draw le mesh
-		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
+		//// 8. Draw le mesh
+		//pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
 }
