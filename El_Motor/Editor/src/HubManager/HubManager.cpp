@@ -130,6 +130,7 @@ void Editor::HubManager::DrawEditorUI()
     if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
+        std::cout<<std::endl<<scriptManager.GetScripts().size();
         scriptManager.Restart();
     }
 

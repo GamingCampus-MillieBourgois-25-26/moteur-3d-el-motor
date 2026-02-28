@@ -21,7 +21,7 @@ public:
 
 
 	// Creates a new script with the given name, generating the necessary header and cpp files
-	void createScript(std::string scriptName);
+	void createScript(std::string scriptName , std::string projectName);
 
 	// Deletes a script by name, with options to delete the corresponding .cpp and .hpp files
 	void DeleteScript(const std::string& scriptName, bool deleteCpp, bool deleteHpp);

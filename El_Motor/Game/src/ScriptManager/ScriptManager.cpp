@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <windows.h>
 
-void ScriptManager::createScript(std::string scriptName) {
-
-    std::filesystem::path directory = "Scripts/" + scriptName;
+void ScriptManager::createScript(std::string scriptName, std::string projectName) {
+    std::filesystem::path project = "Projects/" + projectName;
+    std::filesystem::path directory = project/("Scripts/" + scriptName);
     std::filesystem::create_directories(directory);
 
     std::filesystem::path headerPath = directory / ("Headers/" + scriptName + ".hpp");
@@ -110,11 +110,11 @@ void ScriptManager::updateScripts(float deltaTime)
 
 void ScriptManager::Restart()
 {
-    char path[MAX_PATH];
-    GetModuleFileNameA(NULL, path, MAX_PATH);
+    std::string projectRoot = "C:/Users/Aracno/Documents/GitHub/moteur-3d-el-motor/El_Motor"; // temporaire pour test
 
-    std::string cmd = std::string("start \"\" \"") + path + "\"";
-    std::system(cmd.c_str());
+    std::string configureCmd = "cmake -S \"" + projectRoot + "\" -B \"" + projectRoot + "/out/build\"";
+    std::system(configureCmd.c_str());
 
-    exit(0);
+    std::string buildCmd = "cmake --build \"" + projectRoot + "/out/build\" --config Debug";
+    std::system(buildCmd.c_str());
 }

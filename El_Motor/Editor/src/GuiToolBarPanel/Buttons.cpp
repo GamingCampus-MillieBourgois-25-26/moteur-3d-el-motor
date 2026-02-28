@@ -116,9 +116,8 @@ void Editor::Buttons::editScript(ScriptManager& scriptM)
 void Editor::Buttons::AddScript(ScriptManager& scriptM , std::string name)
 {
     if (ImGui::Button("Add Script", ImVec2(80, 25))) {
-        scriptM.createScript(name);
+        scriptM.createScript(name, GetSessionName());
     }
-    
 	
 }
 
