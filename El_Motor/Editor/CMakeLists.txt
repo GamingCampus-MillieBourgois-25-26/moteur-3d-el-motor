@@ -1,15 +1,3 @@
-file(GLOB_RECURSE SCRIPT_SOURCES
-    "${CMAKE_SOURCE_DIR}/Projects/*/Scripts/*.cpp"
-)
-
-message(STATUS "===== SCRIPTS FOUND =====")
-foreach(file ${SCRIPT_SOURCES})
-    message(STATUS ${file})
-endforeach()
-message(STATUS "=========================")
-
-
-
 file(GLOB_RECURSE EDITOR_SOURCES
 	src/**/*.cpp
 )
@@ -65,10 +53,6 @@ target_link_libraries(Editor PRIVATE
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
                                          /Headers
                                          
-)
-
-target_include_directories(Editor PRIVATE
-    ${CMAKE_SOURCE_DIR}/Projects
 )
 
 target_include_directories(Editor PRIVATE

@@ -131,7 +131,6 @@ void Editor::HubManager::DrawEditorUI()
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
         std::cout<<std::endl<<scriptManager.GetScripts().size();
-        scriptManager.Restart();
     }
 
     ImGui::SameLine(0, 40);

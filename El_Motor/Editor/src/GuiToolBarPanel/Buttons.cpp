@@ -98,9 +98,9 @@ void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
 	ImGui::BeginChild("ScriptMenu", ImVec2(250, 0), true);
     ImGui::Text("Scripts");
     ImGui::Separator();
+    AddScript(scriptM,"Test");
+    ImGui::Separator();
     showScripts(scriptM);
-    AddScript(scriptM, "TEST");
-
     ImGui::EndChild();
 }
 
@@ -118,24 +118,48 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM , std::string name)
     if (ImGui::Button("Add Script", ImVec2(80, 25))) {
         scriptM.createScript(name, GetSessionName());
     }
-	
 }
 
 void Editor::Buttons::showScripts(ScriptManager& scriptM)
 {
     ImGui::BeginChild("ScriptList", ImVec2(250, 0), true);
 
-    auto& scripts = scriptM.GetScripts();
-    //std::cout<< scripts.size()<<std::endl;
+    std::vector<std::string> scriptFiles;
 
-    for (size_t i = 0; i < scripts.size(); i++)
+    
+    std::string basePath = "Projects/" + GetSessionName() + "/Scripts";
+
+    // Vérifie que le dossier existe
+    if (!std::filesystem::exists(basePath))
     {
-        const std::string& name = scripts[i]->GetName();
+        ImGui::Text("Le dossier Scripts n'existe pas !");
+        ImGui::EndChild();
+        return;
+    }
 
+    
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(basePath))
+    {
+        if (entry.is_regular_file())
+        {
+            std::string path = entry.path().string();
+
+            
+            if (path.size() >= 4 && (path.substr(path.size() - 4) == ".cpp" || path.substr(path.size() - 4) == ".hpp"))
+            {
+                
+                scriptFiles.push_back(std::filesystem::relative(entry.path(), basePath).string());
+            }
+        }
+    }
+
+    
+    for (size_t i = 0; i < scriptFiles.size(); ++i)
+    {
+        const std::string& name = scriptFiles[i];
         ImGui::PushID(static_cast<int>(i));
 
         bool isSelected = (selectedScript == name);
-
         if (ImGui::Selectable(name.c_str(), isSelected))
         {
             selectedScript = name;
@@ -146,7 +170,6 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
 
     ImGui::EndChild();
 }
-
 bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
 {
     if (IsCpp)
@@ -173,8 +196,6 @@ bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
     }
     return false;
 }
-
-
 
 bool Editor::Buttons::startRuntime()
 {
