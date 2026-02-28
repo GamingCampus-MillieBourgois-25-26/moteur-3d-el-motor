@@ -27,6 +27,9 @@ public:
 	void DeleteScript(const std::string& scriptName, bool deleteCpp, bool deleteHpp);
 
 
+	// 
+	void Restart();
+
 	// Calls OnStart() on all registered scripts
 	void StartAll();
 

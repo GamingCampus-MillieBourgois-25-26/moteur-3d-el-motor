@@ -81,7 +81,7 @@ void Editor::Buttons::projectName()
     ImGui::Text(GetSessionNameStatus().c_str());
     if (ImGui::InputText("Project Name", bufferSessionName, sizeof(bufferSessionName), ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        if (CheckGoNameValid(bufferSessionName) || CheckCaraterValid(bufferSessionName))
+        if (CheckGoNameValid(bufferSessionName) || !CheckCaraterValid(bufferSessionName))
         {
             strncpy(bufferSessionName,"", sizeof(bufferSessionName));
             bufferSessionName[sizeof(bufferSessionName) - 1] = '\0';
@@ -99,8 +99,9 @@ void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
     ImGui::Text("Scripts");
     ImGui::Separator();
     showScripts(scriptM);
-    AddScript(scriptM, "NewScript");
+    AddScript(scriptM, "TEST");
 
+    ImGui::EndChild();
 }
 
 void Editor::Buttons::deleteScript(ScriptManager& scriptM) const
@@ -114,7 +115,11 @@ void Editor::Buttons::editScript(ScriptManager& scriptM)
 
 void Editor::Buttons::AddScript(ScriptManager& scriptM , std::string name)
 {
-	scriptM.createScript(name);
+    if (ImGui::Button("Add Script", ImVec2(80, 25))) {
+        scriptM.createScript(name);
+    }
+    
+	
 }
 
 void Editor::Buttons::showScripts(ScriptManager& scriptM)
@@ -122,6 +127,7 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
     ImGui::BeginChild("ScriptList", ImVec2(250, 0), true);
 
     auto& scripts = scriptM.GetScripts();
+    //std::cout<< scripts.size()<<std::endl;
 
     for (size_t i = 0; i < scripts.size(); i++)
     {
@@ -144,27 +150,29 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
 
 bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
 {
- //   if (IsCpp) 
- //   {
- //       if (str.empty() || str.ends_with(".cpp") || all_of(str.begin(), str.end(),
- //           [](unsigned char c) {
- //               return std::isspace(c);
- //           }))
- //       
- //   }
- //   else if (!IsCpp)
- //   {
- //       if (str.empty() || str.ends_with(".hpp") || all_of(str.begin(), str.end(),
- //           [](unsigned char c) {
- //               return std::isspace(c);
- //           }
-	//}
+    if (IsCpp)
+    {
+        if (str.empty() || str.ends_with(".cpp") || all_of(str.begin(), str.end(),
+            [](unsigned char c) {
+                return std::isspace(c);
+            })) 
+        {}
 
- //   else
- //   {
- //       SetSessionNameStatus("Type a script name, then press Enter to confirm");
-	//}
-	return false;
+    }
+    else if (!IsCpp)
+    {
+        if (str.empty() || str.ends_with(".hpp") || all_of(str.begin(), str.end(),
+            [](unsigned char c) {
+                return std::isspace(c);
+            })) 
+        {}
+    }
+
+    else
+    {
+        SetSessionNameStatus("Type a script name, then press Enter to confirm");
+    }
+    return false;
 }
 
 
@@ -416,7 +424,7 @@ static char buffer[256] = "";
 
     if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
+        if (!CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
             selectedEntity->SetName("GameObject");
         }
@@ -440,7 +448,7 @@ bool Editor::Buttons::CheckCaraterValid(const std::string& str)
 {
         return std::ranges::all_of(str, [](unsigned char c)
             {
-                return std::isalnum(c) || c == '_';
+                return std::isalnum(c) || c == '_' || c == '-';
             });
 }
 

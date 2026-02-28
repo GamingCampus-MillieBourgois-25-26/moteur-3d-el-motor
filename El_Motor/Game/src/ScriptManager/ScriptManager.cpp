@@ -1,8 +1,10 @@
 #include "ScriptManager/ScriptManager.hpp"
 #include "UserScript/UserScript.hpp"
 #include "ScriptRegister/ScriptRegister.hpp"
+#include <thread>
 #include <fstream>
 #include <algorithm>
+#include <windows.h>
 
 void ScriptManager::createScript(std::string scriptName) {
 
@@ -11,7 +13,8 @@ void ScriptManager::createScript(std::string scriptName) {
 
     std::filesystem::path headerPath = directory / ("Headers/" + scriptName + ".hpp");
     std::filesystem::path cppPath = directory / ("src/" + scriptName + ".cpp");
-
+    std::filesystem::create_directories(headerPath.parent_path());
+    std::filesystem::create_directories(cppPath.parent_path());
 
 
     std::ofstream headerFile(headerPath);
@@ -30,20 +33,21 @@ void ScriptManager::createScript(std::string scriptName) {
 
     std::ofstream cppFile(cppPath);
     cppFile <<
-        "#include \"" << scriptName << ".hpp\"\n"
+        "#include \"../Headers/" << scriptName << ".hpp\"\n"
         "#include \"MacroAutoRegister/AutoRegister.hpp\"\n"
         "#include <iostream>\n\n"
+
         "void " << scriptName << "::OnStart()\n"
         "{\n"
         "    std::cout << \"" << scriptName << " Started\" << std::endl;\n"
         "}\n\n"
+
         "void " << scriptName << "::Update(float deltaTime)\n"
         "{\n"
         "}\n\n"
-        "REGISTER_SCRIPT(" << scriptName << ")\n";
+
+        "REGISTER_SCRIPT(" << scriptName << ");\n";
     cppFile.close();
-
-
 }
 
 
@@ -102,4 +106,15 @@ void ScriptManager::updateScripts(float deltaTime)
 {
     for (auto& script : scripts)
         script->Update(deltaTime);
+}
+
+void ScriptManager::Restart()
+{
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+
+    std::string cmd = std::string("start \"\" \"") + path + "\"";
+    std::system(cmd.c_str());
+
+    exit(0);
 }
