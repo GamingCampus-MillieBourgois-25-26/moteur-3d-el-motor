@@ -13,21 +13,33 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
+#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
+
+#include "Maths/Headers/MVec3.hpp"
 
 // Création des Shapes
 
 class BoxCollider{
 public:
-	BoxCollider(float side)
+	BoxCollider(Maths::Vec3f side);
+
+private:
+	JPH::ShapeRefC mShape;
 };
 
 class SphereCollider{
 public:
-	SphereCollider(float radius)
+	SphereCollider(float radius);
+
+private:
+	JPH::ShapeRefC mShape;
 };
 
 class CapsuleCollider{
 public:
-	CapsuleCollider(float radius, float height)
+	CapsuleCollider(float radius, float height);
+
+private:
+	JPH::ShapeRefC mShape;
 };

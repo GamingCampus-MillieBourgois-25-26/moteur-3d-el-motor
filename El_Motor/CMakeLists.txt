@@ -7,6 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
+set(GLFW_BUILD_EXAMPLES OFF)
+set(GLFW_BUILD_TESTS OFF)
+set(GLFW_BUILD_DOCS OFF)
+
+set(JOLT_BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+set(JOLT_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(JOLT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -16,12 +24,8 @@ FetchContent_Declare(
 FetchContent_Declare(
     JoltPhysics
     GIT_REPOSITORY https://github.com/jrouwe/JoltPhysics.git
-    GIT_TAG v5.5.0 
+    GIT_TAG v5.5.0
 )
-
-set(GLFW_BUILD_EXAMPLES OFF)
-set(GLFW_BUILD_TESTS OFF)
-set(GLFW_BUILD_DOCS OFF)
 
 FetchContent_MakeAvailable(glfw JoltPhysics)
 

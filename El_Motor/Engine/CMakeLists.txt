@@ -5,6 +5,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
     Physics/src/**/*.cpp 
     Components/UserComponents/**/*.cpp
     Externals/**/*.cpp
+    Physics/**/*.cpp
 )
 
 
@@ -14,7 +15,8 @@ file(GLOB_RECURSE ENGINE_HEADERS
     Physics/Headers/**/*.cpp 
     Components/UserComponents/**/*.hpp
     Externals/**/*.h
-     Externals/**/*.hpp
+    Externals/**/*.hpp
+    Physics/**/.hpp
 )
 
 add_library(Engine
@@ -26,14 +28,14 @@ target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Headers
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Components/UserComponents/Headers
-
+                                         ${joltphysics_SOURCE_DIR}
 )
 
 
 target_link_libraries(Engine PRIVATE
     glfw
+    Jolt
     d3d11
     dxgi
-    d3dcompiler   
-    JoltPhysics
+    d3dcompiler
 )

@@ -32,7 +32,6 @@ private:
 	JPH::BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
 };
 
-
 class ObjectVsBroadPhaseLayerFilterImpl : public JPH::ObjectVsBroadPhaseLayerFilter
 {
 public:
@@ -54,7 +53,7 @@ public:
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 {
 public:
-	virtual bool ShouldCollide(JPH::Body inBody1, JPH::Body inBody2) const override
+	virtual bool ShouldCollide(JPH::ObjectLayer inBody1, JPH::ObjectLayer inBody2) const override
 	{
 		switch (inBody1)
 		{
@@ -97,54 +96,66 @@ public:
 	}
 };
 
+BPLayerInterfaceImpl broadPhaseLayerInterface;
+ObjectVsBroadPhaseLayerFilterImpl objectVSBroadphaseLayerFilter;
+ObjectLayerPairFilterImpl objectVSObjectLayerFilter;
+
 void PhysicSystem::Init(){
 	JPH::RegisterDefaultAllocator();
 	JPH::Factory::sInstance = new JPH::Factory();
 
 	JPH::RegisterTypes();
 
-	BPLayerInterfaceImpl BroadPhaseLayerInterface;
-	ObjectVsBroadPhaseLayerFilterImpl ObjectVSBroadphaseLayerFilter;
-	ObjectLayerPairFilterImpl ObjectVSObjectLayerFilter;
+	// Allocate a temp allocator on the heap and store the pointer in the member
+	sPhysics.mTemp_allocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
 
-	const uint cMaxBodies = 65536;
-	const uint cNumBodyMutexes = 0; // VAL ????
-	const uint cMaxBodyPairs = 65536;
-	const uint cMaxContactConstraints = 10240;
+	const JPH::uint cMaxBodies = 65536;
+	const JPH::uint cNumBodyMutexes = 0; // VAL ???? 
+	const JPH::uint cMaxBodyPairs = 65536;
+	const JPH::uint cMaxContactConstraints = 10240;
 
-	mSystem = new JPH::PhysicsSystem();
-	mSystem.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, BroadPhaseLayerInterface, ObjectVSBroadphaseLayerFilter, ObjectVSObjectLayerFilter);
+	sPhysics.mSystem = new JPH::PhysicsSystem();
+	sPhysics.mSystem->Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broadPhaseLayerInterface, objectVSBroadphaseLayerFilter, objectVSObjectLayerFilter);
 
-	&mSystem.SetContactListener(&contactListener);
+	// Create and register contact listener
+	sPhysics.mContactListener = new MyContactListener();
+	sPhysics.mSystem->SetContactListener(sPhysics.mContactListener);
 
-	mBodyInterface = &mSystem->GetBodyInterface();
+	sPhysics.mBodyInterface = &sPhysics.mSystem->GetBodyInterface();
 
-	mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers);
+	sPhysics.mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers);
 }
 
 void PhysicSystem::OnEnd()
 {
-	delete contactListener;
-	delete mJobSystem;
-	delete mSystem;
+	// Delete owned objects in reverse order of creation where appropriate
+	delete sPhysics.mContactListener;
+	sPhysics.mContactListener = nullptr;
 
-	JPH::Factory::sInstance = nullptr;
+	delete sPhysics.mJobSystem;
+	sPhysics.mJobSystem = nullptr;
+
+	delete sPhysics.mSystem;
+	sPhysics.mSystem = nullptr;
+
+	// Delete the temp allocator
+	delete sPhysics.mTemp_allocator;
+	sPhysics.mTemp_allocator = nullptr;
+
+	// Destroy the factory instance properly
 	delete JPH::Factory::sInstance;
+	JPH::Factory::sInstance = nullptr;
 
 	JPH::UnregisterTypes();
 }
 
 void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 	const float cDeltaTime = 1.0f / 60.0f;
-	while() {
+	const int cCollisionSteps = 1;
 
-		// Broad Phase Update Prepare
-		// Broad Phase Update Finalize
-		// Apply Gravity
-		// Find Collisions
+	sPhysics.mSystem->Update(cDeltaTime, cCollisionSteps, sPhysics.mTemp_allocator, sPhysics.mJobSystem);
 
-		const int cCollisionSteps = 1;
+	// Transforms Update
 
-		&mSystem->Update(cDeltaTime, cCollisionSteps, , &mJobSystem);
-	}
+
 }
