@@ -127,7 +127,7 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
     std::vector<std::string> scriptFiles;
 
     
-    std::string basePath = "Projects/" + GetSessionName() + "/Scripts";
+    std::string basePath = "../../../../Game/Projects/" + GetSessionName() + "/Scripts";
 
     // Vérifie que le dossier existe
     if (!std::filesystem::exists(basePath))

@@ -129,7 +129,7 @@ void Editor::HubManager::DrawEditorUI()
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
     if (buttons.reloadScript()) {
-        ProjectManager::Get().projectReload(coreEditor.GetEngine().getScene());
+        scriptManager.Restart();
     }
 	buttons.showScriptMenu(scriptManager);
 

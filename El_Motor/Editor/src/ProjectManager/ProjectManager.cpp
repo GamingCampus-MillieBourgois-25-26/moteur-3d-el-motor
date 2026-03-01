@@ -23,7 +23,7 @@ Editor::ProjectManager::~ProjectManager() = default;
 
 void Editor::ProjectManager::createProject(const std::string& name, std::shared_ptr<Engine::Scene>& scene) {
 
-    std::filesystem::path path = "Projects/" + name;
+    std::filesystem::path path = "../../../../Game/Projects/" + name;
     std::filesystem::create_directories(path);
     std::filesystem::create_directories(path / "Assets");
     std::filesystem::create_directories(path / "Scenes");
