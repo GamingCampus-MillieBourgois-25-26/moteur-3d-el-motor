@@ -1,9 +1,11 @@
 file(GLOB_RECURSE EDITOR_SOURCES
-	src/**/*.cpp
+    src/**/*.cpp
+    Projects/${ACTIVE_PROJECT_NAME}/Scripts/*/src/*.cpp
 )
 
 file(GLOB_RECURSE EDITOR_HEADERS
-	 Headers/**/*.hpp
+    Headers/**/*.hpp
+    Projects/${ACTIVE_PROJECT_NAME}/Scripts/*/Headers/*.hpp
 )
 
 # === HLSL Compilation (CSO dans Editor/Shader) ===
@@ -114,6 +116,7 @@ target_include_directories(Editor PRIVATE
      External/ImGuiFileLog/includes/coreIncludes
      External/ImGuiFileLog/includes/dirent
      External/Json
+     Projects/${ACTIVE_PROJECT_NAME}/Scripts/*/Headers
 )
 
 target_compile_definitions(Editor PRIVATE

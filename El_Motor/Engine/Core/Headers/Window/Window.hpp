@@ -24,6 +24,5 @@ namespace Engine
 		bool shouldClose() const { return glfwWindowShouldClose(window.get()); }
 
 		GLFWwindow* getMyWindow() const { return window.get(); } // recupere le pointeur brut de la fenetre pour l'utiliser plus tard
-
 	};
 }

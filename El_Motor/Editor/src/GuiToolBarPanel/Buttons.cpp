@@ -197,6 +197,15 @@ bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
     return false;
 }
 
+bool Editor::Buttons::reloadScript()
+{
+    if (ImGui::Button("Reaload & Restart", ImVec2(50, 50)))
+    {
+        return true;
+    }
+    return false;
+}
+
 bool Editor::Buttons::startRuntime()
 {
     if (ImGui::Button("Run", ImVec2(50, 50)))
@@ -265,15 +274,6 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
     }
 }
 
-void Editor::Buttons::test()
-{
-    //auto& currentSelected = selectedEntity->GetAllComponents();
-    //for (int i = 0; selectedEntity->GetAllComponents().size(); i++) {
-    //    if (currentSelected[i] == AssetManager:: ) {
-
-    //    }
-    //}
-}
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {

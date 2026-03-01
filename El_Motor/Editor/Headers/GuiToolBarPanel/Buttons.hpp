@@ -55,7 +55,7 @@ namespace Editor
 		void editScript(ScriptManager& scriptM);
 		void showScripts(ScriptManager& scriptM);
 		bool CheckScriptNameValid(const std::string& str, bool IsCpp);
-
+		bool reloadScript();
 
 		//Editor Entity Buttons
 		void selectGO(std::shared_ptr<Engine::Scene>& scene);//select GO
@@ -78,7 +78,6 @@ namespace Editor
 
 		bool startRuntime();
 		void loadAssets(AssetManager& manager);
-		void test();
 
 		//Getter
 		std::string GetSessionName() const { return sessionName; }

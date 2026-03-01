@@ -78,9 +78,13 @@ void Editor::HubManager::LoadProject()
 
 void Editor::HubManager::DrawHubUI()
 {
-    ImGui::SetNextWindowSize(ImVec2(800, 200), ImGuiCond_Always);
+
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowPos(ImVec2(windowSize.x / 2, windowSize.y / 2));
+    ImGui::SetNextWindowSize(ImVec2(500, 600), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     buttons.projectName();
@@ -95,8 +99,9 @@ void Editor::HubManager::DrawHubUI()
 
     buttons.loadProject();
     if (buttons.GetLoadProjReady()) {
-
+        scriptManager.Initialize();
         Editor::ProjectManager::Get().loadProject(buttons.GetProjectPath(),coreEditor.GetEngine().getScene());
+
         SetEditorState(EditorState::Editor);
     }
     ImGui::End();
@@ -104,13 +109,13 @@ void Editor::HubManager::DrawHubUI()
 
 void Editor::HubManager::DrawEditorUI()
 {
-    //Ligne pour li� la fenetre � la fenetre Dx11 , � ajouter quand la fenetre dx sera scale par rapport � l'�cran de l'utilisateur (� rescale)
+    
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(500, windowSize.y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(500,600), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     if (buttons.startRuntime())
@@ -123,6 +128,9 @@ void Editor::HubManager::DrawEditorUI()
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+    if (buttons.reloadScript()) {
+        ProjectManager::Get().projectReload(coreEditor.GetEngine().getScene());
+    }
 	buttons.showScriptMenu(scriptManager);
 
 
