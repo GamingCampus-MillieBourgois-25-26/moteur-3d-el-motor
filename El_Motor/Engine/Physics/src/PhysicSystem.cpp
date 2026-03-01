@@ -155,7 +155,8 @@ void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 
 	sPhysics.mSystem->Update(cDeltaTime, cCollisionSteps, sPhysics.mTemp_allocator, sPhysics.mJobSystem);
 
-	// Transforms Update
-
+	// Transforms Update || (pos et rot)
+	// pour tous aller chercher le body in rigidBody 
+	auto objects = scene.GetRootObjects();
 
 }
