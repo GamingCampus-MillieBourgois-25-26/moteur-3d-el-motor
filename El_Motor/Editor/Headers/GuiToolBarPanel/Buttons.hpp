@@ -67,10 +67,10 @@ namespace Editor
 
 
 		//Editor Component Buttons
-		void showCmpnt();//show all the component of a selected GO
+		void showCmpnt(const AssetManager& assetM);//show all the component of a selected GO
 		void addComponent(); //add a component to a selecte GO
 		void delComponent(); //delete a component of a selected GO
-		void editComponent(); //Change the value of the selected Go Transform
+		void editComponent(const AssetManager& assetM); //Change the value of the selected Go Transform
 
 		//Editor save level
 		bool saveProject();

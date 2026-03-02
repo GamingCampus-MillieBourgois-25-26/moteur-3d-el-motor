@@ -54,7 +54,6 @@ void Editor::HubManager::HubRun()
         {
             if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
             {
-                std::cout << "[DEBUG] Drawing mesh: " << path << std::endl;
                 app.getD3D11()->DrawShape(*mesh);
             }
         }
@@ -139,7 +138,7 @@ void Editor::HubManager::DrawEditorUI()
 
 
 
-    buttons.showCmpnt();
+    buttons.showCmpnt(coreEditor.GetEngine().getAssetManager());
     ImGui::End();
 
     

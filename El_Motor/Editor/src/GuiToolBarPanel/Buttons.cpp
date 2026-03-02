@@ -306,7 +306,7 @@ void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
     ImGui::EndChild();
 }
 
-void Editor::Buttons::showCmpnt()
+void Editor::Buttons::showCmpnt(const AssetManager& assetM)
 {
     if (!selectedEntity)
         return;
@@ -340,7 +340,7 @@ void Editor::Buttons::showCmpnt()
         ImGui::PopID();
 		//Show the component's editable properties if it's selected
     }
-    editComponent();
+    editComponent(assetM);
     ImGui::EndChild();
 }
 
@@ -393,7 +393,7 @@ void Editor::Buttons::delComponent()
 	}
 }
 
-void Editor::Buttons::editComponent()
+void Editor::Buttons::editComponent(const AssetManager& assetM)
 {
     if (!selectedComponent)
         return;
@@ -403,6 +403,34 @@ void Editor::Buttons::editComponent()
         ImGui::DragFloat3("Position", &transform->position.x, 0.1f);
         ImGui::DragFloat3("Rotation", &transform->rotation.x, 0.1f);
         ImGui::DragFloat3("Scale", &transform->scale.x, 0.1f);
+    }
+
+    if (auto* meshComp = dynamic_cast<Engine::MeshComponent*>(selectedComponent))
+    {
+        ImGui::Text("Mesh");
+
+        if (ImGui::BeginCombo("##MeshSelect",
+            meshComp->GetMesh() ? meshComp->GetMesh()->path.c_str() : "None"))
+        {
+            for (const auto& [path, asset] : assetM.GetMeshes())
+            {
+                auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset);
+                if (!mesh)
+                    continue;
+
+                bool isSelected = (meshComp->GetMesh() == mesh);
+
+                if (ImGui::Selectable(path.c_str(), isSelected))
+                {
+                    meshComp->SetMesh(mesh);
+                }
+
+                if (isSelected)
+                    ImGui::SetItemDefaultFocus();
+            }
+
+            ImGui::EndCombo();
+        }
     }
 }
 
