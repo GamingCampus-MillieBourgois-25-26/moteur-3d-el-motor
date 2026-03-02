@@ -7,7 +7,6 @@
 
 
 
-
 Editor::ProjectManager& Editor::ProjectManager::Get()
 {
     static ProjectManager instance;
@@ -67,7 +66,7 @@ void Editor::ProjectManager::loadProject(const std::filesystem::path& path, std:
     nlohmann::json config;
     configFile >> config;
     std::cout << "Loaded project: " << config["name"] << std::endl;
-
+	SetLoadedProjectName(config["name"]);
     // Load the main scene only (single scene)
     std::filesystem::path mainScenePath = path / "Scenes" / "MainScene.json";
     loadScene(mainScenePath, scene);

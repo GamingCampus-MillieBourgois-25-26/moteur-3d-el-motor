@@ -101,7 +101,7 @@ void Editor::HubManager::DrawHubUI()
     if (buttons.GetLoadProjReady()) {
         scriptManager.Initialize();
         Editor::ProjectManager::Get().loadProject(buttons.GetProjectPath(),coreEditor.GetEngine().getScene());
-
+		buttons.SetSessionName(Editor::ProjectManager::Get().GetLoadedProjectName());
         SetEditorState(EditorState::Editor);
     }
     ImGui::End();

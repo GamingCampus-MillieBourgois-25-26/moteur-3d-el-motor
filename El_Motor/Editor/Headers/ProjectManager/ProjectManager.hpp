@@ -6,10 +6,11 @@
 #include <vector>
 
 namespace Editor {
+
 	class ProjectManager {
 
 	private:
-		
+		std::string loadedProjectName;
 
 	protected:
 		std::filesystem::path currentProjectPath;
@@ -35,12 +36,12 @@ namespace Editor {
 
 		//Setter
 		void SetProjectPath(const std::filesystem::path& path) {currentProjectPath = path;}
-
+		void SetLoadedProjectName(const std::string& name) { loadedProjectName = name; }
 
 
 		//Getter
 		const std::filesystem::path& GetProjectPath() const;
-
+		std::string GetLoadedProjectName() const { return loadedProjectName; }
 
 
 

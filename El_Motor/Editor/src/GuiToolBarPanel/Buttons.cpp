@@ -46,7 +46,7 @@ void Editor::Buttons::loadProject() {
     if (GetLoadProject())
     {
         IGFD::FileDialogConfig config;
-        config.path = "Projects";
+        config.path = "../../../../Game/Projects";
 
         // Ouvre le dialog pour sélectionner un dossier
         ImGuiFileDialog::Instance()->OpenDialog(
@@ -454,7 +454,7 @@ static char buffer[256] = "";
 
     if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        if (!CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
+        if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
             selectedEntity->SetName("GameObject");
         }
