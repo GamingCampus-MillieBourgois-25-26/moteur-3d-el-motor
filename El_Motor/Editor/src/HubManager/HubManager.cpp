@@ -84,7 +84,7 @@ void Editor::HubManager::DrawHubUI()
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(500, 600), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(800,500), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     buttons.projectName();
@@ -115,7 +115,7 @@ void Editor::HubManager::DrawEditorUI()
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(500,600), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, viewport->Size.y), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     if (buttons.startRuntime())
