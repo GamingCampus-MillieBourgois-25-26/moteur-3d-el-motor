@@ -169,11 +169,17 @@ void ScriptManager::updateScripts(float deltaTime)
 /// </summary>
 void ScriptManager::Restart()
 {
-    std::string projectRoot = "C:/Users/Aracno/Documents/GitHub/moteur-3d-el-motor/El_Motor"; // temporaire pour test
+    std::filesystem::path root = "../../../../";
+    std::filesystem::path buildDir = root / "out/build/x64-Debug/Editor" ;
 
-    std::string configureCmd = "cmake -S \"" + projectRoot + "\" -B \"" + projectRoot + "/out/build\"";
+    std::string configureCmd =
+        "cmake -S \"" + root.string() +
+        "\" -B \"" + buildDir.string() + "\"";
+
     std::system(configureCmd.c_str());
 
-    std::string buildCmd = "cmake --build \"" + projectRoot + "/out/build\" --config Debug";
+    std::string buildCmd =
+        "cmake --build \"" + buildDir.string() + "\" --config Debug";
+
     std::system(buildCmd.c_str());
 }

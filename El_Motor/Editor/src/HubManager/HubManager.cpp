@@ -78,13 +78,13 @@ void Editor::HubManager::LoadProject()
 
 void Editor::HubManager::DrawHubUI()
 {
-
+    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowViewport(viewport->ID);
 
-    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(800,500), ImGuiCond_Always);
+   
+    ImGui::SetNextWindowSize(ImVec2(windowSize), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     buttons.projectName();
@@ -116,7 +116,7 @@ void Editor::HubManager::DrawEditorUI()
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
     ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, viewport->Size.y), ImGuiCond_Always);
-    ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
+    ImGui::Begin("EL MOTOR HUB", nullptr);
 
     if (buttons.startRuntime())
     {
@@ -129,6 +129,7 @@ void Editor::HubManager::DrawEditorUI()
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
     if (buttons.reloadScript()) {
+        ProjectManager::Get().SetLastProject(buttons.GetSessionName());
         scriptManager.Restart();
     }
 	buttons.showScriptMenu(scriptManager);

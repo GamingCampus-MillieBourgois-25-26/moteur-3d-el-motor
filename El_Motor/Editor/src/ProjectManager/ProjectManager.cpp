@@ -182,3 +182,11 @@ void Editor::ProjectManager::saveScene(const Engine::Scene& scene, const std::fi
     std::ofstream file(scenePath);
     file << sceneJson.dump(4);
 }
+
+void Editor::ProjectManager::SetLastProject(const std::string& name)
+{
+    std::filesystem::path root = "../../../../Editor";
+    std::ofstream file(root / "LastProject.txt");
+    file << name;
+    file.close();
+}

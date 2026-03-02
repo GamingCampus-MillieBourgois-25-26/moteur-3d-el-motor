@@ -56,7 +56,7 @@ void Editor::Buttons::loadProject() {
             config                 // dossier de départ
         );
 
-        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(200, 50)))
+        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(600, 500)))
         {
             if (ImGuiFileDialog::Instance()->IsOk())
             {

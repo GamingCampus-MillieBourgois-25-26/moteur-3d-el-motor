@@ -1,3 +1,24 @@
+# === Lire le projet actif depuis LastProject.txt ===
+
+set(LAST_PROJECT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LastProject.txt")
+
+if(EXISTS ${LAST_PROJECT_FILE})
+    file(READ ${LAST_PROJECT_FILE} ACTIVE_PROJECT_NAME)
+    string(STRIP "${ACTIVE_PROJECT_NAME}" ACTIVE_PROJECT_NAME)
+else()
+    message(FATAL_ERROR "LastProject.txt not found in Editor folder")
+endif()
+
+message(STATUS "Active project: ${ACTIVE_PROJECT_NAME}")
+
+# Forcer reconfigure si le fichier change
+configure_file(
+    ${LAST_PROJECT_FILE}
+    ${CMAKE_BINARY_DIR}/LastProject_copy.txt
+    COPYONLY
+)
+
+
 file(GLOB_RECURSE EDITOR_SOURCES
     src/**/*.cpp
     Projects/${ACTIVE_PROJECT_NAME}/Scripts/*/src/*.cpp
