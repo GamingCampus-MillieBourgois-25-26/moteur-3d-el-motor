@@ -96,7 +96,7 @@ public:
 	}
 };
 
-BPLayerInterfaceImpl broadPhaseLayerInterface;
+BPLayerInterfaceImpl broadPhaseLayerInterface = BPLayerInterfaceImpl();
 ObjectVsBroadPhaseLayerFilterImpl objectVSBroadphaseLayerFilter;
 ObjectLayerPairFilterImpl objectVSObjectLayerFilter;
 
@@ -159,4 +159,15 @@ void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 	// pour tous aller chercher le body in rigidBody 
 	auto objects = scene.GetRootObjects();
 
+	for (auto& it : objects){
+		for (auto& comp : it->GetAllComponents()) {
+			if (comp->GetTypeName() == "RigidBody") {
+				// Update pos
+
+
+				// Update rot
+			}
+		}
+
+	}
 }

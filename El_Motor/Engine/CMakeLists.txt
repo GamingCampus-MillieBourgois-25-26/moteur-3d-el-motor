@@ -34,7 +34,6 @@ target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers
 
 target_link_libraries(Engine PRIVATE
     glfw
-    Jolt
     d3d11
     dxgi
     d3dcompiler
