@@ -81,34 +81,37 @@ void MeshAsset::Load()
 
                 for (int j = 0; j < 3; ++j)
                 {
-                    int p = 0;
-                    int t = 0;
-                    int n = 0;
+                    int v_idx = 0;
+                    int vt_idx = 0;
+                    int vn_idx = 0;
 
                    
-
-                    if (sscanf_s(triangle[j].c_str(), "%d/%d/%d", &p, &t, &n) < 1)
+                    // face : v/vt/vn v/vt/vn v/vt/vn
+                    // v = vertex index
+                    // vt = uv index
+                    // vn = normal index
+                    if (sscanf_s(triangle[j].c_str(), "%d/%d/%d", &v_idx, &vt_idx, &vn_idx) < 1)
                         throw std::runtime_error("Invalid face format in OBJ");
 
                     Vertex vertex{};
 
                     // Position 
-                    if (p > 0 && p <= positions.size())
-                        vertex.position = positions[p - 1];
+                    if (v_idx > 0 && v_idx <= positions.size())
+                        vertex.position = positions[v_idx - 1];
                     else
                         throw std::runtime_error("Invalid position index");
 
                     // UV 
-                    if (t > 0 && t <= uvs.size())
-                        vertex.uv = uvs[t - 1];
+                    if (vt_idx > 0 && vt_idx <= uvs.size())
+                        vertex.uv = uvs[vt_idx - 1];
                     else
                         vertex.uv = DirectX::XMFLOAT2(0.0f, 0.0f);
 
                     // Normal 
-                    if (n > 0 && n <= normals.size())
-                        vertex.normal = normals[n - 1];
+                    if (vn_idx > 0 && vn_idx <= normals.size())
+                        vertex.normal = normals[vn_idx - 1];
                     else
-                        vertex.normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+                        vertex.normal = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 
                     vertices.push_back(vertex);
                     indices.push_back(static_cast<uint32_t>(indices.size()));

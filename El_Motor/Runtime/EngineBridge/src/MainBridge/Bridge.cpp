@@ -3,7 +3,7 @@
 
 void Runtime::Bridge::init() {
 	app.initApp();
-	engine.init();
+	engine.init(app);
 	engine.getScene() = std::make_shared<Engine::Scene>();
 
 }

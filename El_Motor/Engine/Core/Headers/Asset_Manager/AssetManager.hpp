@@ -39,8 +39,7 @@ public:
     void UnloadAll();
 
     const std::unordered_map<std::string, std::shared_ptr<Asset>>& GetAssets() const { return m_assets; }
-    ID3D11Device* GetDevice() const { return m_device.Get(); }
-    ID3D11DeviceContext* GetContext() const { return m_context.Get(); }
+
     AssetManager() = default;
     ~AssetManager();
 

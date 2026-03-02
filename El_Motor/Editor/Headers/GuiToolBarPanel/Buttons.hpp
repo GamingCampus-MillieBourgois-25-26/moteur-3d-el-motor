@@ -78,7 +78,7 @@ namespace Editor
 
 		bool startRuntime();
 		void loadAssets(AssetManager& manager);
-
+		void test();
 
 		//Getter
 		std::string GetSessionName() const { return sessionName; }

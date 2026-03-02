@@ -19,11 +19,17 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
+FetchContent_Declare(
+    DirectXTK
+    GIT_REPOSITORY https://github.com/microsoft/DirectXTK.git 
+    GIT_TAG oct2025
+)
+
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw JoltPhysics)
+FetchContent_MakeAvailable(glfw JoltPhysics DirectXTK)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)

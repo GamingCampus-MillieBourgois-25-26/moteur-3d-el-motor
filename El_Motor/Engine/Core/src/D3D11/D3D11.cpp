@@ -193,7 +193,7 @@ namespace Engine
 		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), mDepthStencilView.Get());
 
 		// 2. Clear la frame (couleur + depth)
-		float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f }; // couleur par défaut
+		float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 		pContext->ClearRenderTargetView(pTarget.Get(), clearColor);
 		pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -233,11 +233,7 @@ namespace Engine
 			0
 		);
 
-		pContext->PSSetConstantBuffers(
-			0,
-			1,
-			mObjectColorBuffer.GetAddressOf()
-		);
+		pContext->PSSetConstantBuffers(0, 1, mObjectColorBuffer.GetAddressOf());
 
 		// 8. Draw le mesh
 		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);

@@ -20,7 +20,7 @@ namespace Editor
 		EditorCore() {}
 		~EditorCore() {}
 
-		void editorInit();
+		void editorInit(Engine::Application& app);
 		void editorRun(Engine::Application& app);
 		void editorShutdown();
 		void startRuntime();
