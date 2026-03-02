@@ -46,7 +46,7 @@ void Editor::Buttons::loadProject() {
     if (GetLoadProject())
     {
         IGFD::FileDialogConfig config;
-        config.path = "Projects";
+        config.path = "../../../../Game/Projects";
 
         // Ouvre le dialog pour sélectionner un dossier
         ImGuiFileDialog::Instance()->OpenDialog(
@@ -56,7 +56,7 @@ void Editor::Buttons::loadProject() {
             config                 // dossier de départ
         );
 
-        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(200, 50)))
+        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(600, 500)))
         {
             if (ImGuiFileDialog::Instance()->IsOk())
             {
@@ -127,7 +127,7 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
     std::vector<std::string> scriptFiles;
 
     
-    std::string basePath = "Projects/" + GetSessionName() + "/Scripts";
+    std::string basePath = "../../../../Game/Projects/" + GetSessionName() + "/Scripts";
 
     // Vérifie que le dossier existe
     if (!std::filesystem::exists(basePath))
@@ -193,6 +193,15 @@ bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
     else
     {
         SetSessionNameStatus("Type a script name, then press Enter to confirm");
+    }
+    return false;
+}
+
+bool Editor::Buttons::reloadScript()
+{
+    if (ImGui::Button("Reaload & Restart", ImVec2(50, 50)))
+    {
+        return true;
     }
     return false;
 }
@@ -265,15 +274,6 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
     }
 }
 
-void Editor::Buttons::test()
-{
-    //auto& currentSelected = selectedEntity->GetAllComponents();
-    //for (int i = 0; selectedEntity->GetAllComponents().size(); i++) {
-    //    if (currentSelected[i] == AssetManager:: ) {
-
-    //    }
-    //}
-}
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {
@@ -482,7 +482,7 @@ static char buffer[256] = "";
 
     if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        if (!CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
+        if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
             selectedEntity->SetName("GameObject");
         }

@@ -584,3 +584,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/vs,cmake,visualstudio
 
 El_Motor/out/**
+El_Motor/Game/Projects/**
