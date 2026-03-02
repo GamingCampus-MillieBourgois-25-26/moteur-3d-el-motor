@@ -585,3 +585,4 @@ FodyWeavers.xsd
 
 El_Motor/out/**
 El_Motor/Game/Projects/**
+El_Motor/Editor/LastProject.txt
