@@ -20,16 +20,12 @@ private:
 
 public:
 
-    // Load CPU (juste vérifie le path)
     void Load() override;
 
-    // Libère GPU
     void Unload() override;
 
-    // Crée GPU resource
     void CreateBuffers(ID3D11Device* device) override;
 
-    // Bind dans pipeline
     void Bind(ID3D11DeviceContext* context) const override;
 
     bool IsReady() const;

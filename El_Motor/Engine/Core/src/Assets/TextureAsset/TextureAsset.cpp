@@ -30,7 +30,6 @@ void TextureAsset::CreateBuffers(ID3D11Device* device)
     if (FAILED(hr))
         throw std::runtime_error("Failed to create texture: " + path);
 
-    // récupérer taille
     wrl::ComPtr<ID3D11Texture2D> texture;
     resource.As(&texture);
 
