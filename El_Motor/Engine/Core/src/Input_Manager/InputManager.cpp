@@ -46,8 +46,8 @@ void Engine::InputManager::update() {
             state = InputState::Up;
     }
 
-    mouseDelta.x = mousePosition.x - previousMousePosition.x;
-    mouseDelta.y = mousePosition.y - previousMousePosition.y;
+    mouseDelta.m_x = mousePosition.m_x - previousMousePosition.m_x;
+    mouseDelta.m_y = mousePosition.m_y - previousMousePosition.m_y;
 
     previousMousePosition = mousePosition;
 }
@@ -102,13 +102,12 @@ bool Engine::InputManager::isMouseReleased(MouseButton button) const {
     return mouseStates[(size_t)button] == InputState::Released;
 }
 
-void Engine::InputManager::setMousePosition(Vec2 pos) {
+void Engine::InputManager::setMousePosition(Maths::Vec2f pos) {
     mousePosition = pos;
 }
 
-Engine::Vec2 Engine::InputManager::getMousePosition() const { return mousePosition; }
+Maths::Vec2f Engine::InputManager::getMousePosition() const { return mousePosition; }
 
-Engine::Vec2 Engine::InputManager::getMouseDelta() const { return mouseDelta; }
+Maths::Vec2f Engine::InputManager::getMouseDelta() const { return mouseDelta; }
 
-
-Engine::Vec2 Engine::InputManager::getPreviousMousePosition() const { return previousMousePosition; }
+Maths::Vec2f Engine::InputManager::getPreviousMousePosition() const { return previousMousePosition; }

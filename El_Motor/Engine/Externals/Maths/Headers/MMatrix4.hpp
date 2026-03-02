@@ -11,12 +11,11 @@
 namespace Maths {
 	template<typename T = float>
 	class Mat4 {
-	private:
+	public:
 		T det;
 		std::array<T, 16> tabMat;
 		float deg2rad = 3.14159265f / 180.f;
 
-	public:
 		Mat4();
 		Mat4(T u, T d, T t, T q, T c, T si, T se, T h, T n, T di, T on, T dou, T tre, T qua, T qui, T sei);
 		~Mat4() = default;

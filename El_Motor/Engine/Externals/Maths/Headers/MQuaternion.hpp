@@ -9,12 +9,11 @@ namespace Maths {
 
     template<typename T = float>
     class Quat {
-    private:
+    public:
         T m_x, m_y, m_z, m_w;
 
         static_assert(std::is_arithmetic_v<T>);
 
-    public:
         static constexpr T kEpsilon = static_cast<T>(1e-6);
         static constexpr T PI = static_cast<T>(3.14159265358979323846);
 

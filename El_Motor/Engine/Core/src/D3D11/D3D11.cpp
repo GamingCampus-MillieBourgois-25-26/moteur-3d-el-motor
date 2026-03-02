@@ -221,7 +221,8 @@ namespace Engine
 
 		// 7. Constant buffer pour la couleur
 		ObjectColorBuffer buffer;
-		buffer.objColor = mesh.GetColor();
+		DirectX::XMFLOAT3 colorConv = DirectX::XMFLOAT3(mesh.GetColor().m_x, mesh.GetColor().m_y, mesh.GetColor().m_z);
+		buffer.objColor = colorConv;
 		buffer.padding = 0.0f;
 
 		pContext->UpdateSubresource(
