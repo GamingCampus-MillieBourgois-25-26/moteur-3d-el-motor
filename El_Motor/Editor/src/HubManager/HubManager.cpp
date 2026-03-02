@@ -50,7 +50,7 @@ void Editor::HubManager::HubRun()
 
         // --- DESSIN DES MESHES ---
         auto& assetManager = coreEditor.GetEngine().getAssetManager();
-        for (auto& [path, asset] : assetManager.GetAssets())
+        for (auto& [path, asset] : assetManager.GetMeshes())
         {
             if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
             {

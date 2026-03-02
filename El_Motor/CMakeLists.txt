@@ -25,11 +25,18 @@ FetchContent_Declare(
     GIT_TAG oct2025
 )
 
+FetchContent_Declare(
+    assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG v5.4.3
+)
+
+
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw JoltPhysics DirectXTK)
+FetchContent_MakeAvailable(glfw JoltPhysics DirectXTK assimp)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)

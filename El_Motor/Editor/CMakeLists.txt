@@ -99,6 +99,7 @@ target_link_libraries(Editor PRIVATE
     glfw
     d3d11
     dxgi
+    assimp
     DirectXTK
 )
 

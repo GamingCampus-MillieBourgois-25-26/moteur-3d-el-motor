@@ -33,5 +33,5 @@ target_link_libraries(Engine PRIVATE
     dxgi
     d3dcompiler
     DirectXTK
-
+    assimp
 )
