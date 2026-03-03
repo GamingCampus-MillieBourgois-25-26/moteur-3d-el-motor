@@ -46,6 +46,16 @@ void Editor::HubManager::HubRun()
             coreEditor.editorRun(app);
         }
         break;
+
+        case EditorState::Run:
+        {
+            float dt = coreEditor.GetEngine().getDeltaTime();
+            coreEditor.editorRun(app);
+            scriptManager.updateScripts(dt);
+            break;
+        }
+        break;
+
         }
 
         // --- DESSIN DES MESHES ---
@@ -90,6 +100,7 @@ void Editor::HubManager::DrawHubUI()
 
     if (buttons.createProject())
     {
+        Editor::ProjectManager::Get().clearLastProject();
         CreateProject();
         Editor::ProjectManager::Get().createProject(buttons.GetSessionName(), coreEditor.GetEngine().getScene());
         SetEditorState(EditorState::Editor);
@@ -128,6 +139,7 @@ void Editor::HubManager::DrawEditorUI()
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
     if (buttons.reloadScript()) {
+        ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
         ProjectManager::Get().SetLastProject(buttons.GetSessionName());
         scriptManager.Restart();
     }

@@ -31,7 +31,7 @@ namespace Editor
 		Engine::GameObject* selectedEntity = nullptr;
 		std::string currentEntityLabel;
 		std::string selectedScript;
-		std::string scriptName;
+		std::string scriptName = "Null";
 
 		//Selected Component pointer
 		Engine::Component* selectedComponent = nullptr;

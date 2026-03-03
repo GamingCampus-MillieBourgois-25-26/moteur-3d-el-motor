@@ -1,6 +1,7 @@
 #include "ScriptManager/ScriptManager.hpp"
 #include "UserScript/UserScript.hpp"
 #include "ScriptRegister/ScriptRegister.hpp"
+#include "Logger/Logger.hpp"
 #include <thread>
 #include <fstream>
 #include <algorithm>
@@ -24,112 +25,105 @@ void ScriptManager::createScript(std::string scriptName, std::string projectName
     std::filesystem::path headerPath = scriptDir / "Headers" / (scriptName + ".hpp");
     std::filesystem::path cppPath = scriptDir / "src" / (scriptName + ".cpp");
 
-    // Create header file
-    std::ofstream headerFile(headerPath);
-    if (!headerFile.is_open()) {
-        std::cerr << "Failed to create header file: " << headerPath << std::endl;
-        return;
-    }
 
-    headerFile <<
-        "#pragma once\n"
-        "#include \"UserScript/UserScript.hpp\"\n\n"
-        "class " << scriptName << " : public UserScript\n"
-        "{\n"
-        "public:\n"
-        "    " << scriptName << "() : UserScript(\"" << scriptName << "\") {}\n"
-        "    ~" << scriptName << "() = default;\n\n"
-        "    void OnStart() override;\n"
-        "    void Update(float deltaTime) override;\n"
-        "};\n";
-    headerFile.close();
+    
+        // Create header file
+        std::ofstream headerFile(headerPath);
+        if (!headerFile.is_open()) {
+            std::cerr << "Failed to create header file: " << headerPath << std::endl;
+            Engine::LoggerManager::Get().LogError("Failed to create header file: ");
+            return;
+        }
 
-    // Create implementation file
-    std::ofstream cppFile(cppPath);
-    if (!cppFile.is_open()) {
-        std::cerr << "Failed to create cpp file: " << cppPath << std::endl;
-        return;
-    }
 
-    cppFile <<
-        "#include \"../Headers/" << scriptName << ".hpp\"\n"
-        "#include \"MacroAutoRegister/AutoRegister.hpp\"\n"
-        "#include <iostream>\n\n"
-        "void " << scriptName << "::OnStart()\n"
-        "{\n"
-        "    std::cout << \"" << scriptName << " Started\" << std::endl;\n"
-        "}\n\n"
-        "void " << scriptName << "::Update(float deltaTime)\n"
-        "{\n"
-        "}\n\n"
-        "REGISTER_SCRIPT(" << scriptName << ");\n";
-    cppFile.close();
+        headerFile <<
+            "#pragma once\n"
+            "#include \"UserScript/UserScript.hpp\"\n\n"
+            "class " << scriptName << " : public UserScript\n"
+            "{\n"
+            "public:\n"
+            "    " << scriptName << "() : UserScript(\"" << scriptName << "\") {}\n"
+            "    ~" << scriptName << "() = default;\n\n"
+            "    void OnStart() override;\n"
+            "    void Update(float deltaTime) override;\n"
+            "};\n";
+        headerFile.close();
+   
 
-    std::cout << "Script '" << scriptName << "' created successfully at: " << scriptDir << std::endl;
+    
+
+    
+        // Create implementation file
+        std::ofstream cppFile(cppPath);
+        if (!cppFile.is_open()) {
+            Engine::LoggerManager::Get().LogError("Failed to create cpp file: " + cppPath.string());
+            return;
+        }
+
+        cppFile <<
+            "#include \"../Headers/" << scriptName << ".hpp\"\n"
+            "#include \"MacroAutoRegister/AutoRegister.hpp\"\n"
+            "#include <iostream>\n\n"
+            "void " << scriptName << "::OnStart()\n"
+            "{\n"
+            "    std::cout << \"" << scriptName << " Started\" << std::endl;\n"
+            "}\n\n"
+            "void " << scriptName << "::Update(float deltaTime)\n"
+            "{\n"
+            "}\n\n"
+            "REGISTER_SCRIPT(" << scriptName << ");\n";
+        cppFile.close();
+    
 }
 
 /// <summary>
 /// Deletes a script instance from memory and optionally removes associated files.
 /// </summary>
-void ScriptManager::DeleteScript(const std::string& scriptName, bool deleteCpp, bool deleteHpp)
+void ScriptManager::DeleteScript(const std::string& projectPath,const std::string& scriptName)
 {
-    // Remove script instance from active scripts list
+    //  Remove script instance from memory
     auto it = std::remove_if(scripts.begin(), scripts.end(),
-        [&](const std::unique_ptr<UserScript>& s) {
+        [&](const std::unique_ptr<UserScript>& s)
+        {
             return s->GetName() == scriptName;
         });
 
-    if (it != scripts.end()) {
+    if (it != scripts.end())
+    {
         scripts.erase(it, scripts.end());
-        std::cout << "Instance of script '" << scriptName << "' deleted from memory." << std::endl;
+        Engine::LoggerManager::Get().LogInfo("Instance of script '" + scriptName + "' deleted from memory.\n");
     }
-    else {
-        std::cout << "No instance of script '" << scriptName << "' found in memory." << std::endl;
+    else
+    {
+        Engine::LoggerManager::Get().LogWarning("No instance of script '" + scriptName + "' found in memory.\n");
     }
 
-    // Delete files from project Scripts directory using same path structure as createProject
-    std::filesystem::path projectsPath = std::filesystem::path("../../../../Game/Projects");
-    
-    // Search for the script in all projects
-    try {
-        for (const auto& project : std::filesystem::directory_iterator(projectsPath)) {
-            if (project.is_directory()) {
-                std::filesystem::path scriptDir = project.path() / "Scripts" / scriptName;
-                
-                if (std::filesystem::exists(scriptDir)) {
-                    if (deleteCpp) {
-                        std::filesystem::path cppPath = scriptDir / "src" / (scriptName + ".cpp");
-                        if (std::filesystem::exists(cppPath)) {
-                            std::filesystem::remove(cppPath);
-                            std::cout << "Deleted: " << cppPath << std::endl;
-                        }
-                    }
+    // Remove script folder from active project only
+    std::filesystem::path scriptDir =
+        std::filesystem::path(projectPath) /
+        "Scripts" /
+        scriptName;
 
-                    if (deleteHpp) {
-                        std::filesystem::path hppPath = scriptDir / "Headers" / (scriptName + ".hpp");
-                        if (std::filesystem::exists(hppPath)) {
-                            std::filesystem::remove(hppPath);
-                            std::cout << "Deleted: " << hppPath << std::endl;
-                        }
-                    }
+    try
+    {
+        if (std::filesystem::exists(scriptDir))
+        {
+            std::filesystem::remove_all(scriptDir);
 
-                    // Remove empty directories
-                    try {
-                        std::filesystem::remove(scriptDir / "src");
-                        std::filesystem::remove(scriptDir / "Headers");
-                        std::filesystem::remove(scriptDir);
-                    }
-                    catch (const std::filesystem::filesystem_error&) {
-                        // Directories not empty or other error - that's okay
-                    }
-                    
-                    break;
-                }
-            }
+            Engine::LoggerManager::Get().LogInfo("Deleted script folder: " + scriptDir.string());
+           
+        }
+        else
+        {
+            Engine::LoggerManager::Get().LogError("Script folder not found: " + scriptDir.string());
         }
     }
-    catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "Error searching for script files: " << e.what() << std::endl;
+    catch (const std::filesystem::filesystem_error& e)
+    {
+       
+        std::cerr << "Filesystem error while deleting script: "
+            << e.what() << std::endl;
+        Engine::LoggerManager::Get().LogError("Filesystem error while deleting script: ");
     }
 }
 

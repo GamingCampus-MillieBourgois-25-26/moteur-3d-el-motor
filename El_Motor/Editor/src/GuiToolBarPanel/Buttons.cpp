@@ -101,7 +101,6 @@ void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
 	ImGui::BeginChild("ScriptMenu", ImVec2(200, 0), true);
     ImGui::Text("Scripts");
     ImGui::Separator();
-    
     deleteScript(scriptM);
     AddScript(scriptM);
     ImGui::Separator();
@@ -162,10 +161,9 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM)
 
         
 
-
-    if (ImGui::InputText("Name", bufferScriptName, sizeof(bufferScriptName), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
+    if (ImGui::InputText("Name", bufferScriptName, sizeof(bufferScriptName), ImGuiInputTextFlags_EnterReturnsTrue))
     {
-        if (!CheckScriptNameValid(bufferScriptName))
+        if (!CheckScriptNameValid(bufferScriptName) || !CheckCaraterValid(bufferScriptName) )
         {
             SetScriptName(bufferScriptName);
         }
@@ -176,9 +174,12 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM)
         }
     }
     
-    if (ImGui::Button("Add")) //Button to add the selected component type to the selected entity
+    if (ImGui::Button("Add"))
     {
-        scriptM.createScript(GetScriptName(), GetSessionName());
+        if (GetScriptName() != "Null") {
+            scriptM.createScript(GetScriptName(), GetSessionName());
+        }
+        
     }
 
 
