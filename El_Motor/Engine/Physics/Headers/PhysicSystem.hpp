@@ -45,7 +45,11 @@ namespace Layers
 class PhysicSystem {
 public:
 	void Init();
-	void OnEnd();
+	void Exit();
+
+	void OnStart(Engine::Scene& scene);
+	void OnEnd(Engine::Scene& scene);
+
 
 	void Update(Engine::Scene& scene, float deltaTime);
 

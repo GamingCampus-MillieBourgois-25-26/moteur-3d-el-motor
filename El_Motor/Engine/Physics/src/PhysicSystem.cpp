@@ -120,13 +120,14 @@ void PhysicSystem::Init(){
 	// Create and register contact listener
 	sPhysics.mContactListener = new MyContactListener();
 	sPhysics.mSystem->SetContactListener(sPhysics.mContactListener);
+	sPhysics.mSystem->SetGravity(JPH::Vec3(0, -9.81f, 0));
 
 	sPhysics.mBodyInterface = &sPhysics.mSystem->GetBodyInterface();
 
 	sPhysics.mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers);
 }
 
-void PhysicSystem::OnEnd()
+void PhysicSystem::Exit()
 {
 	// Delete owned objects in reverse order of creation where appropriate
 	delete sPhysics.mContactListener;
@@ -149,6 +150,33 @@ void PhysicSystem::OnEnd()
 	JPH::UnregisterTypes();
 }
 
+void PhysicSystem::OnStart(Engine::Scene& scene) {
+	auto objects = scene.GetRootObjects();
+
+	for (auto& it : objects) {
+		for (auto& comp : it->GetAllComponents()) {
+			if (comp->GetTypeName() == "RigidBody") {
+
+				/*sPhysics.mBodyInterface->AddBody(, JPH::EActivation::Activate);*/
+			}
+		}
+	}
+}
+
+void PhysicSystem::OnEnd(Engine::Scene& scene) {
+	auto objects = scene.GetRootObjects();
+
+	for (auto& it : objects) {
+		for (auto& comp : it->GetAllComponents()) {
+			if (comp->GetTypeName() == "RigidBody") {
+
+				/*sPhysics.mBodyInterface->RemoveBody();
+				sPhysics.mBodyInterface->DestroyBody();*/
+			}
+		}
+	}
+}
+
 void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 	const float cDeltaTime = 1.0f / 60.0f;
 	const int cCollisionSteps = 1;
@@ -163,9 +191,12 @@ void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 		for (auto& comp : it->GetAllComponents()) {
 			if (comp->GetTypeName() == "RigidBody") {
 				// Update pos
-
+				// JPH::Vec3 pos = ;
+				// JPH::Quat pos = ;
+				// it->GetTransform()->SetPosition(Maths::Vec3f(pos.x(), pos.y(), pos.z()));
 
 				// Update rot
+				// it->GetTransform()->SeRotation(Maths::Quatf(rot.x(), rot.y(), rot.z(), rot.w()));
 			}
 		}
 
