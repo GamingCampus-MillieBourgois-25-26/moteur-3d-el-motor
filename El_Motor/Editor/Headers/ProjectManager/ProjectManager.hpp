@@ -28,7 +28,12 @@ namespace Editor {
 		//Load project and everything contained in the project
 		void loadProject(const std::filesystem::path& path, std::shared_ptr<Engine::Scene>& scene);
 		
+
+
+		//
 		void SetLastProject(const std::string& name);
+		void clearLastProject();
+
 
 		//Save Project
 		void saveProject(std::shared_ptr<Engine::Scene>& scenes);
