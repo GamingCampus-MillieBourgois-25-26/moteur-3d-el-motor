@@ -18,7 +18,7 @@ public:
 
     template<typename T>
     std::shared_ptr<T> Load(const std::string& path) {
-        static_assert(std::is_base_of<Asset, T>::value, "T doit hériter de Asset");
+        static_assert(std::is_base_of<Asset, T>::value, "T doit heriter de Asset");
 
         auto it = m_assets.find(path);
         if (it != m_assets.end()) {

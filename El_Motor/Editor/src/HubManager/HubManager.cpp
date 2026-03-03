@@ -23,6 +23,16 @@ void Editor::HubManager::Init()
 
 void Editor::HubManager::HubRun()
 {
+    auto mesh = AssetManager::Get().Load<MeshAsset>("Shader/viking_room.obj");
+    auto material = AssetManager::Get().LoadMaterialForMesh("Shader/viking_room.obj");
+
+    if (material)
+    {
+        if (material->IsReady())
+            std::cout << "Texture found" << std::endl;
+        else
+            std::cout << "No texture (fallback)" << std::endl;
+    }
    
     while (!glfwWindowShouldClose(app.getWindowOpener().getMyWindow()))
     {
@@ -52,9 +62,9 @@ void Editor::HubManager::HubRun()
         auto& assetManager = coreEditor.GetEngine().getAssetManager();
         for (auto& [path, asset] : assetManager.GetAssets())
         {
+
             if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
             {
-                std::cout << "[DEBUG] Drawing mesh: " << path << std::endl;
                 app.getD3D11()->DrawShape(*mesh);
             }
         }
