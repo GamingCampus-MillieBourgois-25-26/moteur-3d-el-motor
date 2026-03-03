@@ -3,8 +3,9 @@
 BoxCollider::BoxCollider(Maths::Vec3f halfExtent) {
 	JPH::BoxShapeSettings settings(JPH::Vec3(halfExtent.x(), halfExtent.y(), halfExtent.z()));
 	JPH::ShapeSettings::ShapeResult bResult = settings.Create();
+
 	if (bResult.IsValid()){
-		mShape = bResult.Get();
+		Shape::Create(bResult.Get());
 	}
 	// else 
 		// Log Call
@@ -13,8 +14,9 @@ BoxCollider::BoxCollider(Maths::Vec3f halfExtent) {
 SphereCollider::SphereCollider(float radius){
 	JPH::SphereShapeSettings settings(radius);
 	JPH::ShapeSettings::ShapeResult sResult = settings.Create();
+
 	if (sResult.IsValid()){
-		mShape = sResult.Get();
+		Shape::Create(sResult.Get());
 	}
 	// else 
 		// Log Call
@@ -23,8 +25,9 @@ SphereCollider::SphereCollider(float radius){
 CapsuleCollider::CapsuleCollider(float radius, float height){
 	JPH::CapsuleShapeSettings settings(radius, height);
 	JPH::ShapeSettings::ShapeResult cResult = settings.Create();
+
 	if (cResult.IsValid()){
-		mShape = cResult.Get();
+		Shape::Create(cResult.Get());
 	}
 	// else 
 		// Log Call

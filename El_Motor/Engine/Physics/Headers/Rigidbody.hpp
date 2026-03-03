@@ -34,11 +34,11 @@
 class RigidBody{
 public:
 	RigidBody() = default;
-	RigidBody(JPH::ShapeRefC shape, bool isStatic);
+	RigidBody(PShape shape, bool isStatic);
 
-	void Create(JPH::ShapeRefC shape, bool isStatic); // Body creation;
+	void Create(PShape shape, bool isStatic); // Body creation;
 
 	JPH::Body* GetBody() const { return mBody; }
 private:
-	JPH::Body* mBody;
+	JPH::Body* mBody = nullPtr;
 };
