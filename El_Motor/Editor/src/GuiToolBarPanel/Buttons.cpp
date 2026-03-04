@@ -7,6 +7,9 @@
 #include "Entity/Component/MeshComponent.hpp"
 #include "ScriptManager/ScriptManager.hpp"
 #include "Logger/Logger.hpp"
+#include "Asset_Manager/AssetManager.hpp"
+#include "Assets/Asset.hpp"
+#include "Entity/GameObject.hpp"
 #include <iostream>
 
 
@@ -46,7 +49,7 @@ void Editor::Buttons::loadProject() {
     if (GetLoadProject())
     {
         IGFD::FileDialogConfig config;
-        config.path = "Projects";
+        config.path = "../../../../Game/Projects";
 
         // Ouvre le dialog pour sélectionner un dossier
         ImGuiFileDialog::Instance()->OpenDialog(
@@ -56,7 +59,7 @@ void Editor::Buttons::loadProject() {
             config                 // dossier de départ
         );
 
-        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(200, 50)))
+        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(600, 500)))
         {
             if (ImGuiFileDialog::Instance()->IsOk())
             {
@@ -95,39 +98,101 @@ void Editor::Buttons::projectName()
 
 void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
 {
-	ImGui::BeginChild("ScriptMenu", ImVec2(250, 0), true);
+	ImGui::BeginChild("ScriptMenu", ImVec2(200, 0), true);
     ImGui::Text("Scripts");
     ImGui::Separator();
-    AddScript(scriptM,"Test");
+    deleteScript(scriptM);
+    AddScript(scriptM);
     ImGui::Separator();
     showScripts(scriptM);
     ImGui::EndChild();
 }
 
-void Editor::Buttons::deleteScript(ScriptManager& scriptM) const
+void Editor::Buttons::deleteScript(ScriptManager& scriptM)
 {
+    if (ImGui::Button("Delete Script", ImVec2(80, 50)))
+    {
+        if (selectedScript.empty())
+        {
+            std::cout << "No script selected to delete\n";
+            return;
+        }
 
+        // selectedScript contains a path relative to the Scripts folder,
+        // e.g. "MyScript/Headers/MyScript.hpp" or "MyScript.hpp".
+        std::filesystem::path rel(selectedScript);
+        std::string scriptName;
+
+        auto it = rel.begin();
+        if (it != rel.end())
+        {
+            std::filesystem::path first = *it;
+            // If the first element has an extension (e.g. "MyScript.hpp") use stem,
+            // otherwise it's the folder name (e.g. "MyScript")
+            if (first.has_extension())
+                scriptName = first.stem().string();
+            else
+                scriptName = first.string();
+        }
+        else
+        {
+            scriptName = rel.stem().string();
+        }
+
+        // Ask ScriptManager to remove script files (both .cpp and .hpp)
+        scriptM.DeleteScript(GetProjectPath(),selectedScript);
+
+        // Clear selection so UI is consistent after deletion
+        selectedScript.clear();
+
+        std::cout << "Requested deletion of script: " << scriptName << std::endl;
+    }
 }
 
 void Editor::Buttons::editScript(ScriptManager& scriptM)
 {
+
 }
 
-void Editor::Buttons::AddScript(ScriptManager& scriptM , std::string name)
+void Editor::Buttons::AddScript(ScriptManager& scriptM)
 {
-    if (ImGui::Button("Add Script", ImVec2(80, 25))) {
-        scriptM.createScript(name, GetSessionName());
+
+    static char bufferScriptName[256] = "";
+
+        
+
+    if (ImGui::InputText("Name", bufferScriptName, sizeof(bufferScriptName), ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        if (!CheckScriptNameValid(bufferScriptName) || !CheckCaraterValid(bufferScriptName) )
+        {
+            SetScriptName(bufferScriptName);
+        }
+        else
+        {
+            strncpy(bufferScriptName, "Script name", sizeof(bufferScriptName));
+            bufferScriptName[sizeof(bufferScriptName) - 1] = '\0';
+        }
     }
+    
+    if (ImGui::Button("Add"))
+    {
+        if (GetScriptName() != "Null") {
+            scriptM.createScript(GetScriptName(), GetSessionName());
+        }
+        
+    }
+
+
 }
 
 void Editor::Buttons::showScripts(ScriptManager& scriptM)
 {
-    ImGui::BeginChild("ScriptList", ImVec2(250, 0), true);
+    ImGui::BeginChild("ScriptList", ImVec2(200, 0), true);
 
     std::vector<std::string> scriptFiles;
 
     
-    std::string basePath = "Projects/" + GetSessionName() + "/Scripts";
+    std::string basePath = "../../../../Game/Projects/" + GetSessionName() + "/Scripts";
 
     // Vérifie que le dossier existe
     if (!std::filesystem::exists(basePath))
@@ -170,29 +235,20 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
 
     ImGui::EndChild();
 }
-bool Editor::Buttons::CheckScriptNameValid(const std::string& str, bool IsCpp)
+bool Editor::Buttons::CheckScriptNameValid(const std::string& str)
 {
-    if (IsCpp)
-    {
-        if (str.empty() || str.ends_with(".cpp") || all_of(str.begin(), str.end(),
-            [](unsigned char c) {
-                return std::isspace(c);
-            })) 
-        {}
 
-    }
-    else if (!IsCpp)
-    {
-        if (str.empty() || str.ends_with(".hpp") || all_of(str.begin(), str.end(),
-            [](unsigned char c) {
-                return std::isspace(c);
-            })) 
-        {}
-    }
+    return !str.empty()
+        && !std::all_of(str.begin(), str.end(),
+            [](unsigned char c) { return std::isspace(c); })
+        && (str.ends_with(".cpp") || str.ends_with(".hpp"));
+}
 
-    else
+bool Editor::Buttons::reloadScript()
+{
+    if (ImGui::Button("Reaload", ImVec2(80, 50)))
     {
-        SetSessionNameStatus("Type a script name, then press Enter to confirm");
+        return true;
     }
     return false;
 }
@@ -249,7 +305,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
                 else if (extension == ".obj" || extension == ".fbx")
                 {
                     manager.Load<MeshAsset>(filePath);
-                    std::cout << "ok load";
+                    Engine::LoggerManager::Get().LogInfo("Asset Loaded succesfuly : " + filePath);
                 }
                 else
                 {
@@ -265,15 +321,6 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
     }
 }
 
-void Editor::Buttons::test()
-{
-    //auto& currentSelected = selectedEntity->GetAllComponents();
-    //for (int i = 0; selectedEntity->GetAllComponents().size(); i++) {
-    //    if (currentSelected[i] == AssetManager:: ) {
-
-    //    }
-    //}
-}
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {
@@ -306,7 +353,7 @@ void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
     ImGui::EndChild();
 }
 
-void Editor::Buttons::showCmpnt()
+void Editor::Buttons::showCmpnt(const AssetManager& assetM)
 {
     if (!selectedEntity)
         return;
@@ -340,7 +387,7 @@ void Editor::Buttons::showCmpnt()
         ImGui::PopID();
 		//Show the component's editable properties if it's selected
     }
-    editComponent();
+    editComponent(assetM);
     ImGui::EndChild();
 }
 
@@ -393,7 +440,7 @@ void Editor::Buttons::delComponent()
 	}
 }
 
-void Editor::Buttons::editComponent()
+void Editor::Buttons::editComponent(const AssetManager& assetM)
 {
     if (!selectedComponent)
         return;
@@ -403,6 +450,34 @@ void Editor::Buttons::editComponent()
         ImGui::DragFloat3("Position", &transform->position.m_x, 0.1f);
         ImGui::DragFloat3("Rotation", &transform->rotation.m_x, 0.1f);
         ImGui::DragFloat3("Scale", &transform->scale.m_x, 0.1f);
+    }
+
+    if (auto* meshComp = dynamic_cast<Engine::MeshComponent*>(selectedComponent))
+    {
+        ImGui::Text("Mesh");
+
+        if (ImGui::BeginCombo("##MeshSelect",
+            meshComp->GetMesh() ? meshComp->GetMesh()->path.c_str() : "None"))
+        {
+            for (const auto& [path, asset] : assetM.GetMeshes())
+            {
+                auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset);
+                if (!mesh)
+                    continue;
+
+                bool isSelected = (meshComp->GetMesh() == mesh);
+
+                if (ImGui::Selectable(path.c_str(), isSelected))
+                {
+                    meshComp->SetMesh(mesh);
+                }
+
+                if (isSelected)
+                    ImGui::SetItemDefaultFocus();
+            }
+
+            ImGui::EndCombo();
+        }
     }
 }
 
@@ -414,7 +489,6 @@ bool Editor::Buttons::saveProject()
     }
     return false;
 }
-
 
 void Editor::Buttons::createGO(std::shared_ptr<Engine::Scene>& scene)
 {
@@ -454,7 +528,7 @@ static char buffer[256] = "";
 
     if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
-        if (!CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
+        if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
             selectedEntity->SetName("GameObject");
         }
@@ -481,6 +555,10 @@ bool Editor::Buttons::CheckCaraterValid(const std::string& str)
                 return std::isalnum(c) || c == '_' || c == '-';
             });
 }
+
+
+
+
 
 
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "ScriptRegistry/ScriptRegistry.hpp"
+#include "ScriptRegister/ScriptRegister.hpp"
 #include <memory>
 
 //NEVER INCLUDE THIS HEADER IN A HEADER, ONLY IN CPP, OTHERWISE IT WILL REGISTER THE SCRIPT MULTIPLE TIMES AND CAUSE LINKER ERRORS

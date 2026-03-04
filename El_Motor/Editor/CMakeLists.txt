@@ -1,10 +1,55 @@
-file(GLOB_RECURSE EDITOR_SOURCES
-	src/**/*.cpp
+# === Lire le projet actif depuis LastProject.txt ===
+
+set(LAST_PROJECT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LastProject.txt")
+
+if(EXISTS ${LAST_PROJECT_FILE})
+    file(READ ${LAST_PROJECT_FILE} ACTIVE_PROJECT_NAME)
+    string(STRIP "${ACTIVE_PROJECT_NAME}" ACTIVE_PROJECT_NAME)
+else()
+    message(FATAL_ERROR "LastProject.txt not found in Editor folder")
+endif()
+
+configure_file(
+    ${LAST_PROJECT_FILE}
+    ${CMAKE_BINARY_DIR}/LastProject_copy.txt
+    COPYONLY
 )
 
-file(GLOB_RECURSE EDITOR_HEADERS
-	 Headers/**/*.hpp
+# === Scripts du projet actif ===
+set(PROJECT_SCRIPTS_PATH
+    ${CMAKE_SOURCE_DIR}/Game/Projects/${ACTIVE_PROJECT_NAME}/Scripts
 )
+
+file(GLOB_RECURSE PROJECT_SCRIPT_SOURCES
+    ${PROJECT_SCRIPTS_PATH}/**/*.cpp
+)
+
+file(GLOB_RECURSE PROJECT_SCRIPT_HEADERS
+    ${PROJECT_SCRIPTS_PATH}/**/*.hpp
+)
+
+# === Sources Editor ===
+file(GLOB_RECURSE EDITOR_CORE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+)
+
+file(GLOB_RECURSE EDITOR_CORE_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Headers/**/*.hpp
+)
+
+# Fusion
+set(EDITOR_SOURCES
+    ${EDITOR_CORE_SOURCES}
+    ${PROJECT_SCRIPT_SOURCES}
+)
+
+set(EDITOR_HEADERS
+    ${EDITOR_CORE_HEADERS}
+    ${PROJECT_SCRIPT_HEADERS}
+)
+
+message(STATUS "Active project: ${ACTIVE_PROJECT_NAME}")
+message(STATUS "Scripts found: ${PROJECT_SCRIPT_SOURCES}")
 
 # === HLSL Compilation (CSO dans Editor/Shader) ===
 
@@ -99,6 +144,7 @@ target_link_libraries(Editor PRIVATE
     glfw
     d3d11
     dxgi
+    assimp
     DirectXTK
 )
 
@@ -115,6 +161,7 @@ target_include_directories(Editor PRIVATE
      External/ImGuiFileLog/includes/coreIncludes
      External/ImGuiFileLog/includes/dirent
      External/Json
+     ${PROJECT_SCRIPTS_PATH}
 )
 
 target_compile_definitions(Editor PRIVATE
