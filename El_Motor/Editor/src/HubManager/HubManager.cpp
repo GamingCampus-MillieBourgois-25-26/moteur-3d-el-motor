@@ -23,17 +23,7 @@ void Editor::HubManager::Init()
 
 void Editor::HubManager::HubRun()
 {
-    auto mesh = AssetManager::Get().Load<MeshAsset>("Shader/viking_room.obj");
-    auto material = AssetManager::Get().LoadMaterialForMesh("Shader/viking_room.obj");
-
-    if (material)
-    {
-        if (material->IsReady())
-            std::cout << "Texture found" << std::endl;
-        else
-            std::cout << "No texture (fallback)" << std::endl;
-    }
-   
+  
     while (!glfwWindowShouldClose(app.getWindowOpener().getMyWindow()))
     {
         glfwPollEvents();

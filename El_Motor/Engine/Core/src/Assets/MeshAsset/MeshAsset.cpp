@@ -193,6 +193,8 @@ void MeshAsset::Load()
     if (vertices.empty() || indices.empty())
         throw std::runtime_error("OBJ mesh empty: " + path);
 }
+
+
 void MeshAsset::LoadTestCube()
 {
     vertices.clear();
