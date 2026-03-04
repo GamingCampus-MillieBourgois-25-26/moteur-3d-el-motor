@@ -64,7 +64,7 @@ void MeshAsset::Load()
             }
             else
             {
-                v.normal = DirectX::XMFLOAT3(0, 1, 0);
+                v.normal = Maths::Vec3f(0.0f, 1.0f, 0.0f);
             }
 
             if (mesh->HasTextureCoords(0))
@@ -77,7 +77,7 @@ void MeshAsset::Load()
             }
             else
             {
-                v.uv = DirectX::XMFLOAT2(0, 0);
+                v.uv = Maths::Vec2f(0.0f, 0.0f);
             }
 
             vertices.push_back(v);
@@ -104,9 +104,12 @@ void MeshAsset::Load()
     if (!file.is_open())
         throw std::runtime_error("Failed to open OBJ file: " + path);
 
-    std::vector<DirectX::XMFLOAT3> positions;
-    std::vector<DirectX::XMFLOAT3> normals;
-    std::vector<DirectX::XMFLOAT2> uvs;
+    vertices.clear();
+    indices.clear();
+
+    std::vector<Maths::Vec3f> positions;
+    std::vector<Maths::Vec3f> normals;
+    std::vector<Maths::Vec2f> uvs;
 
     std::string line;
 
@@ -121,20 +124,20 @@ void MeshAsset::Load()
 
         if (prefix == "v")
         {
-            DirectX::XMFLOAT3 pos{};
-            ss >> pos.x >> pos.y >> pos.z;
+            Maths::Vec3f pos{};
+            ss >> pos.m_x >> pos.m_y >> pos.m_z;
             positions.push_back(pos);
         }
         else if (prefix == "vn")
         {
-            DirectX::XMFLOAT3 normal{};
-            ss >> normal.x >> normal.y >> normal.z;
+            Maths::Vec3f normal{};
+            ss >> normal.m_x >> normal.m_y >> normal.m_z;
             normals.push_back(normal);
         }
         else if (prefix == "vt")
         {
-            DirectX::XMFLOAT2 uv{};
-            ss >> uv.x >> uv.y;
+            Maths::Vec2f uv{};
+            ss >> uv.m_x >> uv.m_y;
             uvs.push_back(uv);
         }
         else if (prefix == "f")
@@ -171,12 +174,12 @@ void MeshAsset::Load()
                     if (vt_idx > 0 && vt_idx <= uvs.size())
                         vertex.uv = uvs[vt_idx - 1];
                     else
-                        vertex.uv = DirectX::XMFLOAT2(0, 0);
+                        vertex.uv = Maths::Vec2f(0.0f, 0.0f);
 
                     if (vn_idx > 0 && vn_idx <= normals.size())
                         vertex.normal = normals[vn_idx - 1];
                     else
-                        vertex.normal = DirectX::XMFLOAT3(0, 1, 0);
+                        vertex.normal = Maths::Vec3f(1.0f, 1.0f, 1.0f);
 
                     vertices.push_back(vertex);
                     indices.push_back((uint32_t)indices.size());

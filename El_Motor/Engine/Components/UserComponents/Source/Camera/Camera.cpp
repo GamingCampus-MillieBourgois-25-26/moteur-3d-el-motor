@@ -1,14 +1,14 @@
 #include "Camera/Camera.hpp"
 #include "Input_Manager/InputManager.hpp"
 
-float ToRadians(float degree) {
+float Camera::ToRadians(float degree) {
     return degree * Maths::Quatf::PI / 180;
 }
 
 void Camera::RotationUpdate(Engine::InputManager& input)
 {
-    float dx = input.getMouseDelta().x;
-    float dy = input.getMouseDelta().y;
+    float dx = input.getMouseDelta().m_x;
+    float dy = input.getMouseDelta().m_y;
 
     float mouseSensitivity = sensitivity;
 
@@ -56,8 +56,8 @@ void Camera::VPMatrix(){ Maths::Mat4f viewMP = view * projection; }
 void Camera::MouseUpdate(Engine::InputManager& input)
 {
     // lastxy ; xyoffset ; sensitivity ; fistPos ; 
-    float Xpos = input.getMousePosition().x;
-    float Ypos = input.getMousePosition().y;
+    float Xpos = input.getMousePosition().m_x;
+    float Ypos = input.getMousePosition().m_y;
 
     static float lastX = 0.0f;
     static float lastY = 0.0f;

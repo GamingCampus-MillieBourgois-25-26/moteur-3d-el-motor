@@ -11,7 +11,7 @@ Editor::HubManager::HubManager()
 
 Editor::HubManager::~HubManager()
 {
-
+    buttons.SetSelectedEntity();
 }
 
 void Editor::HubManager::Init()
@@ -54,6 +54,7 @@ void Editor::HubManager::HubRun()
         {
             DrawEditorUI();
             coreEditor.editorRun(app);
+            camera.Update(coreEditor.GetEngine().getInputManager());
         }
         break;
 
@@ -62,6 +63,7 @@ void Editor::HubManager::HubRun()
             float dt = coreEditor.GetEngine().getDeltaTime();
             coreEditor.editorRun(app);
             scriptManager.updateScripts(dt);
+            camera.Update(coreEditor.GetEngine().getInputManager());
             break;
         }
         break;

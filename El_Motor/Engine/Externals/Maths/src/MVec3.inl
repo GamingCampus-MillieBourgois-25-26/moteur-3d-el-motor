@@ -1,5 +1,3 @@
-#include "Maths/Headers/MVec3.hpp"
-
 template <typename T>
 Maths::Vec3<T>::Vec3(T m_x, T m_y, T m_z) : m_x(m_x), m_y(m_y), m_z(m_z) {}
 
@@ -43,7 +41,7 @@ Maths::Vec3<T> Maths::Vec3<T>::Normalized() { // Renvoies une copie normalisée d
 	if (mag != 0.0f)
 		return Maths::Vec3<T>(m_x / mag, m_y / mag, m_z / mag);
 	else
-		return Maths::Vec3<T>(0.0f, 0.0f, 0.0f);
+		return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0));
 }
 
 template <typename T>
@@ -52,7 +50,7 @@ T Maths::Vec3<T>::Magnitude() { return std::sqrt(m_x * m_x + m_y * m_y + m_z * m
 template <typename T>
 T Maths::Vec3<T>::SqrtMagnitude() {
 	T mag = (*this).Magnitude();  
-	return std::pow((mag), 2); } 
+	return std::pow((mag), static_cast<T>(2)); }
 
 template <typename T>
 T Maths::Vec3<T>::This(int i) {
@@ -83,7 +81,7 @@ Maths::Vec3<T> Maths::Vec3<T>::RotateTowards(Vec3<T> current, Vec3<T> target, T 
 	T theta = acos(Dot(a, b));
 	Vec3 rotationAxis = Cross(a, b);
 	Vec3 nomalizedRotationAxis = rotationAxis.Normalized();
-	return a * cos(theta) + Cross(rotationAxis, a) * sin(theta) + rotationAxis * (Dot(rotationAxis, a)) * (1 - cos(theta));
+	return a * cos(theta) + Cross(rotationAxis, a) * sin(theta) + rotationAxis * (Dot(rotationAxis, a)) * (static_cast<T>(1) - cos(theta));
 }
 
 template <typename T>
@@ -108,7 +106,7 @@ template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::Reflect(Vec3<T> inDirection, Vec3<T> inNormal) { 
 	Vec3<T> n = inNormal.Normalized();
 	T dot = Dot(inDirection, inNormal);
-	return inDirection - inNormal * dot * 2;
+	return inDirection - inNormal * dot * static_cast<T>(2);
 }
 
 template <typename T>
@@ -124,7 +122,7 @@ Maths::Vec3<T> Maths::Vec3<T>::SlerpUnclamped(Vec3<T> a, Vec3<T> b, T t) {
 	Vec3 aNormal = a.Normalized();
 	Vec3 bNormal = b.Normalized();
 	T theta = acos(Dot(aNormal, bNormal));
-	return bNormal * (sin(t * theta) / sin(theta)) + aNormal * sin((1 - t) * theta) / sin(theta);
+	return bNormal * (sin(t * theta) / sin(theta)) + aNormal * sin((static_cast<T>(1) - t) * theta) / sin(theta);
 }
 
 template <typename T>
@@ -152,7 +150,7 @@ Maths::Vec3<T> Maths::Vec3<T>::Slerp(Vec3<T> a, Vec3<T> b, T t) {
 	T factorA = std::sin((1 - t) * theta) / sinTheta;
 	T factorB = std::sin(t * theta) / sinTheta;
 
-	return (aNormal * factorA + bNormal * factorB).Normalized();
+	return Vec3<T>(aNormal * factorA + bNormal * factorB).Normalized();
 }
 
 template <typename T>
@@ -241,7 +239,7 @@ Maths::Vec3<T> Maths::Vec3<T>::operator*(const Vec3<T>& other) const {
 
 template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::operator*(T scalar) const {
-	return Vec3<T>(m_x * scalar, m_y * scalar, m_z - scalar);
+	return Vec3<T>(m_x * scalar, m_y * scalar, m_z * scalar);
 }
 
 template <typename T>

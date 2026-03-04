@@ -9,13 +9,12 @@ namespace Maths {
 
 	template <typename T = float>
 	class Vec2 {
-	private:
+	public:
 		T m_x;
 		T m_y;
 
 		static_assert(std::is_arithmetic_v<T>);
 
-	public:
 		Vec2(T m_x, T m_y);
 		Vec2() = default;
 		~Vec2() = default;
@@ -84,3 +83,5 @@ namespace Maths {
 	};
 	using Vec2f = Vec2<float>;
 }
+
+#include "Maths/src/MVec2.inl"

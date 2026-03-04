@@ -447,9 +447,9 @@ void Editor::Buttons::editComponent(const AssetManager& assetM)
 
     if (auto* transform = dynamic_cast<Engine::Transform*>(selectedComponent))
     {
-        ImGui::DragFloat3("Position", &transform->position.x, 0.1f);
-        ImGui::DragFloat3("Rotation", &transform->rotation.x, 0.1f);
-        ImGui::DragFloat3("Scale", &transform->scale.x, 0.1f);
+        ImGui::DragFloat3("Position", &transform->position.m_x, 0.1f);
+        ImGui::DragFloat3("Rotation", &transform->rotation.m_x, 0.1f);
+        ImGui::DragFloat3("Scale", &transform->scale.m_x, 0.1f);
     }
 
     if (auto* meshComp = dynamic_cast<Engine::MeshComponent*>(selectedComponent))

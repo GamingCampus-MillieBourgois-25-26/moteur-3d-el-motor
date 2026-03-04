@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <limits>
 #include <algorithm>
 #include "MVec3.hpp"
 
@@ -9,14 +10,10 @@ namespace Maths {
     template<typename T = float>
     class Quat {
     public:
-        T m_x;
-        T m_y;
-        T m_z;
-        T m_w;
+        T m_x, m_y, m_z, m_w;
 
         static_assert(std::is_arithmetic_v<T>);
 
-    public:
         static constexpr T kEpsilon = static_cast<T>(1e-6);
         static constexpr T PI = static_cast<T>(3.14159265358979323846);
 
@@ -37,11 +34,11 @@ namespace Maths {
         void Set(T newX, T newY, T newZ, T newW) { m_x = newX, m_y = newY, m_z = newZ, m_w = newW; }
 
 		//////// STATIC PORPRETIES ////////
-        static Quat Identity();
+        static Quat<T> Identity();
 
         //////// PORPRETIES ////////
-        void EulerAngles(); 
-        Quat Normalized();
+        Vec3<T> EulerAngles();
+        Quat<T> Normalized();
         T Magnitude();
         T This(int i);
 
@@ -54,28 +51,29 @@ namespace Maths {
 		std::string ToString();
 
         //////// STATIC METHODS ////////
-        static Quat AngleAxis(T angle, const Quat<T>& axis);
-        static Quat SlerpUnclamped(const Quat<T>& b, T t);
-        static Quat LerpUnclamped(const Quat<T>& b, T t);
-        static Quat FromEuler(const Vec3<T>& eulerRad);
-        static Quat Slerp(const Quat<T>& b, T t);
-        static Quat Lerp(const Quat<T>& b, T t);
-        static void Inverse();
-        static Quat Cross(const Quat<T>& b);
+        static Quat<T> AngleAxis(T angle, const Quat<T>& axis);
+        static Quat<T> SlerpUnclamped(const Quat<T>& b, T t);
+        static Quat<T> LerpUnclamped(const Quat<T>& b, T t);
+        static Quat<T> FromEuler(const Vec3<T>& eulerRad);
+        static Quat<T> Slerp(const Quat<T>& a, const Quat<T>& b, T t);
+        static Quat<T> Lerp(const Quat<T>& a, const Quat<T>& b, T t);
+        static Quat<T> Cross(const Quat<T>& b);
+        static Quat<T> Inverse(const Quat<T>& q);
         
-
         static Vec3<T> MulltiplyQuatVec(const Vec3<T> v, const Quat<T>& q);
-        static T Angle(const Quat& a, const Quat& b);
-        static T Dot(const Quat& a, const Quat& b);
+        static T Angle(const Quat<T>& a, const Quat<T>& b);
+        static T Dot(const Quat<T>& a, const Quat<T>& b);
 
-        static void LookRotation(const Quat<T>& forward, const Quat<T>& up);
+        static void LookRotation(const Vec3<T>& forward, const Vec3<T>& up);
         static void RotateTowards(const Quat<T>& to, T maxDegreesDelta);
         static void FromToRotation(const Quat<T>& to);
-        static void Normalize();
+        void Normalize();
 
         //////// OPERATOR ////////
-        Quat operator*(const Quat<T>& q) const;
+        Quat<T> operator*(const Quat<T>& q) const;
 		bool operator==(const Maths::Quat<T>& q) const;
     };
     using Quatf = Quat<float>;
 }
+
+#include "Maths/src/MQuaternion.inl"

@@ -1,5 +1,3 @@
-#include "Maths/Headers/MVec2.hpp"
-
 template <typename T>
 Maths::Vec2<T>::Vec2(T m_x, T m_y) : m_x(m_x), m_y(m_y) {}
 
@@ -36,15 +34,15 @@ Maths::Vec2<T> Maths::Vec2<T>::Normalized() {
 
     T mag = Magnitude();
     if (mag != 0.0f)
-        return Maths::Vec2<T>(x / mag, y / mag);
+        return Maths::Vec2<T>(m_x / mag, m_y / mag);
     else
-        return Maths::Vec2<T>(0.0f, 0.0f);
+        return Maths::Vec2<T>(static_cast<T>(0), static_cast<T>(0));
 }
 
 template <typename T>
 T Maths::Vec2<T>::SqrtMagnitude() {
     T mag = (*this).Magnitude();
-    return std::pow((mag), 2);
+    return std::pow((mag), static_cast<T>(2));
 }
 
 template <typename T>
@@ -107,7 +105,7 @@ static Maths::Vec2<T> Maths::Vec2<T>::Lerp(Vec2<T> a, Vec2<T> b, T t) {
 
 template <typename T>
 static Maths::Vec2<T> Maths::Vec2<T>::Scale(Vec2<T>& a, Vec2<T>& b) {
-    return Vec2<T>(a.x * b.x, a.y * b.y);
+    return Vec2<T>(a.m_x * b.m_x, a.m_y * b.m_y);
 }
 
 template <typename T>
@@ -124,7 +122,7 @@ static Maths::Vec2<T> Maths::Vec2<T>::Max(Vec2<T>& a, Vec2<T>& b) {
 template <typename T>
 static T Maths::Vec2<T>::SignedAngle(Vec2<T> from, Vec2<T> to) {
     T angle = Angle(from, to);
-    T cross = from.x * to.y - from.y * to.x;
+    T cross = from.m_x * to.m_y - from.m_y * to.m_x;
     return (cross < 0) ? -angle : angle;
 }
 
@@ -135,7 +133,7 @@ static T Maths::Vec2<T>::Distance(Vec2<T>& a, Vec2<T>& b) {
 
 template <typename T>
 static T Maths::Vec2<T>::Angle(Vec2<T> a, Vec2<T> b) {
-    float dotProd = a.x * b.x + a.y * b.y;
+    float dotProd = a.m_x * b.m_x + a.m_y * b.m_y;
     float lenA = a.Magnitude();
     float lenB = b.Magnitude();
     T cosAngle = std::clamp(dotProd / (lenA * lenB), -1.0f, 1.0f);

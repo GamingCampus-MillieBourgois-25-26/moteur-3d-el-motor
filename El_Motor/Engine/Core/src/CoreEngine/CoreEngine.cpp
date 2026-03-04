@@ -15,6 +15,7 @@ void Engine::CoreEngine::run() {
 		timeManager.Update();
 		SetDeltaTime(timeManager.GetDeltaTime());
 		inputManager.update();
+		getCamera().Update(inputManager);
 		getScene()->Update(getDeltaTime());
 }
 

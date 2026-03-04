@@ -2,29 +2,30 @@
 #include <vector>
 #include <string>
 #include <d3d11.h>
-#include <DirectXMath.h>
 #include <wrl.h>
 
 #include "Assets/Asset.hpp"
+#include "Maths/Headers/MVec2.hpp"
+#include "Maths/Headers/MVec3.hpp"
 
 namespace wrl = Microsoft::WRL;
 
 struct Vertex
 {
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT3 normal;
-    DirectX::XMFLOAT2 uv;
+    Maths::Vec3f position;
+    Maths::Vec3f normal;
+    Maths::Vec2f uv;
 };
 
 class MeshAsset : public Asset
 {
 private:
-    DirectX::XMFLOAT3 mColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+    Maths::Vec3f mColor = Maths::Vec3f(1.0f, 1.0f, 1.0f);
 public:
 
 
     //MeshAsset(const std::string& path,
-    //    const DirectX::XMFLOAT3& color = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f));
+    //    const Maths::Vec3f& color = Maths::Vec3f(1.0f, 0.0f, 0.0f));
 
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
@@ -32,8 +33,8 @@ public:
     wrl::ComPtr<ID3D11Buffer> vertexBuffer = nullptr;
     wrl::ComPtr<ID3D11Buffer> indexBuffer = nullptr;
 
-	const DirectX::XMFLOAT3& GetColor() const { return mColor; } 
-    void SetColor(float r, float g, float b) { mColor = DirectX::XMFLOAT3(r, g, b); }
+	const Maths::Vec3f& GetColor() const { return mColor; }
+    void SetColor(float r, float g, float b) { mColor = Maths::Vec3f(r, g, b); }
 
     void Load() override;
     void LoadTestCube();

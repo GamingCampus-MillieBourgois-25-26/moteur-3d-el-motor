@@ -8,14 +8,13 @@ namespace Maths {
 
 	template <typename T = float>
 	class Vec3 {
-	private:
+	public:
 		T m_x;
 		T m_y;
 		T m_z;
 
 		static_assert(std::is_arithmetic_v<T>);
 
-	public:
 		Vec3(T m_x, T m_y, T m_z);
 		Vec3() = default;
 		~Vec3() = default;
@@ -91,3 +90,5 @@ namespace Maths {
 	};
 	using Vec3f = Vec3<float>;
 }
+
+#include "Maths/src/MVec3.inl"

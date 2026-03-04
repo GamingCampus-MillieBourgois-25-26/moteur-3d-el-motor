@@ -65,6 +65,11 @@ namespace Editor
 		/// </summary>
 		ScriptManager scriptManager;
 
+		/// <summary>
+		/// Camera for the editor.
+		/// </summary>
+		EditorCamera camera;
+
 	public:
 		/// <summary>
 		/// Constructor for HubManager.

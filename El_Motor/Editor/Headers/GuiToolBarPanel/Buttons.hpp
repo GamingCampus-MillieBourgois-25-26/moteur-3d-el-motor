@@ -99,5 +99,6 @@ namespace Editor
 		void SetLoadProjReady(bool ready) { LoadProjReady = ready; }
 		void SetLoadAsset(bool load) { LoadAsset = load; }
 		void SetScriptName(std::string name) { scriptName = name; }
+		void SetSelectedEntity() { selectedEntity = nullptr; }
 	};
 }
