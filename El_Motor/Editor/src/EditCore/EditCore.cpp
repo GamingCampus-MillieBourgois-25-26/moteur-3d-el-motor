@@ -13,7 +13,6 @@ void Editor::EditorCore::editorInit(Engine::Application& app) {
 void Editor::EditorCore::editorRun(Engine::Application& app)
 {
 	coreEngine.run();
-	InputUpdate(app);
 	coreEngine.getInputManager().update();
 }
 
@@ -44,7 +43,6 @@ void Editor::EditorCore::InputUpdate(Engine::Application& app)
 	// Mise à jour de la position de la souris
 	glfwGetCursorPos(window, &x, &y);
 	input.setMousePosition({ (float)getMouseEditorX(), (float)getMouseEditorY() });
-
 
 }
 

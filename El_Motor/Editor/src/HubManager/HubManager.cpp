@@ -36,7 +36,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Hub:
         {
             DrawHubUI();
-            coreEditor.InputUpdate(app);
+            
             break;
         }
         break;
@@ -46,6 +46,19 @@ void Editor::HubManager::HubRun()
             DrawEditorUI();
             coreEditor.editorRun(app);
             camera.Update(coreEditor.GetEngine().getInputManager());
+
+
+            auto& assetManager = coreEditor.GetEngine().getAssetManager();
+            for (auto& [path, asset] : assetManager.GetMeshes())
+            {
+                if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
+                {
+                    auto material = assetManager.LoadMaterialForMesh(path);
+                    if (material)
+                        app.getD3D11()->DrawShape(*mesh, *material);
+                }
+            }
+            break;
         }
         break;
 
@@ -55,6 +68,18 @@ void Editor::HubManager::HubRun()
             coreEditor.editorRun(app);
             scriptManager.updateScripts(dt);
             camera.Update(coreEditor.GetEngine().getInputManager());
+
+
+            auto& assetManager = coreEditor.GetEngine().getAssetManager();
+            for (auto& [path, asset] : assetManager.GetMeshes())
+            {
+                if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
+                {
+                    auto material = assetManager.LoadMaterialForMesh(path);
+                    if (material)
+                        app.getD3D11()->DrawShape(*mesh, *material);
+                }
+            }
             break;
         }
         break;
@@ -62,16 +87,8 @@ void Editor::HubManager::HubRun()
         }
 
         // --- DESSIN DES MESHES ---
-        auto& assetManager = coreEditor.GetEngine().getAssetManager();
-        for (auto& [path, asset] : assetManager.GetMeshes())
-        {
-            if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
-            {
-                auto material = assetManager.LoadMaterialForMesh(path);
-                if (material)
-                    app.getD3D11()->DrawShape(*mesh, *material);
-            }
-        }
+
+        coreEditor.InputUpdate(app);
         Shutdown();
         guiLayer.EndFrame();
         app.getD3D11()->Present();
