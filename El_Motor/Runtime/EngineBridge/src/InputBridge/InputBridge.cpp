@@ -32,5 +32,5 @@ void Runtime::InputBridge::fetchGLFWInput(Engine::CoreEngine& core, Engine::Appl
 
 	// Mise à jour de la position de la souris
 	glfwGetCursorPos(window, &x, &y);
-	input.setMousePosition({x,y});
+	input.setMousePosition({ (float)x,(float)y });
 }

@@ -44,7 +44,6 @@ void Editor::EditorCore::InputUpdate(Engine::Application& app)
 	// Mise à jour de la position de la souris
 	glfwGetCursorPos(window, &x, &y);
 	input.setMousePosition({ (float)getMouseEditorX(), (float)getMouseEditorY() });
-	std::cout << input.isKeyHeld(Engine::KeyCode::Z);
 }
 
 void Editor::EditorCore::startRuntime() {
