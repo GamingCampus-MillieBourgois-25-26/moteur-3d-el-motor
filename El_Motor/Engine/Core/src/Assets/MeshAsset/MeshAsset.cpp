@@ -70,7 +70,7 @@ void MeshAsset::Load()
             }
             else
             {
-                v.normal = DirectX::XMFLOAT3(0, 1, 0);
+                v.normal = Maths::Vec3f(0.0f, 1.0f, 0.0f);
             }
 
             if (mesh->HasTextureCoords(0))
@@ -83,7 +83,7 @@ void MeshAsset::Load()
             }
             else
             {
-                v.uv = DirectX::XMFLOAT2(0, 0);
+                v.uv = Maths::Vec2f(0.0f, 0.0f);
             }
 
             vertices.push_back(v);

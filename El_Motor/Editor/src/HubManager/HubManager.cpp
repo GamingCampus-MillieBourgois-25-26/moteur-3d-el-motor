@@ -11,7 +11,7 @@ Editor::HubManager::HubManager()
 
 Editor::HubManager::~HubManager()
 {
-
+    buttons.SetSelectedEntity();
 }
 
 void Editor::HubManager::Init()
