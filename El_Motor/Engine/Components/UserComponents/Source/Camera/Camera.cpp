@@ -47,15 +47,14 @@ Camera::Camera() : projection(), view(), VP()
 
 ///////// CALCUL DE MATRICES //////////
 
-void Camera::ProjectionMatrix(){ Maths::Mat4f proj = Maths::Mat4f::Perspective4x4(fov, aspectRatio, nearPlane, farPlane); }
+void Camera::ProjectionMatrix(){ projection = Maths::Mat4f::Perspective4x4(fov, aspectRatio, nearPlane, farPlane); }
 
-void Camera::ViewMatrix(){ Maths::Mat4f viewM = Maths::Mat4f::LookAt4x4(position, position + forward, up); }
+void Camera::ViewMatrix(){ view = Maths::Mat4f::LookAt4x4(position, position + forward, up); }
 
-void Camera::VPMatrix(){ Maths::Mat4f viewMP = view * projection; }
+void Camera::VPMatrix(){ VP = view * projection; }
 
 void Camera::MouseUpdate(Engine::InputManager& input)
 {
-    // lastxy ; xyoffset ; sensitivity ; fistPos ; 
     float Xpos = input.getMousePosition().m_x;
     float Ypos = input.getMousePosition().m_y;
 
@@ -93,25 +92,23 @@ void Camera::MouseUpdate(Engine::InputManager& input)
 
 	Maths::Vec3f direction = Maths::Vec3f(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch));
 	direction = direction.Normalized();
-
 }
 
 void Camera::MoveUpdate(Engine::InputManager& input) {
-    // accumulate movement delta, apply once
-    
     Maths::Vec3f moveDelta = Maths::Vec3f(0.0f, 0.0f, 0.0f);
 
-    if (input.isKeyPressed(Engine::KeyCode::Z))
-		moveDelta = moveDelta + forward * moveSpeed;
-    if (input.isKeyPressed(Engine::KeyCode::S))
+    // Utilise les scancodes physiques (W, A, S, D) - indépendant de la disposition du clavier
+    if (input.isKeyPressed(Engine::Scancode::KEY_W) || input.isKeyHeld(Engine::Scancode::KEY_W))
+        moveDelta = moveDelta + forward * moveSpeed;
+    if (input.isKeyPressed(Engine::Scancode::KEY_S) || input.isKeyHeld(Engine::Scancode::KEY_S))
         moveDelta = moveDelta + forward * -moveSpeed;
-    if (input.isKeyPressed(Engine::KeyCode::Q))
-		moveDelta = moveDelta + right * moveSpeed;
-    if (input.isKeyPressed(Engine::KeyCode::D))
+    if (input.isKeyPressed(Engine::Scancode::KEY_A) || input.isKeyHeld(Engine::Scancode::KEY_A))
         moveDelta = moveDelta + right * -moveSpeed;
+    if (input.isKeyPressed(Engine::Scancode::KEY_D) || input.isKeyHeld(Engine::Scancode::KEY_D))
+        moveDelta = moveDelta + right * moveSpeed;
     
-    if (moveDelta == Maths::Vec3f(0.0f, 0.0f, 0.0f)) {
-		position = position + moveDelta;
+    if (moveDelta != Maths::Vec3f(0.0f, 0.0f, 0.0f)) {
+        position = position + moveDelta;
     }
 
     if (input.isMousePressed(Engine::MouseButton::Left))
