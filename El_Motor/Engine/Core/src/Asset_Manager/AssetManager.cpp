@@ -15,9 +15,10 @@ std::shared_ptr<Material> AssetManager::LoadMaterialForMesh(const std::string& m
     std::string base = p.stem().string();
     std::string dir = p.parent_path().string();
 
-    std::cout << "Mesh path: " << meshPath << std::endl;
-    std::cout << "Directory: " << dir << std::endl;
-    std::cout << "Base name: " << base << std::endl;
+    //Debug
+    //std::cout << "Mesh path: " << meshPath << std::endl;
+    //std::cout << "Directory: " << dir << std::endl;
+    //std::cout << "Base name: " << base << std::endl;
 
     std::vector<std::string> extensions = { ".png", ".dds", ".jpg", ".jpeg" };
 
@@ -25,11 +26,9 @@ std::shared_ptr<Material> AssetManager::LoadMaterialForMesh(const std::string& m
     {
         std::string texPath = (std::filesystem::path(dir) / (base + ext)).string();
 
-        std::cout << "Testing: " << texPath;
 
         if (std::filesystem::exists(texPath))
         {
-            std::cout << " -> FOUND" << std::endl;
 
             auto texture = Load<TextureAsset>(texPath);
             auto mat = std::make_shared<Material>();
@@ -38,10 +37,7 @@ std::shared_ptr<Material> AssetManager::LoadMaterialForMesh(const std::string& m
             return mat;
         }
 
-        std::cout << " -> not found" << std::endl;
     }
-
-    std::cout << "No texture found for: " << meshPath << std::endl;
     return std::make_shared<Material>();
 }
 

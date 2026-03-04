@@ -72,10 +72,11 @@ void Editor::HubManager::HubRun()
         auto& assetManager = coreEditor.GetEngine().getAssetManager();
         for (auto& [path, asset] : assetManager.GetMeshes())
         {
-
             if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
             {
-                app.getD3D11()->DrawShape(*mesh);
+                auto material = assetManager.LoadMaterialForMesh(path);
+                if (material)
+                    app.getD3D11()->DrawShape(*mesh, *material);
             }
         }
 

@@ -14,6 +14,7 @@
 #include "Window/IWindow.hpp"
 
 class MeshAsset;
+class Material;
 
 namespace wrl = Microsoft::WRL;
 
@@ -24,7 +25,7 @@ namespace Engine {
 	struct ObjectColorBuffer
 	{
 		DirectX::XMFLOAT3 objColor;
-		float padding;
+		int useTexture;
 	};
 
 	class D3D11 {
@@ -41,7 +42,7 @@ namespace Engine {
 		ID3D11DeviceContext* GetContext() const noexcept { return pContext.Get(); }
 		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain.Get(); }
 		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget.Get(); }
-		void DrawShape(const MeshAsset& mesh);
+		void DrawShape(const MeshAsset& mesh, const Material& material);
 	private:
 		HWND myWindow;
 		wrl::ComPtr <ID3D11Device> pDevice = nullptr;

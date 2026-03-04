@@ -8,12 +8,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-//MeshAsset::MeshAsset(const std::string& path,const DirectX::XMFLOAT3& color): mColor(color)
-//{
-//    this->path = path;
-//}
-
-
 void MeshAsset::Load()
 {
     vertices.clear();
@@ -300,7 +294,7 @@ void MeshAsset::Bind(ID3D11DeviceContext* context) const
     );
 
     context->IASetPrimitiveTopology(
-        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
+        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
     );
 }
 

@@ -12,6 +12,7 @@
 #include "Assets/Asset.hpp"
 #include "Assets/MeshAsset/MeshAsset.hpp"
 #include "Assets/TextureAsset/TextureAsset.hpp"
+#include "Assets/TextureAsset/Material.hpp"
 
 namespace wrl = Microsoft::WRL;
 
@@ -75,6 +76,8 @@ public:
             static_assert(sizeof(T) == 0, "Unsupported asset type");
         }
     }
+
+    std::shared_ptr<Material> LoadMaterialForMesh(const std::string& meshPath);
 
     void Reload(const std::string& path);
 
