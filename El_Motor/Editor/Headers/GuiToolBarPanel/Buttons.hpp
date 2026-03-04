@@ -6,6 +6,9 @@
 #include <string>
 #include <filesystem>
 
+
+
+struct ImVec2;
 class GameObject;
 class Asset;
 class AssetManager;

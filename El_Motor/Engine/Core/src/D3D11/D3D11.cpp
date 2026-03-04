@@ -156,8 +156,8 @@ namespace Engine
 
 	DXGI_SWAP_CHAIN_DESC D3D11::initSwapChainDesc() {
 		DXGI_SWAP_CHAIN_DESC SwapChDesc = {};
-		SwapChDesc.BufferDesc.Width = 800; // Largeur du buffer
-		SwapChDesc.BufferDesc.Height = 600; // Hauteur du buffer
+		SwapChDesc.BufferDesc.Width = 0; // Largeur du buffer
+		SwapChDesc.BufferDesc.Height = 0; // Hauteur du buffer
 		SwapChDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // Format du buffer
 		SwapChDesc.BufferDesc.RefreshRate.Numerator = 60; // Taux de rafraîchissement (numérateur)
 		SwapChDesc.BufferDesc.RefreshRate.Denominator = 1; // Taux de rafraîchissement (dénominateur)

@@ -21,6 +21,12 @@ void GuiLayer::Init(GLFWwindow* window, ID3D11Device* device, ID3D11DeviceContex
     // Initialisation backends 
     ImGui_ImplGlfw_InitForOther(window, true); // GLFW
     ImGui_ImplDX11_Init(device, context);      // DX11
+
+    // Scaling DPI
+    float xScale, yScale;
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    glfwGetMonitorContentScale(monitor, &xScale, &yScale);
+    io.FontGlobalScale = xScale; // ou moyenne: (xScale + yScale)/2
 }
 
 void GuiLayer::BeginFrame()

@@ -81,6 +81,17 @@ namespace Editor
 		/// </summary>
 		~HubManager();
 
+
+
+		/// <summary>
+		/// Initializes the editor hub including the application, GUI layer, and systems.
+		/// Must be called before HubRun().
+		/// </summary>
+		void Shutdown();
+
+
+
+
 		/// <summary>
 		/// Initializes the editor hub including the application, GUI layer, and systems.
 		/// Must be called before HubRun().

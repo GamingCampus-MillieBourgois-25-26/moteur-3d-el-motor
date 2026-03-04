@@ -26,22 +26,59 @@ void Editor::Buttons::update(AssetManager& manager) {
 
 bool Editor::Buttons::createProject()
 {
+    ImVec2 windowSize = ImGui::GetWindowSize();
+    ImVec2 buttonSize = ImVec2(250, 75);
 
-    if (ImGui::Button("Create Project", ImVec2(200, 50)))
+    // ---------- TEXTE ----------
+    const char* title = "El Motor";
+
+    // Agrandir temporairement
+    ImGui::SetWindowFontScale(2.5f);
+
+    ImVec2 textSize = ImGui::CalcTextSize(title);
+
+    ImGui::SetCursorPos(ImVec2(
+        (windowSize.x - textSize.x) * 0.5f,
+        (windowSize.y * 0.5f) - 300
+    ));
+
+    ImGui::Text("%s", title);
+
+    // Remettre scale normal
+    ImGui::SetWindowFontScale(1.0f);
+
+
+    // ---------- BOUTON ----------
+    ImGui::SetCursorPos(ImVec2(
+        (windowSize.x - buttonSize.x) * 0.5f,
+        ((windowSize.y - buttonSize.y) * 0.5f) - buttonSize.y
+    ));
+
+    if (ImGui::Button("Create Project", buttonSize))
     {
-        if(GetSessionName() != "Null")
-        return true;
-
+        if (GetSessionName() != "Null")
+            return true;
         else
-        SetSessionNameStatus("Incorrect project name , try again");
+            SetSessionNameStatus("Incorrect project name , try again");
     }
+
     return false;
 
 }
 
 void Editor::Buttons::loadProject() {
 
-    if (ImGui::Button("Load Project", ImVec2(200, 50)))
+    ImVec2 windowSize = ImGui::GetWindowSize();
+    ImVec2 buttonSize = ImVec2(250, 75);
+    ImVec2 LoadButtSize = ImVec2(800, 500);
+
+    ImGui::SetCursorPos(ImVec2(
+        (windowSize.x - buttonSize.x) * 0.5f,
+        ((windowSize.y - buttonSize.y) * 0.5f) + buttonSize.y
+    ));
+
+
+    if (ImGui::Button("Load Project", buttonSize))
     {
         SetLoadSession(true);
     }
@@ -59,7 +96,10 @@ void Editor::Buttons::loadProject() {
             config                 // dossier de départ
         );
 
-        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, ImVec2(600, 500)))
+
+
+
+        if (ImGuiFileDialog::Instance()->Display("LoadProjectKey", ImGuiWindowFlags_None, LoadButtSize))
         {
             if (ImGuiFileDialog::Instance()->IsOk())
             {
@@ -81,23 +121,48 @@ void Editor::Buttons::loadProject() {
 void Editor::Buttons::projectName()
 {
     static char bufferSessionName[256] = "";
-    ImGui::Text(GetSessionNameStatus().c_str());
-    if (ImGui::InputText("Project Name", bufferSessionName, sizeof(bufferSessionName), ImGuiInputTextFlags_EnterReturnsTrue))
+
+    ImVec2 windowSize = ImGui::GetWindowSize();
+
+    // ---------------- STATUS TEXT ----------------
+    ImGui::SetWindowFontScale(1.5f);
+
+    std::string status = GetSessionNameStatus();
+    ImVec2 textSize = ImGui::CalcTextSize(status.c_str());
+    ImGui::SetCursorPosX((windowSize.x - textSize.x) * 0.5f);
+    ImGui::SetCursorPosY(((windowSize.y - textSize.y) * 0.5f) -180);
+    ImGui::Text("%s", status.c_str());
+
+    ImGui::SetWindowFontScale(1.0f);
+
+
+    // ---------------- INPUT FIELD ----------------
+    float inputWidth = 900.0f;
+
+    ImGui::SetCursorPosX(((windowSize.x - inputWidth) * 0.5f));
+    ImGui::SetCursorPosY(((windowSize.y - inputWidth) * 0.5f)+ 300);
+    ImGui::SetNextItemWidth(inputWidth);
+
+    if (ImGui::InputText("##ProjectName", bufferSessionName, sizeof(bufferSessionName),
+        ImGuiInputTextFlags_EnterReturnsTrue))
     {
         if (CheckGoNameValid(bufferSessionName) || !CheckCaraterValid(bufferSessionName))
         {
-            strncpy(bufferSessionName,"", sizeof(bufferSessionName));
-            bufferSessionName[sizeof(bufferSessionName) - 1] = '\0';
+            bufferSessionName[0] = '\0';
             SetSessionNameStatus("Incorrect project name , try again");
         }
-        else {
+        else
+        {
             SetSessionName(bufferSessionName);
         }
     }
+
 }
 
 void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
 {
+
+    
 	ImGui::BeginChild("ScriptMenu", ImVec2(200, 0), true);
     ImGui::Text("Scripts");
     ImGui::Separator();

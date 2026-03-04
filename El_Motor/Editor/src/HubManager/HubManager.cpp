@@ -36,6 +36,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Hub:
         {
             DrawHubUI();
+            coreEditor.InputUpdate(app);
             break;
         }
         break;
@@ -71,7 +72,7 @@ void Editor::HubManager::HubRun()
                     app.getD3D11()->DrawShape(*mesh, *material);
             }
         }
-
+        Shutdown();
         guiLayer.EndFrame();
         app.getD3D11()->Present();
     }
@@ -169,9 +170,10 @@ void Editor::HubManager::DrawEditorUI()
     
 }
     
+void Editor::HubManager::Shutdown() {
+    if (coreEditor.GetEngine().getInputManager().isKeyPressed(Engine::Scancode::ESCAPE) == true) 
+    {
+        app.getWindowOpener().CloseWindow();
+    }
+}
 
-//void Editor::HubManager::createNewLevel()
-//{
-//    Engine::Scene* level = new Engine::Scene();
-//    GetLevels().emplace_back(level);
-//}
