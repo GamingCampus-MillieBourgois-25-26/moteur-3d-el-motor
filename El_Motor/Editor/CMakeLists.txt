@@ -132,10 +132,31 @@ list(APPEND EDITOR_SOURCES
     External/imgui/src/Backend/imgui_impl_dx11.cpp
     External/imgui/src/Backend/imgui_impl_glfw.cpp
     External/ImGuiFileLog/src/ImGuiFileDialog.cpp
+
 )
 
 add_executable(Editor ${EDITOR_SOURCES} 
                       ${EDITOR_HEADERS}
+ "src/Gizmos/Gizmos.cpp"
+)
+
+file(GLOB_RECURSE GIZMOS_SOURCES
+    src/**/*.cpp
+)
+
+
+
+file(GLOB_RECURSE GIZMOS_HEADERS
+    Headers/**/*.hpp
+)
+
+add_library(ImGuizmo ${GIZMOS_SOURCES} 
+                     ${GIZMOS_HEADERS}
+                     ${imguizmo_SOURCE_DIR}/ImGuizmo.cpp
+)
+
+target_include_directories(ImGuizmo PUBLIC
+    ${imguizmo_SOURCE_DIR}
 )
 
 target_link_libraries(Editor PRIVATE
@@ -146,6 +167,7 @@ target_link_libraries(Editor PRIVATE
     dxgi
     assimp
     DirectXTK
+    ImGuizmo
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
