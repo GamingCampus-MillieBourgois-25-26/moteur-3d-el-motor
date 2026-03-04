@@ -12,6 +12,7 @@
 #include "Assets/Asset.hpp"
 #include "Assets/MeshAsset/MeshAsset.hpp"
 #include "Assets/TextureAsset/TextureAsset.hpp"
+#include "Assets/TextureAsset/Material.hpp"
 
 namespace wrl = Microsoft::WRL;
 
@@ -24,9 +25,9 @@ public:
     void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
 
     template<typename T>
-    std::shared_ptr<T> Load(const std::string& path)
-    {
-        static_assert(std::is_base_of<Asset, T>::value, "T doit hériter de Asset");
+    std::shared_ptr<T> Load(const std::string& path) {
+        static_assert(std::is_base_of<Asset, T>::value, "T doit heriter de Asset");
+
 
         // ===== MESH =====
         if constexpr (std::is_same_v<T, MeshAsset>)
@@ -75,6 +76,8 @@ public:
             static_assert(sizeof(T) == 0, "Unsupported asset type");
         }
     }
+
+    std::shared_ptr<Material> LoadMaterialForMesh(const std::string& meshPath);
 
     void Reload(const std::string& path);
 

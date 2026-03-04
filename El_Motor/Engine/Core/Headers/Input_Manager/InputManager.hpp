@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
+#include <unordered_map>
 #include <array>
 #include "InputState.hpp"
-#include "KeyCode.hpp"
+#include "Scancode.hpp"
 #include "MouseButton.hpp"
 #include "Maths/Headers/MVec2.hpp"
 
@@ -19,11 +20,11 @@ namespace Engine{
         void init();
         void update();
 
-        //Clavier
-        void updateKey(KeyCode key, bool isDown);
-        bool isKeyPressed(KeyCode key) const;
-        bool isKeyHeld(KeyCode key) const;
-        bool isKeyReleased(KeyCode key) const;
+        //Clavier - Utilise les scancodes
+        void updateKey(Scancode scancode, bool isDown);
+        bool isKeyPressed(Scancode scancode) const;
+        bool isKeyHeld(Scancode scancode) const;
+        bool isKeyReleased(Scancode scancode) const;
 
         //Souris
         void updateMouseButton(MouseButton button, bool isDown);
@@ -39,8 +40,8 @@ namespace Engine{
 
     private:
 
-        //clavier
-        std::array<InputState, (size_t)KeyCode::COUNT> keyStates;
+        // Clavier - Utilise une map pour supporter tous les scancodes
+        std::unordered_map<int, InputState> keyStates;
         bool initialized = false;
 
         //Souris

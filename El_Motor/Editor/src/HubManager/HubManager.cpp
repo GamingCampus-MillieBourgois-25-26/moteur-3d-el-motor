@@ -23,7 +23,7 @@ void Editor::HubManager::Init()
 
 void Editor::HubManager::HubRun()
 {
-   
+  
     while (!glfwWindowShouldClose(app.getWindowOpener().getMyWindow()))
     {
         glfwPollEvents();
@@ -66,7 +66,9 @@ void Editor::HubManager::HubRun()
         {
             if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
             {
-                app.getD3D11()->DrawShape(*mesh);
+                auto material = assetManager.LoadMaterialForMesh(path);
+                if (material)
+                    app.getD3D11()->DrawShape(*mesh, *material);
             }
         }
 

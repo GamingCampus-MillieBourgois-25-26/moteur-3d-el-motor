@@ -1,5 +1,6 @@
 #include "D3D11/D3D11.hpp"
 #include "Assets/MeshAsset/MeshAsset.hpp"
+#include "Assets/TextureAsset/Material.hpp"
 
 #include <d3dcompiler.h>
 #include <wrl.h>
@@ -109,7 +110,11 @@ namespace Engine
 		bd.ByteWidth = sizeof(ObjectColorBuffer);
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+		hr = pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			std::cout << "Failed to create ObjectColor constant buffer, hr=" << std::hex << hr << std::endl;
+			return; 
+		}
 
 		hr = pDevice->CreateInputLayout(
 			layout,
@@ -183,7 +188,7 @@ namespace Engine
 			pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
-	void D3D11::DrawShape(const MeshAsset& mesh)
+	void D3D11::DrawShape(const MeshAsset& mesh, const Material& material)
 	{
 		// Récupère le render target
 		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
@@ -218,12 +223,18 @@ namespace Engine
 
 		// 6. Bind le mesh
 		mesh.Bind(pContext.Get());
+		material.Bind(pContext.Get());
+
+		if (!mObjectColorBuffer)
+		{
+			std::cout << "ObjectColor buffer is null, skipping draw\n";
+			return;
+		}
 
 		// 7. Constant buffer pour la couleur
 		ObjectColorBuffer buffer;
-		DirectX::XMFLOAT3 colorConv = DirectX::XMFLOAT3(mesh.GetColor().m_x, mesh.GetColor().m_y, mesh.GetColor().m_z);
-		buffer.objColor = colorConv;
-		buffer.padding = 0.0f;
+		buffer.objColor = material.color;
+		buffer.useTexture = material.texture && material.texture->IsReady() ? 1 : 0;
 
 		pContext->UpdateSubresource(
 			mObjectColorBuffer.Get(),
@@ -233,6 +244,7 @@ namespace Engine
 			0,
 			0
 		);
+
 
 		pContext->PSSetConstantBuffers(0, 1, mObjectColorBuffer.GetAddressOf());
 
