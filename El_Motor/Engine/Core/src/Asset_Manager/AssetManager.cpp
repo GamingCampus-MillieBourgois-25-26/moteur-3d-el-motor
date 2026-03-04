@@ -49,33 +49,62 @@ void AssetManager::Initialize(ID3D11Device* device, ID3D11DeviceContext* context
 {
     m_device = device;
     m_context = context;
+
     std::cout << "AssetManager Initialised" << std::endl;
 }
 
 void AssetManager::Reload(const std::string& path)
 {
-    auto it = m_assets.find(path);
+    auto meshIt = m_meshes.find(path);
 
-    if (it != m_assets.end())
+    if (meshIt != m_meshes.end())
     {
-        it->second->Unload();
-        it->second->Load();
+        meshIt->second->Unload();
 
-        if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(it->second))
-        {
-            mesh->CreateBuffers(m_device.Get());
-        }
+        meshIt->second->Load();
+
+        meshIt->second->CreateBuffers(m_device.Get());
+
+        std::cout << "Reloaded mesh: " << path << std::endl;
+
+        return;
     }
+
+    auto texIt = m_textures.find(path);
+
+    if (texIt != m_textures.end())
+    {
+        texIt->second->Unload();
+
+        texIt->second->Load();
+
+        texIt->second->CreateBuffers(m_device.Get());
+
+        std::cout << "Reloaded texture: " << path << std::endl;
+
+        return;
+    }
+
+    std::cout << "Asset not found for reload: " << path << std::endl;
 }
 
 void AssetManager::UnloadAll()
 {
-    for (auto& [path, asset] : m_assets)
+    for (auto& [path, mesh] : m_meshes)
     {
-        asset->Unload();
+        mesh->Unload();
     }
 
-    m_assets.clear();
+    for (auto& [path, texture] : m_textures)
+    {
+        texture->Unload();
+    }
+
+    m_meshes.clear();
+
+    m_textures.clear();
+
+    std::cout << "All assets unloaded" << std::endl;
 }
 
 AssetManager::~AssetManager()

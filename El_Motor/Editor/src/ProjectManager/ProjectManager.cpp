@@ -7,7 +7,6 @@
 
 
 
-
 Editor::ProjectManager& Editor::ProjectManager::Get()
 {
     static ProjectManager instance;
@@ -23,7 +22,7 @@ Editor::ProjectManager::~ProjectManager() = default;
 
 void Editor::ProjectManager::createProject(const std::string& name, std::shared_ptr<Engine::Scene>& scene) {
 
-    std::filesystem::path path = "Projects/" + name;
+    std::filesystem::path path = "../../../../Game/Projects/" + name;
     std::filesystem::create_directories(path);
     std::filesystem::create_directories(path / "Assets");
     std::filesystem::create_directories(path / "Scenes");
@@ -67,7 +66,7 @@ void Editor::ProjectManager::loadProject(const std::filesystem::path& path, std:
     nlohmann::json config;
     configFile >> config;
     std::cout << "Loaded project: " << config["name"] << std::endl;
-
+	SetLoadedProjectName(config["name"]);
     // Load the main scene only (single scene)
     std::filesystem::path mainScenePath = path / "Scenes" / "MainScene.json";
     loadScene(mainScenePath, scene);
@@ -181,4 +180,21 @@ void Editor::ProjectManager::saveScene(const Engine::Scene& scene, const std::fi
 
     std::ofstream file(scenePath);
     file << sceneJson.dump(4);
+}
+
+
+
+void Editor::ProjectManager::SetLastProject(const std::string& name)
+{
+    std::filesystem::path root = "../../../../Editor";
+    std::ofstream file(root / "LastProject.txt");
+    file << name;
+    file.close();
+}
+void Editor::ProjectManager::clearLastProject()
+{
+    std::filesystem::path root = "../../../../Editor";
+    std::ofstream file(root / "LastProject.txt");
+    file.clear();
+    file.close();
 }

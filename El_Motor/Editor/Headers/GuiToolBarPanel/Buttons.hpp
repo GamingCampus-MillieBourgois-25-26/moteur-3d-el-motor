@@ -6,6 +6,9 @@
 #include <string>
 #include <filesystem>
 
+class GameObject;
+class Asset;
+class AssetManager;
 class ScriptManager;
 namespace Editor
 {
@@ -28,6 +31,7 @@ namespace Editor
 		Engine::GameObject* selectedEntity = nullptr;
 		std::string currentEntityLabel;
 		std::string selectedScript;
+		std::string scriptName = "Null";
 
 		//Selected Component pointer
 		Engine::Component* selectedComponent = nullptr;
@@ -50,12 +54,12 @@ namespace Editor
 		
 		//Script Buttons
 		void showScriptMenu(ScriptManager& scriptM);
-		void AddScript(ScriptManager& scriptM , std::string name);
-		void deleteScript(ScriptManager& scriptM) const;
+		void AddScript(ScriptManager& scriptM);
+		void deleteScript(ScriptManager& scriptM);
 		void editScript(ScriptManager& scriptM);
 		void showScripts(ScriptManager& scriptM);
-		bool CheckScriptNameValid(const std::string& str, bool IsCpp);
-
+		bool CheckScriptNameValid(const std::string& str);
+		bool reloadScript();
 
 		//Editor Entity Buttons
 		void selectGO(std::shared_ptr<Engine::Scene>& scene);//select GO
@@ -67,10 +71,10 @@ namespace Editor
 
 
 		//Editor Component Buttons
-		void showCmpnt();//show all the component of a selected GO
+		void showCmpnt(const AssetManager& assetM);//show all the component of a selected GO
 		void addComponent(); //add a component to a selecte GO
 		void delComponent(); //delete a component of a selected GO
-		void editComponent(); //Change the value of the selected Go Transform
+		void editComponent(const AssetManager& assetM); //Change the value of the selected Go Transform
 
 		//Editor save level
 		bool saveProject();
@@ -78,7 +82,6 @@ namespace Editor
 
 		bool startRuntime();
 		void loadAssets(AssetManager& manager);
-		void test();
 
 		//Getter
 		std::string GetSessionName() const { return sessionName; }
@@ -87,6 +90,7 @@ namespace Editor
 		std::string GetProjectPath() const {return projectPath;}
 		bool GetLoadProjReady() const { return LoadProjReady; }
 		bool GetLoadAsset() const { return LoadAsset; }
+		std::string GetScriptName() const { return scriptName; }
 		//Setter
 		void SetSessionName(std::string session) { sessionName = session; }
 		void SetSessionNameStatus(std::string txt) { sessionNameStatus = txt; }
@@ -94,5 +98,6 @@ namespace Editor
 		void SetProjectPath(std::string path) { projectPath = path; }
 		void SetLoadProjReady(bool ready) { LoadProjReady = ready; }
 		void SetLoadAsset(bool load) { LoadAsset = load; }
+		void SetScriptName(std::string name) { scriptName = name; }
 	};
 }

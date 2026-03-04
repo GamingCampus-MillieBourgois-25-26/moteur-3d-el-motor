@@ -18,7 +18,7 @@ file(GLOB_RECURSE ENGINE_HEADERS
 add_library(Engine
     ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
-)
+ "Core/src/Assets/TextureAsset/TextureAsset.cpp")
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers 
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Externals
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers
@@ -32,4 +32,6 @@ target_link_libraries(Engine PRIVATE
     d3d11
     dxgi
     d3dcompiler
+    DirectXTK
+    assimp
 )

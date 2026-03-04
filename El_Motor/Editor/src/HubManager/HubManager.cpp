@@ -56,11 +56,21 @@ void Editor::HubManager::HubRun()
             coreEditor.editorRun(app);
         }
         break;
+
+        case EditorState::Run:
+        {
+            float dt = coreEditor.GetEngine().getDeltaTime();
+            coreEditor.editorRun(app);
+            scriptManager.updateScripts(dt);
+            break;
+        }
+        break;
+
         }
 
         // --- DESSIN DES MESHES ---
         auto& assetManager = coreEditor.GetEngine().getAssetManager();
-        for (auto& [path, asset] : assetManager.GetAssets())
+        for (auto& [path, asset] : assetManager.GetMeshes())
         {
 
             if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
@@ -88,15 +98,20 @@ void Editor::HubManager::LoadProject()
 
 void Editor::HubManager::DrawHubUI()
 {
-    ImGui::SetNextWindowSize(ImVec2(800, 200), ImGuiCond_Always);
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowPos(ImVec2(windowSize.x / 2, windowSize.y / 2));
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+   
+    ImGui::SetNextWindowSize(ImVec2(windowSize), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     buttons.projectName();
 
     if (buttons.createProject())
     {
+        Editor::ProjectManager::Get().clearLastProject();
         CreateProject();
         Editor::ProjectManager::Get().createProject(buttons.GetSessionName(), coreEditor.GetEngine().getScene());
         SetEditorState(EditorState::Editor);
@@ -105,8 +120,9 @@ void Editor::HubManager::DrawHubUI()
 
     buttons.loadProject();
     if (buttons.GetLoadProjReady()) {
-
+        scriptManager.Initialize();
         Editor::ProjectManager::Get().loadProject(buttons.GetProjectPath(),coreEditor.GetEngine().getScene());
+		buttons.SetSessionName(Editor::ProjectManager::Get().GetLoadedProjectName());
         SetEditorState(EditorState::Editor);
     }
     ImGui::End();
@@ -114,14 +130,14 @@ void Editor::HubManager::DrawHubUI()
 
 void Editor::HubManager::DrawEditorUI()
 {
-    //Ligne pour li� la fenetre � la fenetre Dx11 , � ajouter quand la fenetre dx sera scale par rapport � l'�cran de l'utilisateur (� rescale)
+    
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(500, windowSize.y), ImGuiCond_Always);
-    ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, viewport->Size.y), ImGuiCond_Always);
+    ImGui::Begin("EL MOTOR HUB", nullptr);
 
     if (buttons.startRuntime())
     {
@@ -133,6 +149,11 @@ void Editor::HubManager::DrawEditorUI()
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+    if (buttons.reloadScript()) {
+        ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
+        ProjectManager::Get().SetLastProject(buttons.GetSessionName());
+        scriptManager.Restart();
+    }
 	buttons.showScriptMenu(scriptManager);
 
 
@@ -149,7 +170,7 @@ void Editor::HubManager::DrawEditorUI()
 
 
 
-    buttons.showCmpnt();
+    buttons.showCmpnt(coreEditor.GetEngine().getAssetManager());
     ImGui::End();
 
     
