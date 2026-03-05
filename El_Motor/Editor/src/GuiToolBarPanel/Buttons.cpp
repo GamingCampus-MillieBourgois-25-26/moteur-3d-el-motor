@@ -162,20 +162,18 @@ void Editor::Buttons::projectName()
 void Editor::Buttons::showScriptMenu(ScriptManager& scriptM)
 {
 
-    
-	ImGui::BeginChild("ScriptMenu", ImVec2(200, 0), true);
+
     ImGui::Text("Scripts");
     ImGui::Separator();
     deleteScript(scriptM);
     AddScript(scriptM);
     ImGui::Separator();
     showScripts(scriptM);
-    ImGui::EndChild();
 }
 
 void Editor::Buttons::deleteScript(ScriptManager& scriptM)
 {
-    if (ImGui::Button("Delete Script", ImVec2(80, 50)))
+    if (ImGui::Button("Delete Script", ImVec2(90, 60)))
     {
         if (selectedScript.empty())
         {
@@ -226,7 +224,7 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM)
 
         
 
-    if (ImGui::InputText("Name", bufferScriptName, sizeof(bufferScriptName), ImGuiInputTextFlags_EnterReturnsTrue))
+    if (ImGui::InputText("Script Name", bufferScriptName, sizeof(bufferScriptName), ImGuiInputTextFlags_EnterReturnsTrue))
     {
         if (!CheckScriptNameValid(bufferScriptName) || !CheckCaraterValid(bufferScriptName) )
         {
@@ -252,7 +250,8 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM)
 
 void Editor::Buttons::showScripts(ScriptManager& scriptM)
 {
-    ImGui::BeginChild("ScriptList", ImVec2(200, 0), true);
+    ImVec2 windowSize = ImGui::GetWindowSize();
+    ImGui::BeginChild("ScriptList", ImVec2(200, windowSize.y/2), true);
 
     std::vector<std::string> scriptFiles;
 
@@ -389,6 +388,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {
+    
     ImGui::BeginChild("Hierarchy", ImVec2(250, 0), true);
     auto& currentSelected = scene->GetRootObjects();
 
@@ -425,9 +425,8 @@ void Editor::Buttons::showCmpnt(const AssetManager& assetM)
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
-  
-
-	ImGui::BeginChild("ComponentList", ImVec2(0, 0), true);//Component list child
+ 
+	ImGui::BeginChild("ComponentList", ImVec2(50, 50), true);//Component list child
 	addComponent();//Button to add component to the selected entity
     ChangeGOName();
     auto& components = selectedEntity->GetAllComponents();

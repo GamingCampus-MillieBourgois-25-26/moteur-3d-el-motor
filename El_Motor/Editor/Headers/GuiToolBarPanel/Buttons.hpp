@@ -79,6 +79,14 @@ namespace Editor
 		void delComponent(); //delete a component of a selected GO
 		void editComponent(const AssetManager& assetM); //Change the value of the selected Go Transform
 
+
+		//Editor Sound Buttons
+		void loadSound();
+		void playSound();
+
+
+
+
 		//Editor save level
 		bool saveProject();
 

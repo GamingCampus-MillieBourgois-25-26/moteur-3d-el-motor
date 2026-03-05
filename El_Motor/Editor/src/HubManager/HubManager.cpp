@@ -46,18 +46,6 @@ void Editor::HubManager::HubRun()
             DrawEditorUI();
             coreEditor.editorRun(app);
             camera.Update(coreEditor.GetEngine().getInputManager());
-
-
-            auto& assetManager = coreEditor.GetEngine().getAssetManager();
-            for (auto& [path, asset] : assetManager.GetMeshes())
-            {
-                if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
-                {
-                    auto material = assetManager.LoadMaterialForMesh(path);
-                    if (material)
-                        app.getD3D11()->DrawShape(*mesh, *material);
-                }
-            }
             break;
         }
         break;
@@ -69,17 +57,6 @@ void Editor::HubManager::HubRun()
             scriptManager.updateScripts(dt);
             camera.Update(coreEditor.GetEngine().getInputManager());
 
-
-            auto& assetManager = coreEditor.GetEngine().getAssetManager();
-            for (auto& [path, asset] : assetManager.GetMeshes())
-            {
-                if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
-                {
-                    auto material = assetManager.LoadMaterialForMesh(path);
-                    if (material)
-                        app.getD3D11()->DrawShape(*mesh, *material);
-                }
-            }
             break;
         }
         break;
@@ -88,6 +65,18 @@ void Editor::HubManager::HubRun()
 
         // --- DESSIN DES MESHES ---
 
+
+
+        auto& assetManager = coreEditor.GetEngine().getAssetManager();
+        for (auto& [path, asset] : assetManager.GetMeshes())
+        {
+            if (auto mesh = std::dynamic_pointer_cast<MeshAsset>(asset))
+            {
+                auto material = assetManager.LoadMaterialForMesh(path);
+                if (material)
+                    app.getD3D11()->DrawShape(*mesh, *material);
+            }
+        }
         coreEditor.InputUpdate(app);
         Shutdown();
         guiLayer.EndFrame();
@@ -147,8 +136,8 @@ void Editor::HubManager::DrawEditorUI()
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, viewport->Size.y), ImGuiCond_Always);
-    ImGui::Begin("EL MOTOR HUB", nullptr);
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x/5, viewport->Size.y), ImGuiCond_Always);
+    ImGui::Begin("Main Features", nullptr);
 
     if (buttons.startRuntime())
     {
@@ -160,31 +149,50 @@ void Editor::HubManager::DrawEditorUI()
     buttons.createGO(coreEditor.GetEngine().getScene());
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
+
     if (buttons.reloadScript()) {
         ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
         ProjectManager::Get().SetLastProject(buttons.GetSessionName());
         scriptManager.Restart();
     }
-	buttons.showScriptMenu(scriptManager);
-
-
+	
     if (buttons.saveProject())
     {
         Editor::ProjectManager::Get().saveProject(coreEditor.GetEngine().getScene());
         std::cout<<std::endl<<scriptManager.GetScripts().size();
     }
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+    buttons.showScriptMenu(scriptManager);
+   
+
+
+    ImGui::End();
+
+    ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - viewport->Size.x/5, viewport->Pos.y));
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x /5, viewport->Size.y/2), ImGuiCond_Always);
+    ImGui::Begin("Hierarchy", nullptr);
 
     ImGui::SameLine(0, 40);
     ImGui::SetCursorPosY(30);
-
     buttons.selectGO(coreEditor.GetEngine().getScene());
+    
 
 
-
-    buttons.showCmpnt(coreEditor.GetEngine().getAssetManager());
     ImGui::End();
 
-    
+
+    ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - viewport->Size.x / 5, viewport->Pos.y/2));
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x / 5, viewport->Size.y/2), ImGuiCond_Always);
+    ImGui::Begin("Components", nullptr);
+
+    buttons.showCmpnt(coreEditor.GetEngine().getAssetManager());
+
+
+    ImGui::End();
+
+
 }
     
 void Editor::HubManager::Shutdown() {
