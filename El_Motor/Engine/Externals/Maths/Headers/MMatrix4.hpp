@@ -51,7 +51,7 @@ namespace Maths {
 		void GetRow4x4(T row);
 		bool ValidTRS() const;
 
-		std::string toString4x4();
+		std::string toString4x4() const;
 
 
 		/////// STATIC METHODS ////////
