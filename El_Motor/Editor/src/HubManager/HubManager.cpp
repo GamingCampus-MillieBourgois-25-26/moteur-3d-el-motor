@@ -64,9 +64,6 @@ void Editor::HubManager::HubRun()
         }
 
         // --- DESSIN DES MESHES ---
-
-
-
         auto& assetManager = coreEditor.GetEngine().getAssetManager();
         for (auto& [path, asset] : assetManager.GetMeshes())
         {
@@ -104,7 +101,7 @@ void Editor::HubManager::DrawHubUI()
     ImGui::SetNextWindowViewport(viewport->ID);
 
    
-    ImGui::SetNextWindowSize(ImVec2(windowSize), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x,windowSize.y), ImGuiCond_Always);
     ImGui::Begin("EL MOTOR HUB", nullptr, ImGuiWindowFlags_NoResize);
 
     buttons.projectName();
@@ -183,9 +180,10 @@ void Editor::HubManager::DrawEditorUI()
     ImGui::End();
 
 
-    ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - viewport->Size.x / 5, viewport->Pos.y/2));
+    ImGui::SetNextWindowPos(ImVec2(viewport->Size.x - viewport->Size.x / 5, viewport->Size.y/2));
     ImGui::SetNextWindowSize(ImVec2(viewport->Size.x / 5, viewport->Size.y/2), ImGuiCond_Always);
     ImGui::Begin("Components", nullptr);
+
 
     buttons.showCmpnt(coreEditor.GetEngine().getAssetManager());
 

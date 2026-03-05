@@ -426,7 +426,7 @@ void Editor::Buttons::showCmpnt(const AssetManager& assetM)
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
  
-	ImGui::BeginChild("ComponentList", ImVec2(50, 50), true);//Component list child
+	ImGui::BeginChild("ComponentList", ImVec2(0,0), true);//Component list child
 	addComponent();//Button to add component to the selected entity
     ChangeGOName();
     auto& components = selectedEntity->GetAllComponents();
@@ -465,6 +465,7 @@ void Editor::Buttons::addComponent()
 	const char* items[] = { "MeshRenderer", "Camera", "Light" };//List of component types to add
     const int itemCount = IM_ARRAYSIZE(items);
 
+    ImGui::SetNextWindowSize(ImVec2(200, 300));
 	if (ImGui::BeginCombo("Component Type", items[currentItem]))//Combo box to select component type
     {
         for (int i = 0; i < itemCount; i++)
@@ -482,7 +483,7 @@ void Editor::Buttons::addComponent()
 
     ImGui::SameLine();
 
-	if (ImGui::Button("Add")) //Button to add the selected component type to the selected entity
+	if (ImGui::Button("Add" , ImVec2(0,0))) //Button to add the selected component type to the selected entity
     {
         switch (currentItem)
         {
@@ -520,6 +521,7 @@ void Editor::Buttons::editComponent(const AssetManager& assetM)
     {
         ImGui::Text("Mesh");
 
+        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
         if (ImGui::BeginCombo("##MeshSelect",
             meshComp->GetMesh() ? meshComp->GetMesh()->path.c_str() : "None"))
         {
