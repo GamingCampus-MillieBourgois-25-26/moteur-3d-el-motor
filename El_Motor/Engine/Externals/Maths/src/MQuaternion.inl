@@ -330,7 +330,7 @@ Maths::Quat<T> Maths::Quat<T>::Slerp(const Quat<T>& a, const Quat<T>& b, T t){
 }
 
 template<typename T>
-Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b) {
+Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b){
     return Quat<T>(
         m_y * b.m_z - m_z * b.m_y,
         m_z * b.m_x - m_x * b.m_z,
@@ -438,13 +438,18 @@ void Maths::Quat<T>::RotateTowards(const Quat<T>& to, T maxDegreesDelta)
     Quat<T> target = to.Normalized();
 
     T dot = Dot(from, target);
-    if (dot < 0) { dot = -dot; target = Quat<T>(-target.m_x, -target.m_y, -target.m_z, -target.m_w); }
+    if (dot < 0) {
+        dot = -dot;
+        target = Quat<T>(-target.m_x, -target.m_y, -target.m_z, -target.m_w);
+    }
 
-    T angle = T(2) * std::acos(std::clamp(dot, T(-1), T(1)));
+    T angle = T(2) * std::acos(dot < T(-1) ? T(-1) : (dot > T(1) ? T(1) : dot));
     if (angle <= T(0)) return;
 
     T maxRadiansDelta = maxDegreesDelta * (T(PI) / T(180));
-    T t = std::min(T(1), maxRadiansDelta / angle);
+
+    // Remplace std::min par un ternaire simple
+    T t = (maxRadiansDelta >= angle) ? T(1) : maxRadiansDelta / angle;
 
     *this = SlerpUnclamped(target, t).Normalized();
 }

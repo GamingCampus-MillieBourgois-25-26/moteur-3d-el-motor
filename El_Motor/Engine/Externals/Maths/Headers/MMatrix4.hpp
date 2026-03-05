@@ -1,9 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <array>
-#include <sstream>
-#include <iomanip>
+#include <array>       // pour std::array
+#include <cmath>       // pour std::cos, std::sin, std::sqrt, std::abs
+#include <string>      // pour toString
+#include <sstream>     // pour std::stringstream
+#include <iomanip>     // pour std::setprecision
 
 #include "MVec3.hpp"
 #include "MQuaternion.hpp"

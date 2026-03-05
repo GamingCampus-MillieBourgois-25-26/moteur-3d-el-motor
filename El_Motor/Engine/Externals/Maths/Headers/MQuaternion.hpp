@@ -57,7 +57,7 @@ namespace Maths {
         static Quat<T> FromEuler(const Vec3<T>& eulerRad);
         static Quat<T> Slerp(const Quat<T>& a, const Quat<T>& b, T t);
         static Quat<T> Lerp(const Quat<T>& a, const Quat<T>& b, T t);
-        static Quat<T> Cross(const Quat<T>& b) const;
+        static Quat<T> Cross(const Quat<T>& b);
         static Quat<T> Inverse(const Quat<T>& q);
         
         static Vec3<T> MulltiplyQuatVec(const Vec3<T>& v, const Quat<T>& q);

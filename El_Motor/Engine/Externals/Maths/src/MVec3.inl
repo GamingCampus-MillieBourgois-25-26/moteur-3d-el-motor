@@ -79,7 +79,11 @@ std::string Maths::Vec3<T>::ToString() const {
 
 /////// STATIC METHODS ////////
 template<typename T>
-Maths::Vec3<T> Maths::Vec3<T>::RotateTowards(const Vec3& current, const Vec3& target, const T maxRadiansDelta, const T maxMagnitudeDelta)
+Maths::Vec3<T> Maths::Vec3<T>::RotateTowards(
+	const Vec3<T>& current,
+	const Vec3<T>& target,
+	const T maxRadiansDelta,
+	const T maxMagnitudeDelta)
 {
 	T currentMag = current.Magnitude();
 	T targetMag = target.Magnitude();
@@ -95,23 +99,22 @@ Maths::Vec3<T> Maths::Vec3<T>::RotateTowards(const Vec3& current, const Vec3& ta
 	T dot = std::clamp(Dot(from, to), T(-1), T(1));
 	T angle = std::acos(dot);
 
+	// Ajuste la magnitude en respectant maxMagnitudeDelta
+	T diffMag = targetMag - currentMag;
+	T deltaMag = (diffMag > maxMagnitudeDelta) ? maxRadiansDelta : (diffMag < -maxMagnitudeDelta ? -maxMagnitudeDelta : diffMag);
+	T newMag = currentMag + deltaMag;
+
 	if (angle == T(0))
 	{
 		// Même direction, ajuster la magnitude seulement
-		T newMag = std::min(currentMag + maxMagnitudeDelta, targetMag);
 		return to * newMag;
 	}
 
 	// Fraction de rotation à appliquer
-	T t = std::min(T(1), maxRadiansDelta / angle);
+	T t = (maxRadiansDelta >= angle) ? T(1) : maxRadiansDelta / angle;
 
 	// Rotation sphérique (SLERP)
 	Vec3<T> rotated = SlerpUnclamped(from, to, t);
-
-	// Ajuste la magnitude en respectant maxMagnitudeDelta
-	T newMag = (currentMag < targetMag)
-		? std::min(currentMag + maxMagnitudeDelta, targetMag)
-		: std::max(currentMag - maxMagnitudeDelta, targetMag);
 
 	return rotated * newMag;
 }
@@ -151,8 +154,8 @@ Maths::Vec3<T> Maths::Vec3<T>::ClampMagnitude(const Vec3<T>& a, const T maxLengt
 
 template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::SlerpUnclamped(const Vec3& a, const Vec3& b, const T t) {
-	const Vec3& aConst = a;
-	const Vec3& bConst = b;
+	Vec3<T> aNormal = a.Normalized();
+	Vec3<T> bNormal = b.Normalized();
 	T dot = std::clamp(Dot(aNormal, bNormal), T(-1), T(1));
 	T theta = std::acos(dot);
 	return bNormal * (sin(t * theta) / sin(theta)) + aNormal * (sin((T(1) - t) * theta) / sin(theta));
