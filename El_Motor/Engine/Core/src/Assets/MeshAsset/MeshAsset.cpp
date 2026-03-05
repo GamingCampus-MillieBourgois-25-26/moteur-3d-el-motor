@@ -10,9 +10,11 @@
 
 void MeshAsset::Load()
 {
+    // Reset des données CPU du mesh
     vertices.clear();
     indices.clear();
 
+    // Détection de l'extension du fichier
     std::string extension;
     size_t dot = path.find_last_of('.');
     if (dot != std::string::npos)
@@ -28,6 +30,7 @@ void MeshAsset::Load()
     {
         Assimp::Importer importer;
 
+        // Chargement du mesh via Assimp avec quelques post-process
         const aiScene* scene = importer.ReadFile(
             path,
             aiProcess_Triangulate |
@@ -41,7 +44,7 @@ void MeshAsset::Load()
 
         aiMesh* mesh = scene->mMeshes[0];
 
-        // Vertices
+        // Extraction des vertices
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
             Vertex v{};
@@ -53,6 +56,7 @@ void MeshAsset::Load()
                 mesh->mVertices[i].z
             };
 
+            // Normales si disponibles
             if (mesh->HasNormals())
             {
                 v.normal =
@@ -67,6 +71,7 @@ void MeshAsset::Load()
                 v.normal = Maths::Vec3f(0.0f, 1.0f, 0.0f);
             }
 
+            // UV si disponibles
             if (mesh->HasTextureCoords(0))
             {
                 v.uv =
@@ -83,6 +88,7 @@ void MeshAsset::Load()
             vertices.push_back(v);
         }
 
+        // Extraction des indices
         for (unsigned int i = 0; i < mesh->mNumFaces; i++)
         {
             const aiFace& face = mesh->mFaces[i];
@@ -99,6 +105,10 @@ void MeshAsset::Load()
         return;
     }
 
+    // ============================================================
+    // Loader OBJ simple (fallback)
+    // ============================================================
+
     std::ifstream file(path);
 
     if (!file.is_open())
@@ -113,6 +123,7 @@ void MeshAsset::Load()
 
     std::string line;
 
+    // Parsing ligne par ligne du fichier OBJ
     while (std::getline(file, line))
     {
         if (line.empty())
@@ -122,25 +133,25 @@ void MeshAsset::Load()
         std::string prefix;
         ss >> prefix;
 
-        if (prefix == "v")
+        if (prefix == "v") // position
         {
             Maths::Vec3f pos{};
             ss >> pos.m_x >> pos.m_y >> pos.m_z;
             positions.push_back(pos);
         }
-        else if (prefix == "vn")
+        else if (prefix == "vn") // normal
         {
             Maths::Vec3f normal{};
             ss >> normal.m_x >> normal.m_y >> normal.m_z;
             normals.push_back(normal);
         }
-        else if (prefix == "vt")
+        else if (prefix == "vt") // uv
         {
             Maths::Vec2f uv{};
             ss >> uv.m_x >> uv.m_y;
             uvs.push_back(uv);
         }
-        else if (prefix == "f")
+        else if (prefix == "f") // face
         {
             std::vector<std::string> faceVerts;
             std::string vert;
@@ -148,6 +159,7 @@ void MeshAsset::Load()
             while (ss >> vert)
                 faceVerts.push_back(vert);
 
+            // Triangulation simple des faces
             for (size_t i = 1; i + 1 < faceVerts.size(); ++i)
             {
                 std::string triangle[3] =
@@ -197,18 +209,19 @@ void MeshAsset::Load()
 
 void MeshAsset::LoadTestCube()
 {
+    // Génère un cube simple pour les tests moteur
     vertices.clear();
     indices.clear();
 
     Vertex v[] =
     {
-        // Face avant (proche)
+        // Face avant
         {{-0.5f, -0.5f, 0.0f}, {0,0,-1}, {0,1}},
         {{ 0.5f, -0.5f, 0.0f}, {0,0,-1}, {1,1}},
         {{ 0.5f,  0.5f, 0.0f}, {0,0,-1}, {1,0}},
         {{-0.5f,  0.5f, 0.0f}, {0,0,-1}, {0,0}},
 
-        // Face arrière (plus loin, légèrement décalée pour “profil”)
+        // Face arrière
         {{-0.3f, -0.3f, 0.5f}, {0,0,1}, {0,1}},
         {{ 0.7f, -0.3f, 0.5f}, {0,0,1}, {1,1}},
         {{ 0.7f,  0.7f, 0.5f}, {0,0,1}, {1,0}},
@@ -219,31 +232,20 @@ void MeshAsset::LoadTestCube()
 
     uint32_t ind[] =
     {
-        0,1,2,
-        0,2,3,
-
-        4,6,5,
-        4,7,6,
-
-        4,5,1,
-        4,1,0,
-
-        3,2,6,
-        3,6,7,
-
-        1,5,6,
-        1,6,2,
-
-        4,0,3,
-        4,3,7
+        0,1,2, 0,2,3,
+        4,6,5, 4,7,6,
+        4,5,1, 4,1,0,
+        3,2,6, 3,6,7,
+        1,5,6, 1,6,2,
+        4,0,3, 4,3,7
     };
-    //this->SetColor(0.0f, 0.0f, 1.0f);
 
     indices.assign(std::begin(ind), std::end(ind));
 }
 
 void MeshAsset::CreateBuffers(ID3D11Device* device)
 {
+    // Création des buffers GPU à partir des données CPU
     if (!device)
         throw std::runtime_error("Device is null");
 
@@ -254,8 +256,6 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
     vbd.Usage = D3D11_USAGE_DEFAULT;
     vbd.ByteWidth = UINT(vertices.size() * sizeof(Vertex));
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-
 
     D3D11_SUBRESOURCE_DATA vinit{};
     vinit.pSysMem = vertices.data();
@@ -281,6 +281,7 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
 
 void MeshAsset::Bind(ID3D11DeviceContext* context) const
 {
+    // Bind des buffers dans l'Input Assembler
     UINT stride = sizeof(Vertex);
     UINT offset = 0;
 
@@ -306,6 +307,7 @@ void MeshAsset::Bind(ID3D11DeviceContext* context) const
 
 bool MeshAsset::IsReady() const
 {
+    // Mesh prêt si les buffers GPU existent
     return vertexBuffer && indexBuffer;
 }
 
@@ -316,6 +318,7 @@ UINT MeshAsset::GetIndexCount() const
 
 void MeshAsset::Unload()
 {
+    // Libération des ressources CPU et GPU
     vertices.clear();
     indices.clear();
 
