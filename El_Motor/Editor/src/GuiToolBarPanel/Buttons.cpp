@@ -11,6 +11,7 @@
 #include "Assets/Asset.hpp"
 #include "Entity/GameObject.hpp"
 #include "Entity/Component/RigidBodyComponent.hpp"
+
 #include <iostream>
 
 
@@ -182,8 +183,7 @@ void Editor::Buttons::deleteScript(ScriptManager& scriptM)
             return;
         }
 
-        // selectedScript contains a path relative to the Scripts folder,
-        // e.g. "MyScript/Headers/MyScript.hpp" or "MyScript.hpp".
+
         std::filesystem::path rel(selectedScript);
         std::string scriptName;
 
@@ -191,8 +191,7 @@ void Editor::Buttons::deleteScript(ScriptManager& scriptM)
         if (it != rel.end())
         {
             std::filesystem::path first = *it;
-            // If the first element has an extension (e.g. "MyScript.hpp") use stem,
-            // otherwise it's the folder name (e.g. "MyScript")
+
             if (first.has_extension())
                 scriptName = first.stem().string();
             else
@@ -203,13 +202,21 @@ void Editor::Buttons::deleteScript(ScriptManager& scriptM)
             scriptName = rel.stem().string();
         }
 
-        // Ask ScriptManager to remove script files (both .cpp and .hpp)
         scriptM.DeleteScript(GetProjectPath(),selectedScript);
 
-        // Clear selection so UI is consistent after deletion
+
         selectedScript.clear();
 
         std::cout << "Requested deletion of script: " << scriptName << std::endl;
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Add", ImVec2(90, 60)))
+    {
+        if (GetScriptName() != "Null") {
+            scriptM.createScript(GetScriptName(), GetSessionName());
+        }
+
     }
 }
 
@@ -237,14 +244,6 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM)
             bufferScriptName[sizeof(bufferScriptName) - 1] = '\0';
         }
     }
-    
-    if (ImGui::Button("Add"))
-    {
-        if (GetScriptName() != "Null") {
-            scriptM.createScript(GetScriptName(), GetSessionName());
-        }
-        
-    }
 
 
 }
@@ -252,7 +251,7 @@ void Editor::Buttons::AddScript(ScriptManager& scriptM)
 void Editor::Buttons::showScripts(ScriptManager& scriptM)
 {
     ImVec2 windowSize = ImGui::GetWindowSize();
-    ImGui::BeginChild("ScriptList", ImVec2(200, windowSize.y/2), true);
+    ImGui::BeginChild("ScriptList", ImVec2(0, 0), true);
 
     std::vector<std::string> scriptFiles;
 
@@ -311,7 +310,7 @@ bool Editor::Buttons::CheckScriptNameValid(const std::string& str)
 
 bool Editor::Buttons::reloadScript()
 {
-    if (ImGui::Button("Reaload", ImVec2(80, 50)))
+    if (ImGui::Button("Reaload", ImVec2(150, 50)))
     {
         return true;
     }
@@ -320,7 +319,7 @@ bool Editor::Buttons::reloadScript()
 
 bool Editor::Buttons::startRuntime()
 {
-    if (ImGui::Button("Run", ImVec2(50, 50)))
+    if (ImGui::Button("Run", ImVec2(150, 50)))
     {
         return true;
     }
@@ -332,7 +331,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
 {
 
 
-    if (ImGui::Button("Load Assets", ImVec2(80, 25)))
+    if (ImGui::Button("Load Assets", ImVec2(150, 50)))
     {
         SetLoadAsset(true);
     }
@@ -346,7 +345,7 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
         ImGuiFileDialog::Instance()->OpenDialog(
             "LoadAssetKey",
             "Choose Asset",
-            ".png,.jpg,.obj,.fbx",
+            ".png,.jpg,.obj,.fbx,.mp3",
             config
         );
 
@@ -371,6 +370,10 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
                 {
                     manager.Load<MeshAsset>(filePath);
                     Engine::LoggerManager::Get().LogInfo("Asset Loaded succesfuly : " + filePath);
+                }
+                else if (extension == ".mp3")
+                {
+                    
                 }
                 else
                 {
@@ -482,15 +485,15 @@ void Editor::Buttons::addComponent()
         ImGui::EndCombo();
     }
 
-    ImGui::SameLine();
-
-	if (ImGui::Button("Add" , ImVec2(0,0))) //Button to add the selected component type to the selected entity
+	if (ImGui::Button("Add Component" , ImVec2(0,0))) //Button to add the selected component type to the selected entity
     {
         switch (currentItem)
         {
         case 0: selectedEntity->AddComponent<Engine::MeshComponent>();
             break;
+
         case 1: /* Add Camera */ break;
+
         case 2: selectedEntity->AddComponent<Engine::RigidBodyComponent>();
             break;
         }
@@ -500,9 +503,9 @@ void Editor::Buttons::addComponent()
 
 void Editor::Buttons::delComponent()
 {
-    if (selectedEntity->GetComponent<Engine::Transform>() != selectedComponent && selectedComponent && ImGui::Button("del"))
+    ImGui::SameLine();
+    if (selectedEntity->GetComponent<Engine::Transform>() != selectedComponent && selectedComponent && ImGui::Button("Delete Component"))
     {
-		
 		
 	}
 }
@@ -549,9 +552,26 @@ void Editor::Buttons::editComponent(const AssetManager& assetM)
     }
 }
 
+
+void Editor::Buttons::playSound(Engine::MiniAudioSystem sound)
+{
+    if (ImGui::Button("Play Sound", ImVec2(150, 50)))
+    {
+        return;
+    }
+}
+
+void Editor::Buttons::stopPlayingSound(Engine::MiniAudioSystem sound)
+{
+    if (ImGui::Button("Stop Sound", ImVec2(150, 50)))
+    {
+       return;
+    }
+}
+
 bool Editor::Buttons::saveProject()
 {
-    if (ImGui::Button("Save", ImVec2(200, 50)))
+    if (ImGui::Button("Save", ImVec2(150, 50)))
     {
             return true;
     }

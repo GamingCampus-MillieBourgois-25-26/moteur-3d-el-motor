@@ -6,6 +6,7 @@
 #include "GuiToolBarPanel/Buttons.hpp"
 #include "ScriptManager/ScriptManager.hpp"
 #include "Camera/EditorCamera.hpp"
+#include "API_Sound/MiniAudioSystem.hpp"
 #include <vector>
 
 namespace Editor

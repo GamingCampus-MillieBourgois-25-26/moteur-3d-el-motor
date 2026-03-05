@@ -2,6 +2,7 @@
 #include "Scene/Scene.hpp"
 #include "Entity/GameObject.hpp"
 #include "Asset_Manager/AssetManager.hpp"
+#include "API_Sound/MiniAudioSystem.hpp"
 #include "Assets/Asset.hpp"
 #include <string>
 #include <filesystem>
@@ -83,8 +84,10 @@ namespace Editor
 
 
 		//Editor Sound Buttons
-		void loadSound();
-		void playSound();
+		void loadSound(Engine::MiniAudioSystem sound);
+		void playSound(Engine::MiniAudioSystem sound);
+		void stopPlayingSound(Engine::MiniAudioSystem sound);
+
 
 
 
@@ -94,7 +97,7 @@ namespace Editor
 
 
 		bool startRuntime();
-		void loadAssets(AssetManager& manager);
+		void loadAssets(AssetManager& manager );
 
 		//Getter
 		std::string GetSessionName() const { return sessionName; }

@@ -164,16 +164,30 @@ void ScriptManager::updateScripts(float deltaTime)
 void ScriptManager::Restart()
 {
     std::filesystem::path root = "../../../../";
-    std::filesystem::path buildDir = root / "out/build/x64-Debug/Editor" ;
+    std::filesystem::path buildDir = root / "out/build/x64-Debug";
 
+    //Reconfigure CMake
     std::string configureCmd =
         "cmake -S \"" + root.string() +
-        "\" -B \"" + buildDir.string() + "\"";
+        "\" -B \"" + buildDir.string() +
+        "\" -G \"Visual Studio 17 2022\" -A x64";
 
     std::system(configureCmd.c_str());
 
+    //Build
     std::string buildCmd =
-        "cmake --build \"" + buildDir.string() + "\" --config Debug";
+        "cmake --build \"" + buildDir.string() +
+        "\" --config Debug";
 
     std::system(buildCmd.c_str());
+
+    // Relancer l'éditeur
+    std::filesystem::path exePath =
+        buildDir / "Editor/Debug/Editor.exe";
+
+    std::string runCmd = "\"" + exePath.string() + "\"";
+
+    std::system(runCmd.c_str());
+
+    exit(0);
 }

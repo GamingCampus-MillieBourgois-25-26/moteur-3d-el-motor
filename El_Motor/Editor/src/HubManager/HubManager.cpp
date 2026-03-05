@@ -144,6 +144,11 @@ void Editor::HubManager::DrawEditorUI()
 		SetEditorState(EditorState::Run);
     }
     buttons.createGO(coreEditor.GetEngine().getScene());
+    //ImGui::SameLine();
+    //buttons.playSound();
+    //ImGui::SameLine();
+    //buttons.stopPlayingSound();
+
     buttons.delGO(coreEditor.GetEngine().getScene());
     buttons.loadAssets(coreEditor.GetEngine().getAssetManager());
 
