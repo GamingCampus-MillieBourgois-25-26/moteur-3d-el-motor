@@ -40,8 +40,8 @@ namespace Editor
 	public:
 		Buttons() {};
 		~Buttons() {
-			delete selectedEntity;
-			delete selectedComponent;
+			selectedEntity = nullptr;
+			selectedComponent = nullptr;
 		};
 
 		void init();

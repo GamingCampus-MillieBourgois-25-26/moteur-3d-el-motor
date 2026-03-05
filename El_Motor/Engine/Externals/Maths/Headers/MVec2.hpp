@@ -20,8 +20,8 @@ namespace Maths {
 		~Vec2() = default;
 
 		//////// GETTERS & SETTERS ////////
-		T x() const { return x; }
-		T y() const { return y; }
+		T x() const { return m_x; }
+		T y() const { return m_y; }
 
 		void SetX(T newX) { m_x = newX; }
 		void SetY(T newY) { m_y = newY; }

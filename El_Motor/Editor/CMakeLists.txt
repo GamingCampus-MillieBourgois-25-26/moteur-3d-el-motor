@@ -31,10 +31,12 @@ file(GLOB_RECURSE PROJECT_SCRIPT_HEADERS
 # === Sources Editor ===
 file(GLOB_RECURSE EDITOR_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/src/**/*.cpp
 )
 
 file(GLOB_RECURSE EDITOR_CORE_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Headers/**/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/includes/**/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/includes/**/*.h
 )
 
 # Fusion
@@ -129,34 +131,18 @@ list(APPEND EDITOR_SOURCES
     External/imgui/src/CoreSources/imgui_widgets.cpp
     External/imgui/src/CoreSources/imgui_tables.cpp
     External/imgui/src/CoreSources/imgui_demo.cpp
+    External/imgui/src/ImGuizmo/GraphEditor.cpp
+    External/imgui/src/ImGuizmo/ImCurveEdit.cpp
+    External/imgui/src/ImGuizmo/ImGradient.cpp
+    External/imgui/src/ImGuizmo/ImGuizmo.cpp
+    External/imgui/src/ImGuizmo/ImSequencer.cpp
     External/imgui/src/Backend/imgui_impl_dx11.cpp
     External/imgui/src/Backend/imgui_impl_glfw.cpp
     External/ImGuiFileLog/src/ImGuiFileDialog.cpp
-
 )
 
 add_executable(Editor ${EDITOR_SOURCES} 
                       ${EDITOR_HEADERS}
- "src/Gizmos/Gizmos.cpp"
-)
-
-file(GLOB_RECURSE GIZMOS_SOURCES
-    src/**/*.cpp
-)
-
-
-
-file(GLOB_RECURSE GIZMOS_HEADERS
-    Headers/**/*.hpp
-)
-
-add_library(ImGuizmo ${GIZMOS_SOURCES} 
-                     ${GIZMOS_HEADERS}
-                     ${imguizmo_SOURCE_DIR}/ImGuizmo.cpp
-)
-
-target_include_directories(ImGuizmo PUBLIC
-    ${imguizmo_SOURCE_DIR}
 )
 
 target_link_libraries(Editor PRIVATE
@@ -167,7 +153,6 @@ target_link_libraries(Editor PRIVATE
     dxgi
     assimp
     DirectXTK
-    ImGuizmo
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
@@ -179,7 +164,7 @@ target_include_directories(Editor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Headers
      External/imgui/includes/CoreIncludes
      External/imgui/includes/backend
-     External/imgui/src/Backend   
+     External/imgui/includes/ImGuizmo
      External/ImGuiFileLog/includes/coreIncludes
      External/ImGuiFileLog/includes/dirent
      External/Json

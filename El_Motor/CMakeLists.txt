@@ -31,18 +31,11 @@ FetchContent_Declare(
     GIT_TAG v5.4.3
 )
 
-FetchContent_Declare(
-    imguizmo
-    GIT_REPOSITORY https://github.com/CedricGuillemet/ImGuizmo.git
-    GIT_TAG master
-)
-
-
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 
-FetchContent_MakeAvailable(glfw JoltPhysics DirectXTK assimp imguizmo)
+FetchContent_MakeAvailable(glfw JoltPhysics DirectXTK assimp)
 
 add_subdirectory(Engine)
 add_subdirectory(Editor)

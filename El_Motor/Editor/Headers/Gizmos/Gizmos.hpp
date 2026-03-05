@@ -1,23 +1,9 @@
 #pragma once
- 
-#include <ImGuizmo.h>
+
+#include <External/ImGui/includes/ImGuizmo/ImGuizmo.h>
 
 #include "Maths/Headers/MMatrix4.hpp"
 #include "Camera/Camera.hpp"
-
-/*enum GizmoType {
-	Translate,
-	Rotate,
-	Scale,
-	None
-};
-
-enum GizmoAxis {
-	None,
-	X,
-	Y,
-	Z
-};*/
 
 namespace Editor {
 	class Gizmo {
@@ -25,16 +11,17 @@ namespace Editor {
 		Gizmo() = default;
 		~Gizmo() = default;
 
-		void Draw(const Camera& camera);
+		void Draw();
 		void Update();
 
 	private:
-		Maths::Mat4f m_projection;
-		Maths::Mat4f m_transform;
-		Maths::Mat4f m_view;
+		Maths::Mat4f mProjection;
+		Maths::Mat4f mTransform;
+		Maths::Mat4f mView;
 
 		bool isSelected = false;
-		int currentGizmo;
-		int currentAxis;
+		ImGuizmo::OPERATION mCurrentOperation;
+		ImGuizmo::COLOR mCurrentAxis;
+		ImGuizmo::MODE mCurrentMode;
 	};
 }
