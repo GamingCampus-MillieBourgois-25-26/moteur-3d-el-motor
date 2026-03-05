@@ -113,6 +113,34 @@ Le projet est actuellement en **phase de démarrage**. Les travaux portent princ
 
 ---
 
+# 6 Les fonctionnalités du moteur
+
+## 6.1 Asset Management
+
+Afin de gérer les ressources utilisées par le moteur, un Asset Manager centralisé a été implémenté. Ce système est responsable du chargement, du stockage, de la réutilisation et de la libération des assets.
+
+Toutes les ressources héritent d’une classe abstraite commune Asset, définissant le cycle de vie d’une ressource :
+
+**Load() :** chargement depuis le disque
+
+CreateBuffers() : création des ressources GPU
+
+**Unload() :** libération des ressources
+
+Deux types d’assets sont actuellement implémentés :
+
+### MeshAsset
+Permet le chargement de modèles 3D au format OBJ. Les données de vertex (position, normale, UV) et les indices sont extraits du fichier puis utilisés pour créer les vertex buffers et index buffers nécessaires au rendu avec DirectX 11.
+
+### TextureAsset
+Gère le chargement des textures via WICTextureLoader (DirectXTK), supportant des formats standards comme PNG et JPG. Les textures sont stockées sous forme de Shader Resource View (SRV) afin d’être utilisées dans les shaders.
+
+Les assets sont stockés dans des conteneurs associatifs indexés par leur chemin afin d’éviter les duplications et de permettre leur réutilisation dans le moteur.
+
+**L’Asset Manager** fournit également des fonctions de rechargement (**Reload**) et de libération globale (**UnloadAll**) des ressources.
+
+---
+
 ## 6. Conclusion
 
 Les choix technologiques effectués pour El Motor visent à garantir un développement réaliste, cohérent et pédagogiquement pertinent. Ils permettent à l’équipe de se concentrer sur la compréhension des systèmes fondamentaux d’un moteur de jeu tout en respectant les contraintes de temps et de complexité du projet.
