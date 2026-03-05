@@ -287,7 +287,7 @@ Sur le Hub, deux options s'offrent à l'utilisateur :
 
 Une fois dans l'éditeur, l'interface se divise en plusieurs zones :
 
-**Barre d'outils (haut) :**
+**Barre d'outils (haut gauche) :**
 * **"Create GameObject"** : ajoute un nouvel objet vide dans la scène (avec un Transform par défaut).
 * **"Delete GameObject"** : supprime le GameObject actuellement sélectionné.
 * **"Load Assets"** : ouvre un dialogue de fichiers pour importer un modèle 3D (`.obj`, `.fbx`) ou une texture (`.png`, `.jpg`) dans le moteur.
@@ -295,10 +295,10 @@ Une fois dans l'éditeur, l'interface se divise en plusieurs zones :
 * **"Run"** : lance le mode jeu — les scripts sont instanciés, leur `OnStart()` est appelé, puis `Update()` est exécuté à chaque frame.
 * **"Reload"** : sauvegarde le projet, puis relance un build CMake pour recompiler les scripts modifiés.
 
-**Hiérarchie (panneau gauche) :**
+**Hiérarchie (panneau haut droit) :**
 * Liste tous les GameObjects de la scène. Cliquer sur un objet le sélectionne et ouvre ses détails dans l'inspecteur.
 
-**Inspecteur (panneau droit) :**
+**Inspecteur (panneau bas droit droit) :**
 * Affiche les composants du GameObject sélectionné.
 * **Renommer** : un champ texte permet de modifier le nom du GameObject.
 * **Ajouter un composant** : un menu déroulant propose les types disponibles (`MeshRenderer`, `Camera`, `RigidBody`). Cliquer sur **"Add"** l'attache au GameObject.
@@ -306,7 +306,7 @@ Une fois dans l'éditeur, l'interface se divise en plusieurs zones :
   * *Transform* : champs glissants pour la position, rotation et scale (X, Y, Z).
   * *MeshRenderer* : un menu déroulant liste les meshes chargés — en sélectionner un l'assigne à l'objet.
 
-**Panneau Scripts (gauche) :**
+**Panneau Scripts (bas gauche) :**
 * Affiche l'arborescence des fichiers scripts du projet (`.hpp` / `.cpp`).
 * **"Add"** : saisir un nom puis valider crée automatiquement un nouveau script (header + source) avec le squelette de base (`OnStart`, `Update`) et la macro `REGISTER_SCRIPT`.
 * **"Delete Script"** : supprime le script sélectionné du disque et de la mémoire.
