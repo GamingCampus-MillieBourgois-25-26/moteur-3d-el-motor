@@ -8,21 +8,22 @@
 - **Context:** Début du développement du moteur
 
 ## Revision History
-| Date       | Version | Description                         | Author        |
-|------------|---------|-------------------------------------|---------------|
-| 2026-02-05 | 1.0     | Création initiale du document (TDD) | El Motor Team |
+| Date       | Version | Description                              | Author        |
+|------------|---------|------------------------------------------|---------------|
+| 2026-02-05 | 0.0     | Création initiale du document (TDD)      | El Motor Team |
+| 2026-03-05 | 1.0     | Sortie de la première version utilisable | El Motor Team |
 
 ---
 
 ## 1. Introduction
 
 ### 1.1 Purpose
-Ce document décrit les choix techniques et l’architecture envisagée pour **El Motor**, un moteur de jeu 3D développé en C++. Il a pour objectif de justifier les décisions technologiques prises en début de projet et de servir de référence tout au long du développement.
+Ce document décrit les choix techniques et l’architecture envisagée et finalement utilisée pour **El Motor**, un moteur de jeu 3D développé en C++. Il a pour objectif de justifier les décisions technologiques prises en début de projet, puis sur les technologies finalement utilisées et de servir de référence tout au long du développement.
 
 ### 1.2 Scope
 - **Objectif :** Concevoir un moteur de jeu 3D modulaire et pédagogique.
 - **Cadre :** Projet académique, développement from scratch en C++.
-- **État du projet :** Phase initiale, mise en place des fondations techniques.
+- **État du projet :** Première sortie, version testable fonctionnelle.
 
 ### 1.3 Définitions et acronymes
 - **TDD:** Technical Design Document  
@@ -42,6 +43,8 @@ El Motor est un moteur de jeu modulaire écrit en C++ (C++20), conçu pour sépa
 - **Audio System** : Gestion du son
 - **Input System** : Gestion des entrées utilisateur
 - **Core / Game Logic** : Boucle de jeu et orchestration des systèmes
+- **Entity Manager** : Gestion des objets et entitées
+- **Asset Manager** : Gestion du load des assets dynamiquement.
 
 ---
 
@@ -98,6 +101,8 @@ Cette bibliothèque bas niveau permet à l’équipe de concevoir un système au
 - **OpenAL** : API plus ancienne avec un modèle d’utilisation moins flexible et moins adapté à une architecture moteur moderne.
 - **Wwise** : Solution très complète mais trop lourde et complexe pour le périmètre et la durée du projet, nécessitant un pipeline externe conséquent.
 ---
+
+
 
 ## 5. État d’avancement
 
