@@ -141,6 +141,48 @@ Les assets sont stockés dans des conteneurs associatifs indexés par leur chemi
 
 ---
 
+## 6.2 Entity Management
+
+Le moteur utilise une architecture **Entity-Component** pour représenter les objets présents dans une scène.
+Chaque objet est représenté par un **GameObject** auquel différents **components** peuvent être attachés afin de définir son comportement.
+
+### GameObject
+
+La classe **GameObject** représente une entité dans la scène.
+Elle possède :
+
+* un **nom**
+* une **liste de composants**
+* une **hiérarchie parent / enfants**
+
+Lors de sa création, un **Transform** est automatiquement ajouté afin de stocker les informations spatiales de l’objet (position, rotation, scale).
+
+### Component System
+
+Les fonctionnalités sont ajoutées aux entités via des **components** héritant de la classe abstraite **Component**.
+
+Chaque composant possède un cycle de vie simple :
+
+* **Start()**
+* **Update(float dt)**
+* **OnDestroy()**
+
+Les composants peuvent être ajoutés et récupérés dynamiquement grâce aux fonctions :
+
+* `AddComponent<T>()`
+* `GetComponent<T>()`
+
+### Components implémentés
+
+Plusieurs composants sont actuellement disponibles :
+
+* **Transform** : position, rotation et scale de l’entité
+* **MeshComponent** : associe un **MeshAsset** pour le rendu
+* **RigidBodyComponent** : gère une physique simple basée sur la vitesse et le temps
+
+Ce système permet d’ajouter facilement de nouveaux comportements aux entités sans modifier la structure du moteur.
+
+
 ## 6. Conclusion
 
 Les choix technologiques effectués pour El Motor visent à garantir un développement réaliste, cohérent et pédagogiquement pertinent. Ils permettent à l’équipe de se concentrer sur la compréhension des systèmes fondamentaux d’un moteur de jeu tout en respectant les contraintes de temps et de complexité du projet.
