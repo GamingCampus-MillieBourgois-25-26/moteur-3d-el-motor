@@ -20,8 +20,8 @@ namespace Maths {
 		~Vec2() = default;
 
 		//////// GETTERS & SETTERS ////////
-		T x() const { return x; }
-		T y() const { return y; }
+		T x() const { return m_x; }
+		T y() const { return m_y; }
 
 		void SetX(T newX) { m_x = newX; }
 		void SetY(T newY) { m_y = newY; }
@@ -38,29 +38,29 @@ namespace Maths {
 		static Vec2 NegativeInfinity();
 
 		//////// PORPRETIES ////////
-		Vec2 Normalized(); 
-		T SqrtMagnitude();
-		T Magnitude();
-		T This(int i);
+		Vec2 Normalized() const;
+		T SqrtMagnitude() const;
+		T Magnitude() const;
+		T This(int i) const;
 
 		//////// PUBLIC METHODS ////////
-		bool Equal(Vec2 other); 
-		std::string ToString();
+		bool Equal(const Vec2& other) const; 
+		std::string ToString() const;
 
 		//////// STATIC METHODS ////////
-		static Vec2 MoveTowards(Vec2 current, Vec2 target, T maxDistanceDelta);
-		static Vec2 LerpUnclamped(Vec2 a, Vec2 b, T t);
-		static Vec2 ClampMagnitude(Vec2& a, T MaxLenght);
-		static Vec2 Perpendicular(Vec2 inDirection);
-		static Vec2 Lerp(Vec2 a, Vec2 b, T t);
-		static Vec2 Scale(Vec2& a, Vec2& b);
-		static Vec2 Min(Vec2& a, Vec2& b);
-		static Vec2 Max(Vec2& a, Vec2& b);
+		static Vec2 MoveTowards(const Vec2& current, const Vec2& target, T maxDistanceDelta);
+		static Vec2 LerpUnclamped(const Vec2& a, const Vec2& b, T t);
+		static Vec2 ClampMagnitude(const Vec2& a, T maxLength);
+		static Vec2 Perpendicular(const Vec2& inDirection);
+		static Vec2 Lerp(const Vec2& a, const Vec2& b, T t);
+		static Vec2 Scale(const Vec2& a, const Vec2& b);
+		static Vec2 Min(const Vec2& a, const Vec2& b);
+		static Vec2 Max(const Vec2& a, const Vec2& b);
 
-		static T SignedAngle(Vec2 from, Vec2 to);
-		static T Distance(Vec2& a, Vec2& b);
-		static T Angle(Vec2 a, Vec2 b); 
-		static T Dot(Vec2& a, Vec2& b); 
+		static T SignedAngle(const Vec2& from, const Vec2& to);
+		static T Distance(const Vec2& a, const Vec2& b);
+		static T Angle(const Vec2& a, const Vec2& b);
+		static T Dot(const Vec2& a, const Vec2& b);
 
 		void Normalize();
 
