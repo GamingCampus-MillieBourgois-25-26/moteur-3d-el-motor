@@ -37,18 +37,18 @@ namespace Maths {
         static Quat<T> Identity();
 
         //////// PORPRETIES ////////
-        Vec3<T> EulerAngles();
-        Quat<T> Normalized();
-        T Magnitude();
-        T This(int i);
+        Vec3<T> EulerAngles() const;
+        Quat<T> Normalized() const;
+        T Magnitude() const;
+        T This(int i) const;
 
 		//////// PUBLIC METHODS ////////
-        void SetLookRotation(const Quat<T>& forward, const Quat<T>& up);
-        void ToAngleAxis(T& angle, Quat<T>& axis);
+        void SetLookRotation(const Vec3<T>& forward, const Vec3<T>& up);
+        void ToAngleAxis(T& angle, Vec3<T>& axis);
         void setFromToRotation(const Quat<T>& to);
 
-        bool Equals(const Quat<T>& q);
-		std::string ToString();
+        bool Equals(const Quat<T>& q) const;
+        std::string ToString() const;
 
         //////// STATIC METHODS ////////
         static Quat<T> AngleAxis(T angle, const Quat<T>& axis);
@@ -60,7 +60,7 @@ namespace Maths {
         static Quat<T> Cross(const Quat<T>& b);
         static Quat<T> Inverse(const Quat<T>& q);
         
-        static Vec3<T> MulltiplyQuatVec(const Vec3<T> v, const Quat<T>& q);
+        static Vec3<T> MulltiplyQuatVec(const Vec3<T>& v, const Quat<T>& q);
         static T Angle(const Quat<T>& a, const Quat<T>& b);
         static T Dot(const Quat<T>& a, const Quat<T>& b);
 

@@ -27,102 +27,105 @@ Maths::Quat<T> Maths::Quat<T>::Identity() { // Renvoie le Quat identité
 
 //////// PORPRETIES ////////
 template<typename T>
-Maths::Vec3<T> Maths::Quat<T>::EulerAngles() {
-    const T two = static_cast<T>(2);
+Maths::Vec3<T> Maths::Quat<T>::EulerAngles() const {
+    T two = T(2);
 
-    T pitch = std::atan2(two * (m_w * m_x + m_y * m_z), static_cast<T>(1) - two * (m_x * m_x + m_y * m_y));
-    T yaw = std::asin(std::clamp(two * (m_w * m_y - m_z * m_x), static_cast<T>(-1), static_cast<T>(1)));
-    T roll = std::atan2(two * (m_w * m_z + m_x * m_y), static_cast<T>(1) - two * (m_y * m_y + m_z * m_z));
+    T sinp = two * (m_w * m_x + m_y * m_z);
+    T cosp = T(1) - two * (m_x * m_x + m_y * m_y);
+    T pitch = std::atan2(sinp, cosp);
 
-	return Vec3<T>(pitch, yaw, roll);
+    T siny = two * (m_w * m_y - m_z * m_x);
+    siny = std::clamp(siny, T(-1), T(1));
+    T yaw = std::asin(siny);
+
+    T sinr = two * (m_w * m_z + m_x * m_y);
+    T cosr = T(1) - two * (m_y * m_y + m_z * m_z);
+    T roll = std::atan2(sinr, cosr);
+
+    return Vec3<T>(pitch, yaw, roll);
 }  
 
 template<typename T>
-Maths::Quat<T> Maths::Quat<T>::Normalized() {
+Maths::Quat<T> Maths::Quat<T>::Normalized() const {
     Quat<T> q = *this;
     q.Normalize();
     return q;
 }
 
 template<typename T>
-T Maths::Quat<T>::Magnitude() {
+T Maths::Quat<T>::Magnitude() const {
     return std::sqrt(m_w * m_w + m_x * m_x + m_y * m_y + m_z * m_z);
 }
 
 template <typename T>
-T Maths::Quat<T>::This(int i) {
-    if (i == 0) return m_x;
-    else if (i == 1) return m_y;
-    else if (i == 2) return m_z;
-    else if (i == 3) return m_w;
+T Maths::Quat<T>::This(int i) const {
+    switch (i) {
+    case 0: return m_x;
+    case 1: return m_y;
+    case 2: return m_z;
+    case 3: return m_w;
+    default: throw std::out_of_range("Quat index must be 0-3");
+    }
 }
 
 
 //////// PUBLIC METHODS ////////
 template<typename T>
-void Maths::Quat<T>::SetLookRotation(const Quat<T>& forward, const Quat<T>& up)
+void Maths::Quat<T>::SetLookRotation(const Vec3<T>& forward, const Vec3<T>& up)
 {
+    Vec3<T> f = forward.Normalized();
+    Vec3<T> u = up.Normalized();
 
-    Quat<T> f = forward;
-    f.Normalize();
+    // Right = forward x up
+    Vec3<T> r = f.Cross(u).Normalized();
 
-    Quat<T> u = up;
-    u.Normalize();
+    // Recompute orthogonal up
+    u = r.Cross(f);
 
-    Quat<T> r(
-        f.m_y * u.m_z - f.m_z * u.m_y,
-        f.m_z * u.m_x - f.m_x * u.m_z,
-        f.m_x * u.m_y - f.m_y * u.m_x,
-        static_cast<T>(0)
-    );
-    r.Normalize();
-
-    u = Quat<T>(
-        r.m_y * f.m_z - r.m_z * f.m_y,
-        r.m_z * f.m_x - r.m_x * f.m_z,
-        r.m_x * f.m_y - r.m_y * f.m_x,
-        static_cast<T>(0)
-    );
-
+    // 3x3 rotation matrix
     T m00 = r.m_x, m01 = r.m_y, m02 = r.m_z;
     T m10 = u.m_x, m11 = u.m_y, m12 = u.m_z;
     T m20 = -f.m_x, m21 = -f.m_y, m22 = -f.m_z;
 
     T trace = m00 + m11 + m22;
-    if (trace > static_cast<T>(0)) {
+
+    if (trace > static_cast<T>(0))
+    {
         T s = std::sqrt(trace + static_cast<T>(1)) * static_cast<T>(2);
-        SetW(static_cast<T>(0.25) * s);
-        SetX((m21 - m12) / s);
-        SetY((m02 - m20) / s);
-        SetZ((m10 - m01) / s);
+        m_w = static_cast<T>(0.25) * s;
+        m_x = (m21 - m12) / s;
+        m_y = (m02 - m20) / s;
+        m_z = (m10 - m01) / s;
     }
-    else if ((m00 > m11) && (m00 > m22)) {
+    else if (m00 > m11 && m00 > m22)
+    {
         T s = std::sqrt(static_cast<T>(1) + m00 - m11 - m22) * static_cast<T>(2);
-        SetW((m21 - m12) / s);
-        SetX(static_cast<T>(0.25) * s);
-        SetY((m01 + m10) / s);
-        SetZ((m02 + m20) / s);
+        m_w = (m21 - m12) / s;
+        m_x = static_cast<T>(0.25) * s;
+        m_y = (m01 + m10) / s;
+        m_z = (m02 + m20) / s;
     }
-    else if (m11 > m22) {
+    else if (m11 > m22)
+    {
         T s = std::sqrt(static_cast<T>(1) + m11 - m00 - m22) * static_cast<T>(2);
-        SetW((m02 - m20) / s);
-        SetX((m01 + m10) / s);
-        SetY(static_cast<T>(0.25) * s);
-        SetZ((m12 + m21) / s);
+        m_w = (m02 - m20) / s;
+        m_x = (m01 + m10) / s;
+        m_y = static_cast<T>(0.25) * s;
+        m_z = (m12 + m21) / s;
     }
-    else {
+    else
+    {
         T s = std::sqrt(static_cast<T>(1) + m22 - m00 - m11) * static_cast<T>(2);
-        SetW((m10 - m01) / s);
-        SetX((m02 + m20) / s);
-        SetY((m12 + m21) / s);
-        SetZ(static_cast<T>(0.25) * s);
+        m_w = (m10 - m01) / s;
+        m_x = (m02 + m20) / s;
+        m_y = (m12 + m21) / s;
+        m_z = static_cast<T>(0.25) * s;
     }
 
     Normalize();
 }
-
 template<typename T>
-void Maths::Quat<T>::ToAngleAxis(T& angle, Quat<T>& axis)
+void Maths::Quat<T>::ToAngleAxis(T& angle, Vec3<T>& axis)
 {
     Quat<T> qNorm = *this;
     qNorm.Normalize();
@@ -131,56 +134,56 @@ void Maths::Quat<T>::ToAngleAxis(T& angle, Quat<T>& axis)
     T s = std::sqrt(static_cast<T>(1) - qNorm.m_w * qNorm.m_w);
 
     if (s < static_cast<T>(kEpsilon)) {
-        axis = Quat<T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0), static_cast<T>(0));
+        axis = Vec3<T>(1, 0, 0);
     }
     else {
-        axis = Quat<T>(static_cast<T>(0), qNorm.m_x / s, qNorm.m_y / s, qNorm.m_z / s);
+        axis = Vec3<T>(qNorm.m_x / s, qNorm.m_y / s, qNorm.m_z / s);
     }
 }
 
 template<typename T>
 void Maths::Quat<T>::setFromToRotation(const Quat<T>& to)
 {
+    // Convertir les quaternions en vecteurs (x,y,z)
+    Vec3<T> fromVec(m_x, m_y, m_z);
+    Vec3<T> toVec(to.m_x, to.m_y, to.m_z);
 
-    Quat<T> fromVec(static_cast<T>(0), m_x, m_y, m_z);
-    Quat<T> toVec(static_cast<T>(0), to.m_x, to.m_y, to.m_z);
+    // Calcul du dot produit
+    T dot = std::clamp(fromVec.Dot(toVec), static_cast<T>(-1), static_cast<T>(1));
 
-    T dot = fromVec.m_x * toVec.m_x + fromVec.m_y * toVec.m_y + fromVec.m_z * toVec.m_z;
-    dot = std::clamp(dot, static_cast<T>(-1.0), static_cast<T>(1.0));
-
+    // Cas vecteurs quasi identiques
     if (dot > static_cast<T>(0.9999)) {
-        SetW(static_cast<T>(1)); SetX(static_cast<T>(0)); SetY(static_cast<T>(0)); SetZ(static_cast<T>(0));
+        *this = Identity();
         return;
     }
 
+    // Cas vecteurs opposés
     if (dot < static_cast<T>(-0.9999)) {
-        Quat<T> orthoAxis;
-        if (std::abs(fromVec.m_x) < std::abs(fromVec.m_z)) {
-            orthoAxis = Quat<T>(static_cast<T>(0), static_cast<T>(0), -fromVec.m_z, fromVec.m_y);
+        Vec3<T> orthoAxis;
+        if (absValue(fromVec.x()) < absValue(fromVec.z())) {
+            orthoAxis = Vec3<T>(0, 0, 1).Cross(fromVec);
         }
         else {
-            orthoAxis = Quat<T>(static_cast<T>(0), -fromVec.m_y, fromVec.m_x, static_cast<T>(0));
+            orthoAxis = Vec3<T>(1, 0, 0).Cross(fromVec);
         }
         orthoAxis.Normalize();
-        AngleAxis(static_cast<T>(3.14159265), orthoAxis);
+        *this = AngleAxis(static_cast<T>(PI), Quat<T>(orthoAxis.x(), orthoAxis.y(), orthoAxis.z(), 0));
         return;
     }
 
+    // Calcul de l’axe de rotation via cross product
+    Vec3<T> rotationAxis = fromVec.Cross(toVec).Normalized();
 
-    Quat<T> rotationAxis(static_cast<T>(0),
-        fromVec.m_y * toVec.m_z - fromVec.m_z * toVec.m_y,
-        fromVec.m_z * toVec.m_x - fromVec.m_x * toVec.m_z,
-        fromVec.m_x * toVec.m_y - fromVec.m_y * toVec.m_x);
-
-    rotationAxis.Normalize();
-
+    // Angle de rotation
     T angle = std::acos(dot);
-    AngleAxis(angle, rotationAxis);
+
+    // Appliquer la rotation
+    *this = AngleAxis(angle, Quat<T>(rotationAxis.x(), rotationAxis.y(), rotationAxis.z(), 0));
 }
 
 
 template<typename T>
-bool Maths::Quat<T>::Equals(const Quat<T>& q)
+bool Maths::Quat<T>::Equals(const Quat<T>& q) const
 {
     return (std::abs(m_w - q.m_w) < kEpsilon) &&
         (std::abs(m_x - q.m_x) < kEpsilon) &&
@@ -189,7 +192,7 @@ bool Maths::Quat<T>::Equals(const Quat<T>& q)
 }
 
 template <typename T>
-std::string Maths::Quat<T>::ToString() {
+std::string Maths::Quat<T>::ToString() const {
     return "(" + std::to_string(m_x) + ", " + std::to_string(m_y) + ", " + std::to_string(m_z) + ", " + std::to_string(m_w) + ")";
 }
 
@@ -327,13 +330,12 @@ Maths::Quat<T> Maths::Quat<T>::Slerp(const Quat<T>& a, const Quat<T>& b, T t){
 }
 
 template<typename T>
-Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b) {
-    // Produit vectoriel seulement sur x,y,z (ignore w)
-    return Maths::Quat<T>(
-        static_cast<T>(0),
+Maths::Quat<T> Maths::Quat<T>::Cross(const Quat<T>& b){
+    return Quat<T>(
         m_y * b.m_z - m_z * b.m_y,
         m_z * b.m_x - m_x * b.m_z,
-        m_x * b.m_y - m_y * b.m_x
+        m_x * b.m_y - m_y * b.m_x,
+        static_cast<T>(0) // w = 0 pour un vecteur
     );
 }
 
@@ -351,16 +353,11 @@ Maths::Quat<T> Maths::Quat<T>::Inverse(const Quat<T>& q)
 
 
 template<typename T>
-Maths::Vec3<T> Maths::Quat<T>::MulltiplyQuatVec(const Vec3<T> v, const Maths::Quat<T>& q) {
-    Maths::Quat<T> vQuat = Maths::Quat<T>(v.x(), v.y(), v.z(), static_cast<T>(0));
-
-
-    Maths::Quat<T> qInverse = Maths::Quat<T>::Inverse(q);
-    Maths::Quat<T> res = q * vQuat;
-    Maths::Quat<T> result = res * qInverse;
-
-    Maths::Vec3<T> qVec3 = result.EulerAngles();
-    return qVec3;
+Maths::Vec3<T> Maths::Quat<T>::MulltiplyQuatVec(const Vec3<T>& v, const Maths::Quat<T>& q) {
+    Quat<T> vQuat(v.x(), v.y(), v.z(), static_cast<T>(0));
+    Quat<T> qInv = Quat<T>::Inverse(q);
+    Quat<T> res = q * vQuat * qInv;
+    return Vec3<T>(res.m_x, res.m_y, res.m_z);
 }
 
 
@@ -372,7 +369,7 @@ T Maths::Quat<T>::Angle(const Quat<T>& a, const Quat<T>& b) { // Renvoie l'angle
 }
 
 template<typename T>
-T Maths::Quat<T>::Dot(const Quat& a, const Quat<T>& b)
+T Maths::Quat<T>::Dot(const Quat<T>& a, const Quat<T>& b)
 {
     return a.m_w * b.m_w + a.m_x * b.m_x + a.m_y * b.m_y + a.m_z * b.m_z;
 }
@@ -437,97 +434,56 @@ void Maths::Quat<T>::LookRotation(const Vec3<T>& forward, const Vec3<T>& up)
 template<typename T>
 void Maths::Quat<T>::RotateTowards(const Quat<T>& to, T maxDegreesDelta)
 {
-    // Normaliser les deux quaternions (important)
     Quat<T> from = this->Normalized();
     Quat<T> target = to.Normalized();
 
-    // Dot product
-    T dot = from.m_w * target.m_w +
-        from.m_x * target.m_x +
-        from.m_y * target.m_y +
-        from.m_z * target.m_z;
-
-    // Chemin le plus court
-    if (dot < static_cast<T>(0))
-    {
+    T dot = Dot(from, target);
+    if (dot < 0) {
         dot = -dot;
-        target.m_w = -target.m_w;
-        target.m_x = -target.m_x;
-        target.m_y = -target.m_y;
-        target.m_z = -target.m_z;
+        target = Quat<T>(-target.m_x, -target.m_y, -target.m_z, -target.m_w);
     }
 
-    dot = std::clamp(dot, static_cast<T>(-1), static_cast<T>(1));
+    T angle = T(2) * std::acos(dot < T(-1) ? T(-1) : (dot > T(1) ? T(1) : dot));
+    if (angle <= T(0)) return;
 
-    // Angle total en radians
-    T angle = static_cast<T>(2) * std::acos(dot);
+    T maxRadiansDelta = maxDegreesDelta * (T(PI) / T(180));
 
-    if (angle <= static_cast<T>(0))
-        return;
+    // Remplace std::min par un ternaire simple
+    T t = (maxRadiansDelta >= angle) ? T(1) : maxRadiansDelta / angle;
 
-    // Convertir maxDegreesDelta en radians
-    T maxRadiansDelta = maxDegreesDelta * (static_cast<T>(3.14159265358979323846) / static_cast<T>(180));
-
-    if (angle <= maxRadiansDelta)
-    {
-        *this = target;
-        return;
-    }
-
-    T t = maxRadiansDelta / angle;
-
-    // SLERP
-    T theta = std::acos(dot);
-    T sinTheta = std::sin(theta);
-
-    if (sinTheta > kEpsilon)
-    {
-        T ratioA = std::sin((static_cast<T>(1) - t) * theta) / sinTheta;
-        T ratioB = std::sin(t * theta) / sinTheta;
-
-        m_w = from.m_w * ratioA + target.m_w * ratioB;
-        m_x = from.m_x * ratioA + target.m_x * ratioB;
-        m_y = from.m_y * ratioA + target.m_y * ratioB;
-        m_z = from.m_z * ratioA + target.m_z * ratioB;
-    }
-    else
-    {
-        // fallback lerp
-        m_w = from.m_w * (static_cast<T>(1) - t) + target.m_w * t;
-        m_x = from.m_x * (static_cast<T>(1) - t) + target.m_x * t;
-        m_y = from.m_y * (static_cast<T>(1) - t) + target.m_y * t;
-        m_z = from.m_z * (static_cast<T>(1) - t) + target.m_z * t;
-    }
-
-    Normalize();
+    *this = SlerpUnclamped(target, t).Normalized();
 }
 
 template<typename T>
 void Maths::Quat<T>::FromToRotation(const Quat<T>& to)
 {
-    Quat<T> f = this->normalized();
-    Quat<T> t = to.normalized();
+    Quat<T> f = this->Normalized();
+    Quat<T> t = to.Normalized();
 
-    T cosTheta = f.Dot(t);
-    Quat<T> rotationAxis;
+    Vec3<T> fromVec(f.m_x, f.m_y, f.m_z);
+    Vec3<T> toVec(t.m_x, t.m_y, t.m_z);
 
-    if (cosTheta >= static_cast<T>(1) - static_cast<T>(kEpsilon)) {
-        SetW(static_cast<T>(1)); SetX(static_cast<T>(0)); SetY(static_cast<T>(0)); SetZ(static_cast<T>(0));
+    T cosTheta = std::clamp(fromVec.Dot(toVec), T(-1), T(1));
+
+    // Vecteurs quasi identiques
+    if (cosTheta > static_cast<T>(0.9999)) {
+        *this = Identity();
         return;
     }
 
-    if (cosTheta <= -1.0 + static_cast<T>(kEpsilon)) {
-        rotationAxis = Quat<T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)).Cross(f);
-        if (rotationAxis.Magnitude() < static_cast<T>(1e-6))
-            rotationAxis = Quat<T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0)).Cross(f);
-        rotationAxis.Normalize();
-        Angle(static_cast<T>(PI), rotationAxis.m_x, rotationAxis.m_y, rotationAxis.m_z);
+    // Vecteurs opposés
+    if (cosTheta < static_cast<T>(-0.9999)) {
+        Vec3<T> orthoAxis = (absValue(fromVec.x()) < absValue(fromVec.z())) ? Vec3<T>(0, 0, 1).Cross(fromVec) : Vec3<T>(1, 0, 0).Cross(fromVec);
+        orthoAxis.Normalize();
+        *this = AngleAxis(static_cast<T>(PI), Quat<T>(orthoAxis.x(), orthoAxis.y(), orthoAxis.z(), 0));
         return;
     }
-    rotationAxis = f.Cross(t);
-    T angle = std::acos(std::clamp(cosTheta, static_cast<T>(-1), static_cast<T>(1)));
-    rotationAxis.Normalize();
-    Angle(angle, rotationAxis.m_x, rotationAxis.m_y, rotationAxis.m_z);
+
+    // Axe de rotation normalisé
+    Vec3<T> rotationAxis = fromVec.Cross(toVec).Normalized();
+    T angle = std::acos(cosTheta);
+
+    *this = AngleAxis(angle, Quat<T>(rotationAxis.x(), rotationAxis.y(), rotationAxis.z(), 0));
 }
 
 template<typename T>
@@ -560,5 +516,8 @@ Maths::Quat<T> Maths::Quat<T>::operator*(const Quat<T>& rhs) const {
 
 template<typename T>
 bool Maths::Quat<T>::operator==(const Quat<T>& q) const {
-    return m_x == q.m_x && m_y == q.m_y && m_z == q.m_z && m_w == q.m_w;
+    return (std::abs(m_x - q.m_x) < kEpsilon) &&
+        (std::abs(m_y - q.m_y) < kEpsilon) &&
+        (std::abs(m_z - q.m_z) < kEpsilon) &&
+        (std::abs(m_w - q.m_w) < kEpsilon);
 }

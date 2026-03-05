@@ -4,39 +4,39 @@ Maths::Vec3<T>::Vec3(T m_x, T m_y, T m_z) : m_x(m_x), m_y(m_y), m_z(m_z) {}
 
 //////// STATIC PORPRETIES ////////
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Down() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(-1), static_cast<T>(0)); }
+Maths::Vec3<T> Maths::Vec3<T>::Down() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(-1), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Up() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0)); }
+Maths::Vec3<T> Maths::Vec3<T>::Up() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Left() { return Maths::Vec3<T>(static_cast<T>(-1), static_cast<T>(0), static_cast<T>(0)); }
+Maths::Vec3<T> Maths::Vec3<T>::Left() { return Maths::Vec3<T>(static_cast<T>(-1), static_cast<T>(0), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Right() { return Maths::Vec3<T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)); }
+Maths::Vec3<T> Maths::Vec3<T>::Right() { return Maths::Vec3<T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Back() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(-1)); }
+Maths::Vec3<T> Maths::Vec3<T>::Back() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(-1)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Forward() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
+Maths::Vec3<T> Maths::Vec3<T>::Forward() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::One() { return Maths::Vec3<T>(static_cast<T>(1), static_cast<T>(1), static_cast<T>(1)); }
+Maths::Vec3<T> Maths::Vec3<T>::One() { return Maths::Vec3<T>(static_cast<T>(1), static_cast<T>(1), static_cast<T>(1)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::Zero() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0)); }
+Maths::Vec3<T> Maths::Vec3<T>::Zero() { return Maths::Vec3<T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0)); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::PositiveInfinity() { return Maths::Vec3<T>(std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity()); }
+Maths::Vec3<T> Maths::Vec3<T>::PositiveInfinity() { return Maths::Vec3<T>(std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity(), std::numeric_limits<T>::infinity()); }
 
 template <typename T>
-static Maths::Vec3<T> Maths::Vec3<T>::NegativeInfinity() { return Maths::Vec3<T>(-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()); }
+Maths::Vec3<T> Maths::Vec3<T>::NegativeInfinity() { return Maths::Vec3<T>(-std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity()); }
 
 
 //////// PORPRETIES ////////
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Normalized() { // Renvoies une copie normalisée du vecteur
+Maths::Vec3<T> Maths::Vec3<T>::Normalized() const { // Renvoies une copie normalisée du vecteur
 	T mag = Magnitude();
 	if (mag != 0.0f)
 		return Maths::Vec3<T>(m_x / mag, m_y / mag, m_z / mag);
@@ -45,47 +45,82 @@ Maths::Vec3<T> Maths::Vec3<T>::Normalized() { // Renvoies une copie normalisée d
 }
 
 template <typename T>
-T Maths::Vec3<T>::Magnitude() { return std::sqrt(m_x * m_x + m_y * m_y + m_z * m_z); } 
+T Maths::Vec3<T>::Magnitude() const {
+	return std::sqrt(m_x * m_x + m_y * m_y + m_z * m_z); 
+} 
 
 template <typename T>
-T Maths::Vec3<T>::SqrtMagnitude() {
+T Maths::Vec3<T>::SqrtMagnitude() const {
 	T mag = (*this).Magnitude();  
-	return std::pow((mag), static_cast<T>(2)); }
+	return std::pow((mag), static_cast<T>(2)); 
+}
 
 template <typename T>
-T Maths::Vec3<T>::This(int i) {
+T Maths::Vec3<T>::This(int i) const {
 	if (i == 0) return m_x;
-	else if (i == 1) return m_y;
-	else if (i == 2) return m_z;
+	if (i == 1) return m_y;
+	if (i == 2) return m_z;
+	return static_cast<T>(0);
 }
 
 
 //////// PUBLIC METHODS ////////
 template <typename T>
-bool Maths::Vec3<T>::Equal(Vec3<T>& other) { 
+bool Maths::Vec3<T>::Equal(const Vec3<T>& other) const { 
 	if (m_x == other.m_x && m_y == other.m_y && m_z == other.m_z) return true;
 	else return false;
 }
 
 template <typename T>
-std::string Maths::Vec3<T>::ToString() { 
+std::string Maths::Vec3<T>::ToString() const {
 	return "(" + std::to_string(m_x) + ", " + std::to_string(m_y) + ", " + std::to_string(m_z) + ")";
 }
 
 
 /////// STATIC METHODS ////////
-template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::RotateTowards(Vec3<T> current, Vec3<T> target, T maxRadiansDelta, T maxMagnitudeDelta) { 
-	Vec3 a = current.Normalized();
-	Vec3 b = target.Normalized();
-	T theta = acos(Dot(a, b));
-	Vec3 rotationAxis = Cross(a, b);
-	Vec3 nomalizedRotationAxis = rotationAxis.Normalized();
-	return a * cos(theta) + Cross(rotationAxis, a) * sin(theta) + rotationAxis * (Dot(rotationAxis, a)) * (static_cast<T>(1) - cos(theta));
+template<typename T>
+Maths::Vec3<T> Maths::Vec3<T>::RotateTowards(
+	const Vec3<T>& current,
+	const Vec3<T>& target,
+	const T maxRadiansDelta,
+	const T maxMagnitudeDelta)
+{
+	T currentMag = current.Magnitude();
+	T targetMag = target.Magnitude();
+
+	// Si un vecteur est nul, utiliser MoveTowards simple
+	if (currentMag == T(0) || targetMag == T(0))
+		return MoveTowards(current, target, maxMagnitudeDelta);
+
+	Vec3<T> from = current.Normalized();
+	Vec3<T> to = target.Normalized();
+
+	// Angle entre from et to
+	T dot = std::clamp(Dot(from, to), T(-1), T(1));
+	T angle = std::acos(dot);
+
+	// Ajuste la magnitude en respectant maxMagnitudeDelta
+	T diffMag = targetMag - currentMag;
+	T deltaMag = (diffMag > maxMagnitudeDelta) ? maxRadiansDelta : (diffMag < -maxMagnitudeDelta ? -maxMagnitudeDelta : diffMag);
+	T newMag = currentMag + deltaMag;
+
+	if (angle == T(0))
+	{
+		// Même direction, ajuster la magnitude seulement
+		return to * newMag;
+	}
+
+	// Fraction de rotation à appliquer
+	T t = (maxRadiansDelta >= angle) ? T(1) : maxRadiansDelta / angle;
+
+	// Rotation sphérique (SLERP)
+	Vec3<T> rotated = SlerpUnclamped(from, to, t);
+
+	return rotated * newMag;
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::MoveTowards(Vec3<T> current, Vec3<T> target, T maxDistanceDelta) { 
+Maths::Vec3<T> Maths::Vec3<T>::MoveTowards(const Vec3& current, const Vec3& target, const T maxDistanceDelta) {
 	Vec3 direction = target - current;
 	T distance = direction.Magnitude();
 	if (distance == 0 || (maxDistanceDelta >= 0 && distance <= maxDistanceDelta)) { return target; }
@@ -93,7 +128,7 @@ Maths::Vec3<T> Maths::Vec3<T>::MoveTowards(Vec3<T> current, Vec3<T> target, T ma
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::ProjectOnPlane(Vec3<T> vector, Vec3<T> planeNormal) 
+Maths::Vec3<T> Maths::Vec3<T>::ProjectOnPlane(const Vec3& vector, const Vec3& planeNormal)
 {
 	T dot1 = Dot(vector, planeNormal);
 	T dot2 = Dot(planeNormal, planeNormal);
@@ -103,14 +138,14 @@ Maths::Vec3<T> Maths::Vec3<T>::ProjectOnPlane(Vec3<T> vector, Vec3<T> planeNorma
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Reflect(Vec3<T> inDirection, Vec3<T> inNormal) { 
+Maths::Vec3<T> Maths::Vec3<T>::Reflect(const Vec3& inDirection, const Vec3& inNormal) {
 	Vec3<T> n = inNormal.Normalized();
-	T dot = Dot(inDirection, inNormal);
-	return inDirection - inNormal * dot * static_cast<T>(2);
+	T dot = Dot(inDirection, n);
+	return inDirection - n * dot * static_cast<T>(2);
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::ClampMagnitude(Vec3<T>& a, T maxLength) { 
+Maths::Vec3<T> Maths::Vec3<T>::ClampMagnitude(const Vec3<T>& a, const T maxLength) {
 	T mag = a.Magnitude();
 	if (mag > maxLength)
 		return a.Normalized() * maxLength;
@@ -118,27 +153,30 @@ Maths::Vec3<T> Maths::Vec3<T>::ClampMagnitude(Vec3<T>& a, T maxLength) {
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::SlerpUnclamped(Vec3<T> a, Vec3<T> b, T t) {  
-	Vec3 aNormal = a.Normalized();
-	Vec3 bNormal = b.Normalized();
-	T theta = acos(Dot(aNormal, bNormal));
-	return bNormal * (sin(t * theta) / sin(theta)) + aNormal * sin((static_cast<T>(1) - t) * theta) / sin(theta);
+Maths::Vec3<T> Maths::Vec3<T>::SlerpUnclamped(const Vec3& a, const Vec3& b, const T t) {
+	Vec3<T> aNormal = a.Normalized();
+	Vec3<T> bNormal = b.Normalized();
+	T dot = std::clamp(Dot(aNormal, bNormal), T(-1), T(1));
+	T theta = std::acos(dot);
+	return bNormal * (sin(t * theta) / sin(theta)) + aNormal * (sin((T(1) - t) * theta) / sin(theta));
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Project(Vec3<T> vector, Vec3<T> onNormal) {
+Maths::Vec3<T> Maths::Vec3<T>::Project(const Vec3& vector, const Vec3& onNormal) {
 	T dot1 = Dot(vector, onNormal);
 	T dot2 = Dot(onNormal, onNormal);
+	if (dot2 == T(0))
+		return Vec3<T>::Zero();
 	return onNormal * (dot1 / dot2);
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::LerpUnclamped(Vec3<T> a, Vec3<T> b, T t) { 
+Maths::Vec3<T> Maths::Vec3<T>::LerpUnclamped(const Vec3& a, const Vec3& b, const T t) {
 	return a + (b - a) * t;
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Slerp(Vec3<T> a, Vec3<T> b, T t) {
+Maths::Vec3<T> Maths::Vec3<T>::Slerp(const Vec3& a, const Vec3& b, const T t) {
 	Vec3<T> aNormal = a.Normalized();
 	Vec3<T> bNormal = b.Normalized();
 
@@ -154,46 +192,46 @@ Maths::Vec3<T> Maths::Vec3<T>::Slerp(Vec3<T> a, Vec3<T> b, T t) {
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Lerp(Vec3<T> a, Vec3<T> b, T t) { 
+Maths::Vec3<T> Maths::Vec3<T>::Lerp(const Vec3& a, const Vec3& b, const T t) {
 	t = std::clamp(t, 0.0f, 1.0f);
 	return a + (b - a) * t;
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Scale(Vec3<T>& a, Vec3<T>& b) {
+Maths::Vec3<T> Maths::Vec3<T>::Scale(const Vec3<T>& a,const Vec3<T>& b) {
 	return Vec3(a.m_x * b.m_x, a.m_y * b.m_y, a.m_z * b.m_z);
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Cross(Vec3<T>& a, Vec3<T>& b) { 
+Maths::Vec3<T> Maths::Vec3<T>::Cross(const Vec3<T>& a, const Vec3<T>& b) {
 	return Vec3((a.m_y * b.m_z) - (a.m_z * b.m_y), (a.m_z * b.m_x) - (a.m_x * b.m_z), (a.m_x * b.m_y) - (a.m_y * b.m_x));
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Min(Vec3<T>& a, Vec3<T>& b) { 
+Maths::Vec3<T> Maths::Vec3<T>::Min(const Vec3<T>& a, const Vec3<T>& b) {
 	return Vec3(std::fmin(a.m_x, b.m_x), std::fmin(a.m_y, b.m_y), fmin(a.m_z, b.m_z));
 }
 
 template <typename T>
-Maths::Vec3<T> Maths::Vec3<T>::Max(Vec3<T>& a, Vec3<T>& b) { 
+Maths::Vec3<T> Maths::Vec3<T>::Max(const Vec3<T>& a, const Vec3<T>& b) {
 	return Vec3(std::fmax(a.m_x, b.m_x), std::fmax(a.m_y, b.m_y), fmax(a.m_z, b.m_z));
 }
 
 
 template <typename T>
-T Maths::Vec3<T>::SignedAngle(Vec3<T> from, Vec3<T> to, Vec3<T> axis) { 
+T Maths::Vec3<T>::SignedAngle(const Vec3& from, const Vec3& to, const Vec3& axis) {
 	T angle = Angle(from, to);
 	Vec3<T> cross = Cross(from, to);
 	return (Dot(axis, cross) < 0) ? -angle : angle;
 }
 
 template <typename T>
-T Maths::Vec3<T>::Distance(Vec3<T>& a, Vec3<T>& b) { 
-	return Vec3<T>(a - b).Magnitude();
+T Maths::Vec3<T>::Distance(const Vec3<T>& a, const Vec3<T>& b) {
+	return (a - b).Magnitude();
 }
 
 template <typename T>
-T Maths::Vec3<T>::Angle(Vec3<T> a, Vec3<T> b) { 
+T Maths::Vec3<T>::Angle(const Vec3& a, const Vec3& b) {
 	T dotProduct = Dot(a, b);
 	T MagA = a.Magnitude();
 	T MagB = b.Magnitude();
@@ -202,7 +240,7 @@ T Maths::Vec3<T>::Angle(Vec3<T> a, Vec3<T> b) {
 }
 
 template <typename T>
-T Maths::Vec3<T>::Dot(Vec3<T>& a, Vec3<T>& b) {
+T Maths::Vec3<T>::Dot(const Vec3<T>& a, const  Vec3<T>& b) {
 	return (a.m_x * b.m_x + a.m_y * b.m_y + a.m_z * b.m_z);
 }
 
@@ -216,8 +254,13 @@ void Maths::Vec3<T>::OrthoNormalize(Vec3<T>& normal, Vec3<T>& tangent) {
 
 template <typename T>
 void Maths::Vec3<T>::Normalize() { 
-	T mag = (*this).Magnitude();
-	m_x = m_x / mag; m_y = m_y / mag; m_z = m_z / mag;
+	T mag = Magnitude();
+	if (mag != T(0))
+	{
+		m_x /= mag;
+		m_y /= mag;
+		m_z /= mag;
+	}
 }
 
 
@@ -229,12 +272,12 @@ Maths::Vec3<T> Maths::Vec3<T>::operator-(const Vec3<T>& other) const {
 
 template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::operator+(const Vec3<T>& other) const {
-	return Vec3<T>(m_x + other.m_x, m_y + other.m_y, m_z - other.m_z);
+	return Vec3<T>(m_x + other.m_x, m_y + other.m_y, m_z + other.m_z);
 }
 
 template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::operator*(const Vec3<T>& other) const {
-	return Vec3<T>(m_x * other.m_x, m_y * other.m_y, m_z - other.m_z);
+	return Vec3<T>(m_x * other.m_x, m_y * other.m_y, m_z * other.m_z);
 }
 
 template <typename T>
@@ -254,7 +297,7 @@ Maths::Vec3<T> Maths::Vec3<T>::operator/(const Vec3<T>& other) const {
 template <typename T>
 Maths::Vec3<T> Maths::Vec3<T>::operator/(T scalar) const {
 	if (scalar != 0.0f)
-		return Vec3<T>(m_x / scalar, m_y / scalar, m_z - scalar);
+		return Vec3<T>(m_x / scalar, m_y / scalar, m_z / scalar);
 	else
 		return Vec3<T>(0.0f, 0.0f, 0.0f);
 }

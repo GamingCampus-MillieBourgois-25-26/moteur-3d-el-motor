@@ -10,6 +10,7 @@
 #include "Asset_Manager/AssetManager.hpp"
 #include "Assets/Asset.hpp"
 #include "Entity/GameObject.hpp"
+#include "Entity/Component/RigidBodyComponent.hpp"
 #include <iostream>
 
 
@@ -462,7 +463,7 @@ void Editor::Buttons::addComponent()
 
     static int currentItem = 0;
 
-	const char* items[] = { "MeshRenderer", "Camera", "Light" };//List of component types to add
+	const char* items[] = { "MeshRenderer", "Camera", "RigidBody" };//List of component types to add
     const int itemCount = IM_ARRAYSIZE(items);
 
     ImGui::SetNextWindowSize(ImVec2(200, 300));
@@ -490,7 +491,8 @@ void Editor::Buttons::addComponent()
         case 0: selectedEntity->AddComponent<Engine::MeshComponent>();
             break;
         case 1: /* Add Camera */ break;
-        case 2: /* Add Light */ break;
+        case 2: selectedEntity->AddComponent<Engine::RigidBodyComponent>();
+            break;
         }
     }
     delComponent();
@@ -621,12 +623,3 @@ bool Editor::Buttons::CheckCaraterValid(const std::string& str)
                 return std::isalnum(c) || c == '_' || c == '-';
             });
 }
-
-
-
-
-
-
-
-
-

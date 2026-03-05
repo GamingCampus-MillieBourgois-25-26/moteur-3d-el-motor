@@ -8,21 +8,22 @@
 - **Context:** Début du développement du moteur
 
 ## Revision History
-| Date       | Version | Description                         | Author        |
-|------------|---------|-------------------------------------|---------------|
-| 2026-02-05 | 1.0     | Création initiale du document (TDD) | El Motor Team |
+| Date       | Version | Description                              | Author        |
+|------------|---------|------------------------------------------|---------------|
+| 2026-02-05 | 0.0     | Création initiale du document (TDD)      | El Motor Team |
+| 2026-03-05 | 1.0     | Sortie de la première version utilisable | El Motor Team |
 
 ---
 
 ## 1. Introduction
 
 ### 1.1 Purpose
-Ce document décrit les choix techniques et l’architecture envisagée pour **El Motor**, un moteur de jeu 3D développé en C++. Il a pour objectif de justifier les décisions technologiques prises en début de projet et de servir de référence tout au long du développement.
+Ce document décrit les choix techniques et l’architecture envisagée et finalement utilisée pour **El Motor**, un moteur de jeu 3D développé en C++. Il a pour objectif de justifier les décisions technologiques prises en début de projet, puis sur les technologies finalement utilisées et de servir de référence tout au long du développement.
 
 ### 1.2 Scope
 - **Objectif :** Concevoir un moteur de jeu 3D modulaire et pédagogique.
 - **Cadre :** Projet académique, développement from scratch en C++.
-- **État du projet :** Phase initiale, mise en place des fondations techniques.
+- **État du projet :** Première sortie, version testable fonctionnelle.
 
 ### 1.3 Définitions et acronymes
 - **TDD:** Technical Design Document  
@@ -42,6 +43,8 @@ El Motor est un moteur de jeu modulaire écrit en C++ (C++20), conçu pour sépa
 - **Audio System** : Gestion du son
 - **Input System** : Gestion des entrées utilisateur
 - **Core / Game Logic** : Boucle de jeu et orchestration des systèmes
+- **Entity Manager** : Gestion des objets et entitées
+- **Asset Manager** : Gestion du load des assets dynamiquement.
 
 ---
 
@@ -99,6 +102,8 @@ Cette bibliothèque bas niveau permet à l’équipe de concevoir un système au
 - **Wwise** : Solution très complète mais trop lourde et complexe pour le périmètre et la durée du projet, nécessitant un pipeline externe conséquent.
 ---
 
+
+
 ## 5. État d’avancement
 
 Le projet est actuellement en **phase de démarrage**. Les travaux portent principalement sur :
@@ -108,6 +113,82 @@ Le projet est actuellement en **phase de démarrage**. Les travaux portent princ
 
 ---
 
-## 6. Conclusion
+## 6 Les fonctionnalités du moteur
+
+## 6.1 Asset Management
+
+Afin de gérer les ressources utilisées par le moteur, un Asset Manager centralisé a été implémenté. Ce système est responsable du chargement, du stockage, de la réutilisation et de la libération des assets.
+
+Toutes les ressources héritent d’une classe abstraite commune Asset, définissant le cycle de vie d’une ressource :
+
+**Load() :** chargement depuis le disque
+
+CreateBuffers() : création des ressources GPU
+
+**Unload() :** libération des ressources
+
+Deux types d’assets sont actuellement implémentés :
+
+### MeshAsset
+Permet le chargement de modèles 3D au format OBJ. Les données de vertex (position, normale, UV) et les indices sont extraits du fichier puis utilisés pour créer les vertex buffers et index buffers nécessaires au rendu avec DirectX 11.
+
+### TextureAsset
+Gère le chargement des textures via WICTextureLoader (DirectXTK), supportant des formats standards comme PNG et JPG. Les textures sont stockées sous forme de Shader Resource View (SRV) afin d’être utilisées dans les shaders.
+
+Les assets sont stockés dans des conteneurs associatifs indexés par leur chemin afin d’éviter les duplications et de permettre leur réutilisation dans le moteur.
+
+**L’Asset Manager** fournit également des fonctions de rechargement (**Reload**) et de libération globale (**UnloadAll**) des ressources.
+
+---
+
+## 6.2 Entity Management
+
+Le moteur utilise une architecture **Entity-Component** pour représenter les objets présents dans une scène.
+Chaque objet est représenté par un **GameObject** auquel différents **components** peuvent être attachés afin de définir son comportement.
+
+### GameObject
+
+La classe **GameObject** représente une entité dans la scène.
+Elle possède :
+
+* un **nom**
+* une **liste de composants**
+* une **hiérarchie parent / enfants**
+
+Lors de sa création, un **Transform** est automatiquement ajouté afin de stocker les informations spatiales de l’objet (position, rotation, scale).
+
+### Component System
+
+Les fonctionnalités sont ajoutées aux entités via des **components** héritant de la classe abstraite **Component**.
+
+Chaque composant possède un cycle de vie simple :
+
+* **Start()**
+* **Update(float dt)**
+* **OnDestroy()**
+
+Les composants peuvent être ajoutés et récupérés dynamiquement grâce aux fonctions :
+
+* `AddComponent<T>()`
+* `GetComponent<T>()`
+
+### Components implémentés
+
+Plusieurs composants sont actuellement disponibles :
+
+* **Transform** : position, rotation et scale de l’entité
+* **MeshComponent** : associe un **MeshAsset** pour le rendu
+* **RigidBodyComponent** : gère une physique simple basée sur la vitesse et le temps
+
+Ce système permet d’ajouter facilement de nouveaux comportements aux entités sans modifier la structure du moteur.
+
+
+---
+## 7. Le fonctionnement du moteur
+
+## 7.1 Le lancement
+
+
+## 8. Conclusion
 
 Les choix technologiques effectués pour El Motor visent à garantir un développement réaliste, cohérent et pédagogiquement pertinent. Ils permettent à l’équipe de se concentrer sur la compréhension des systèmes fondamentaux d’un moteur de jeu tout en respectant les contraintes de temps et de complexité du projet.
