@@ -113,7 +113,7 @@ Le projet est actuellement en **phase de démarrage**. Les travaux portent princ
 
 ---
 
-# 6 Les fonctionnalités du moteur
+## 6 Les fonctionnalités du moteur
 
 ## 6.1 Asset Management
 
@@ -183,6 +183,12 @@ Plusieurs composants sont actuellement disponibles :
 Ce système permet d’ajouter facilement de nouveaux comportements aux entités sans modifier la structure du moteur.
 
 
-## 6. Conclusion
+---
+## 7. Le fonctionnement du moteur
+
+## 7.1 Le lancement
+
+
+## 8. Conclusion
 
 Les choix technologiques effectués pour El Motor visent à garantir un développement réaliste, cohérent et pédagogiquement pertinent. Ils permettent à l’équipe de se concentrer sur la compréhension des systèmes fondamentaux d’un moteur de jeu tout en respectant les contraintes de temps et de complexité du projet.
