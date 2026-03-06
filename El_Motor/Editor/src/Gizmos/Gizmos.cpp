@@ -1,8 +1,17 @@
 #include "Gizmos/Gizmos.hpp"
 
-void Editor::Gizmo::Draw() {
-	if (ImGuizmo::IsUsingAny()) { // a gizmo in use
-		
+void Editor::Gizmo::Draw(Camera& camera)
+{
+	ImGuizmo::BeginFrame();
+
+	if(isSelected){
+		ImGuizmo::Manipulate(
+			Maths::Mat4f::value_ptr(camera.GetView()),
+			Maths::Mat4f::value_ptr(camera.GetProjection()),
+			mCurrentOperation,
+			mCurrentMode,
+			Maths::Mat4f::value_ptr(transform)
+		);
 	}
 }
 

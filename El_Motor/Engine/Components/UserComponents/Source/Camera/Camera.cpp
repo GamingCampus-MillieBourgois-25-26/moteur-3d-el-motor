@@ -131,8 +131,8 @@ void Camera::GlobalUpdate(Engine::InputManager& input)
 
 ////////// GETTERS //////////
 
-Maths::Mat4f Camera::Getprojection() const { return projection; }
+Maths::Mat4f Camera::GetProjection() const { return projection; }
 
-Maths::Mat4f Camera::Getview() const { return view; }
+Maths::Mat4f Camera::GetView() const { return view; }
 
 Maths::Mat4f Camera::GetVP() const { return VP; }

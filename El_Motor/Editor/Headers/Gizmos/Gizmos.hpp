@@ -11,17 +11,13 @@ namespace Editor {
 		Gizmo() = default;
 		~Gizmo() = default;
 
-		void Draw();
+		void Draw(Camera& camera);
 		void Update();
 
 	private:
-		Maths::Mat4f mProjection;
-		Maths::Mat4f mTransform;
-		Maths::Mat4f mView;
-
 		bool isSelected = false;
-		ImGuizmo::OPERATION mCurrentOperation;
+		ImGuizmo::OPERATION mCurrentOperation = ImGuizmo::OPERATION::TRANSLATE;
 		ImGuizmo::COLOR mCurrentAxis;
-		ImGuizmo::MODE mCurrentMode;
+		ImGuizmo::MODE mCurrentMode = ImGuizmo::MODE::LOCAL;
 	};
 }

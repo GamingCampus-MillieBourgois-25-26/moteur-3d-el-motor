@@ -30,12 +30,12 @@ file(GLOB_RECURSE PROJECT_SCRIPT_HEADERS
 
 # === Sources Editor ===
 file(GLOB_RECURSE EDITOR_CORE_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/External/src/**/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/src/**/*.cpp
 )
 
 file(GLOB_RECURSE EDITOR_CORE_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/includes/**/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Headers/**/*.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/includes/**/*.h
 )
 
@@ -160,15 +160,15 @@ target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
                                          
 )
 
-target_include_directories(Editor PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Headers
-     External/imgui/includes/CoreIncludes
-     External/imgui/includes/backend
-     External/imgui/includes/ImGuizmo
-     External/ImGuiFileLog/includes/coreIncludes
-     External/ImGuiFileLog/includes/dirent
-     External/Json
-     ${PROJECT_SCRIPTS_PATH}
+target_include_directories(Editor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Headers
+                                          External/imgui/includes/CoreIncludes
+                                          External/imgui/includes/backend
+                                          External/imgui/includes/ImGuizmo
+                                          External/ImGuiFileLog/includes/coreIncludes
+                                          External/ImGuiFileLog/includes/dirent
+                                          External/Json
+                                          Engine/Core/Headers
+                                          ${PROJECT_SCRIPTS_PATH}
 )
 
 target_compile_definitions(Editor PRIVATE

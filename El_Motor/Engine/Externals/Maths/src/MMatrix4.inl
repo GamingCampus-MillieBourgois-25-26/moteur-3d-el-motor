@@ -642,7 +642,7 @@ Maths::Mat4<T> Maths::Mat4<T>::Translate4x4(T tx, T ty, T tz)
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Scale4x4(T x, T y, T z)
 {
-	Mat4 result = Identity();
+	Mat4<T> result = Identity();
 	result.at(0, 0) = x;
 	result.at(1, 1) = y;
 	result.at(2, 2) = z;
@@ -662,6 +662,37 @@ Maths::Mat4<T> Maths::Mat4<T>::operator*(const Mat4<T>& other) const {
 				result.tabMat[i * 4 + j] += tabMat[i * 4 + k] * other.tabMat[k * 4 + j];
 			}
 		}
+	}
+	return result;
+}
+
+template<typename T>
+Maths::Quat<T> Maths::Mat4<T>::operator*(const Maths::Quat<T>& v) {
+
+    return Maths::Quat<T>(
+        this->at(0, 0) * v.m_x + this->at(0, 1) * v.m_y + this->at(0, 2) * v.m_z + this->at(0, 3) * v.m_w,
+        this->at(1, 0) * v.m_x + this->at(1, 1) * v.m_y + this->at(1, 2) * v.m_z + this->at(1, 3) * v.m_w,
+        this->at(2, 0) * v.m_x + this->at(2, 1) * v.m_y + this->at(2, 2) * v.m_z + this->at(2, 3) * v.m_w,
+        this->at(3, 0) * v.m_x + this->at(3, 1) * v.m_y + this->at(3, 2) * v.m_z + this->at(3, 3) * v.m_w
+    );
+}
+
+template<typename T>
+Maths::Vec3<T> Maths::Mat4<T>::operator*(const Maths::Vec3<T>& v) {
+
+	return Maths::Vec3<T>(
+		this->at(0, 0) * v.m_x + this->at(0, 1) * v.m_y + this->at(0, 2) * v.m_z,
+		this->at(1, 0) * v.m_x + this->at(1, 1) * v.m_y + this->at(1, 2) * v.m_z,
+		this->at(2, 0) * v.m_x + this->at(2, 1) * v.m_y + this->at(2, 2) * v.m_z,
+		this->at(3, 0) * v.m_x + this->at(3, 1) * v.m_y + this->at(3, 2) * v.m_z
+	);
+}
+
+template<typename T>
+Maths::Mat4<T> Maths::Mat4<T>::ConvertArrayToMat4(const std::array<T, 16>& arr) {
+	Maths::Mat4<T> result;
+	for (int i = 0; i < 16; ++i) {
+		result.tabMat[i] = arr[i];
 	}
 	return result;
 }

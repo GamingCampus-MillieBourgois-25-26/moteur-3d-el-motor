@@ -68,6 +68,14 @@ namespace Maths {
 
 		//////// OPERATOR ////////
 		Mat4 operator*(const Mat4& other) const;
+		Quat<T> operator*(const Maths::Quat<T>& v);
+		Vec3<T> operator*(const Maths::Vec3<T>& v);
+
+		/////// conversion ///////
+		static float* value_ptr(Mat4& m) { return &m.tabMat[0]; }
+		static const float* value_ptr(const Mat4& m) { return &m.tabMat[0]; }
+		static Mat4 ConvertArrayToMat4(const std::array<T, 16>& arr);
+
 	};
 	using Mat4f = Mat4<float>;
 }

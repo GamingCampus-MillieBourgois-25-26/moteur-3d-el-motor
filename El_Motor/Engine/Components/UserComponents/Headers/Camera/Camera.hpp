@@ -42,15 +42,17 @@ protected:
     void MoveUpdate(Engine::InputManager& input);
     void GlobalUpdate(Engine::InputManager& input);
 
-    //////// GETTERS //////////
-
-    Maths::Mat4f Getprojection() const;
-    Maths::Mat4f Getview() const;
-    Maths::Mat4f GetVP() const;
-
 public:
     Camera();
 
     virtual void Update(Engine::InputManager& input) = 0;
     float ToRadians(float degree);
+
+    //////// GETTERS //////////
+    Maths::Vec3f GetPosition() const { return position; }
+    Maths::Quatf GetRotation() const { return rotation; }
+
+    Maths::Mat4f GetProjection() const;
+    Maths::Mat4f GetView() const;
+    Maths::Mat4f GetVP() const;
 };

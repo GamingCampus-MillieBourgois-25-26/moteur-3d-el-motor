@@ -86,10 +86,8 @@ namespace Engine {
                     return true;
                 }
             }
-
             return false;
         }
-
         const std::vector<Component*>& GetAllComponents() const;
 
         // Shortcut Transform
