@@ -1,13 +1,14 @@
 #include "Camera/Camera.hpp"
 #include "Input_Manager/InputManager.hpp"
 
-float ToRadians(float degree) {
+float Camera::ToRadians(float degree) {
     return degree * Maths::Quatf::PI / 180;
 }
 
-void Camera::RotationUpdate(Engine::InputManager& input){
-    float dx = input.getMouseDelta().x;
-    float dy = input.getMouseDelta().y;
+void Camera::RotationUpdate(Engine::InputManager& input)
+{
+    float dx = input.getMouseDelta().m_x;
+    float dy = input.getMouseDelta().m_y;
 
     float mouseSensitivity = sensitivity;
 
@@ -19,12 +20,12 @@ void Camera::RotationUpdate(Engine::InputManager& input){
     Maths::Quatf QuatR = Maths::Quatf::FromEuler(right);
     Maths::Quatf qPitch = Maths::Quatf::AngleAxis(pitch, QuatR);
 
-    rotation = qPitch * qYaw * rotation;
+    rotation = rotation * qYaw * qPitch;
 }
 
-void Camera::FowardUpdate() { forward = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 0.0f, 1.0f), rotation); }
+void Camera::FowardUpdate() { forward = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 0.0f, -1.0f), rotation); }
 
-void Camera::RightUpdate(){ right = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(1.0f, 0.0f, 0.0f), rotation); }
+void Camera::RightUpdate(){ right = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(-1.0f, 0.0f, 0.0f), rotation); }
 
 void Camera::UpUpdate(){ up = Maths::Quatf::MulltiplyQuatVec(Maths::Vec3f(0.0f, 1.0f, 0.0f), rotation); }
 
@@ -46,17 +47,19 @@ Camera::Camera() : projection(), view(), VP()
 
 ///////// CALCUL DE MATRICES //////////
 
-void Camera::ProjectionMatrix(){ Maths::Mat4f proj = Maths::Mat4f::Perspective4x4(fov, aspectRatio, nearPlane, farPlane); }
+void Camera::ProjectionMatrix(){ projection = Maths::Mat4f::Perspective4x4(fov, aspectRatio, nearPlane, farPlane); }
 
-void Camera::ViewMatrix(){ Maths::Mat4f viewM = Maths::Mat4f::LookAt4x4(position, position + forward, up); }
+void Camera::ViewMatrix(){ view = Maths::Mat4f::LookAt4x4(position, position + forward, up); }
 
-void Camera::VPMatrix(){ Maths::Mat4f viewMP = view * projection; }
+void Camera::VPMatrix()
+{
+    VP = view * projection;
+}
 
 void Camera::MouseUpdate(Engine::InputManager& input)
 {
-    // lastxy ; xyoffset ; sensitivity ; fistPos ; 
-    float Xpos = input.getMousePosition().x;
-    float Ypos = input.getMousePosition().y;
+    float Xpos = input.getMousePosition().m_x;
+    float Ypos = input.getMousePosition().m_y;
 
     static float lastX = 0.0f;
     static float lastY = 0.0f;
@@ -90,51 +93,72 @@ void Camera::MouseUpdate(Engine::InputManager& input)
 	float radYaw = ToRadians(yaw);
     float radPitch = ToRadians(pitch);
 
-	Maths::Vec3f direction = Maths::Vec3f(cosf(radYaw) * cosf(radPitch), sinf(radPitch), sinf(radYaw) * cosf(radPitch));
-	direction = direction.Normalized();
+    Maths::Vec3f direction(
+        cosf(radYaw) * cosf(radPitch),
+        sinf(radPitch),
+        sinf(radYaw) * cosf(radPitch)
+    );
 
+    direction = direction.Normalized();
+
+    // crée un quaternion qui regarde dans la direction voulue
+    Maths::Quatf q;
+    q.SetLookRotation(direction, up);
+
+    // applique la nouvelle rotation
+    rotation = q;
 }
 
 void Camera::MoveUpdate(Engine::InputManager& input) {
-    // accumulate movement delta, apply once
-    
     Maths::Vec3f moveDelta = Maths::Vec3f(0.0f, 0.0f, 0.0f);
 
-    if (input.isKeyPressed(Engine::KeyCode::Z))
-		moveDelta = moveDelta + forward * moveSpeed;
-    if (input.isKeyPressed(Engine::KeyCode::S))
+    // Utilise les scancodes physiques (W, A, S, D) - indépendant de la disposition du clavier
+    if (input.isKeyPressed(Engine::Scancode::KEY_W) || input.isKeyHeld(Engine::Scancode::KEY_W))
         moveDelta = moveDelta + forward * -moveSpeed;
-    if (input.isKeyPressed(Engine::KeyCode::Q))
-		moveDelta = moveDelta + right * moveSpeed;
-    if (input.isKeyPressed(Engine::KeyCode::D))
+    if (input.isKeyPressed(Engine::Scancode::KEY_S) || input.isKeyHeld(Engine::Scancode::KEY_S))
+        moveDelta = moveDelta + forward * moveSpeed;
+    if (input.isKeyPressed(Engine::Scancode::KEY_A) || input.isKeyHeld(Engine::Scancode::KEY_A))
         moveDelta = moveDelta + right * -moveSpeed;
+    if (input.isKeyPressed(Engine::Scancode::KEY_D) || input.isKeyHeld(Engine::Scancode::KEY_D))
+        moveDelta = moveDelta + right * moveSpeed;
     
-    if (moveDelta == Maths::Vec3f(0.0f, 0.0f, 0.0f)) {
-		position = position + moveDelta;
+    if (moveDelta != Maths::Vec3f(0.0f, 0.0f, 0.0f)) {
+        position = position + moveDelta;
     }
 
-    if (input.isMousePressed(Engine::MouseButton::Left))
-    {
-        MouseUpdate(input);
-    }
 }
 
 void Camera::GlobalUpdate(Engine::InputManager& input)
 {
+    MouseUpdate(input);
+
     FowardUpdate();
     RightUpdate();
     UpUpdate();
-    MouseUpdate(input);
+
     MoveUpdate(input);
+
     ProjectionMatrix();
     ViewMatrix();
     VPMatrix();
 }
 
+
 ////////// GETTERS //////////
 
-Maths::Mat4f Camera::Getprojection() const { return projection; }
+Maths::Mat4f Camera::Getprojection() const
+{
+    return projection;
+}
 
-Maths::Mat4f Camera::Getview() const { return view; }
+Maths::Mat4f Camera::Getview() const
+{
+    return view;
+}
 
-Maths::Mat4f Camera::GetVP() const { return VP; }
+Maths::Mat4f Camera::GetVP() const
+{
+    return VP;
+}
+
+

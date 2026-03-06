@@ -1,47 +1,53 @@
 #include "D3D11/D3D11.hpp"
 #include "Assets/MeshAsset/MeshAsset.hpp"
+#include "Assets/TextureAsset/Material.hpp"
 
 #include <d3dcompiler.h>
 #include <wrl.h>
 #include <memory>
 #include <iostream>
 
-
 #pragma comment(lib, "d3dcompiler.lib")
 
 namespace Engine
 {
+	// Constructeur : initialise D3D11, swap chain, shaders, render target et depth stencil
 	D3D11::D3D11(IWindow& window)
 	{
 		myWindow = static_cast<HWND>(window.GetNativeWindow());
-		DXGI_SWAP_CHAIN_DESC swapChainDesc = initSwapChainDesc(); // variable locale pour la description du swap chain, initialisée avec les paramètres souhaités
 
+		// Création de la description du swap chain
+		DXGI_SWAP_CHAIN_DESC swapChainDesc = initSwapChainDesc();
+
+		// Création du device D3D11 + swap chain
 		D3D11CreateDeviceAndSwapChain(
-			searchForAdapters(), // Adapter
-			D3D_DRIVER_TYPE_UNKNOWN,// Driver Type
-			nullptr,// Software
-			0,	// Flags
-			nullptr, 0, // Feature Levels
+			searchForAdapters(),
+			D3D_DRIVER_TYPE_UNKNOWN,
+			nullptr,
+			0,
+			nullptr, 0,
 			D3D11_SDK_VERSION,
-			&swapChainDesc, // Utilise la variable locale, qui est une l-value
+			&swapChainDesc,
 			pSwapChain.GetAddressOf(),
 			pDevice.GetAddressOf(),
-			nullptr,// Feature Level
+			nullptr,
 			pContext.GetAddressOf()
 		);
+
+		// Récupération du back buffer
 		Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
-		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer); // Récupère le buffer de rendu arrière du swap chain
+		pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)&pBackBuffer);
 		if (pDevice != nullptr) {
-			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.GetAddressOf()); // Crée une vue de rendu à partir du buffer de rendu arrière
+			pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pTarget.GetAddressOf());
 		}
 
-		// Récup taille de la fenêtre
+		// Récupération taille de la fenêtre
 		RECT rect;
 		GetClientRect(myWindow, &rect);
 		UINT width = rect.right - rect.left;
 		UINT height = rect.bottom - rect.top;
 
-		// Description de la texture depth
+		// Création de la texture depth
 		D3D11_TEXTURE2D_DESC depthDesc = {};
 		depthDesc.Width = width;
 		depthDesc.Height = height;
@@ -56,12 +62,13 @@ namespace Engine
 		if (FAILED(hr)) { std::cout << "Depth texture creation failed\n"; return; }
 
 		hr = pDevice->CreateDepthStencilView(
-			depthTexture.Get(),      
-			nullptr,                 
-			mDepthStencilView.GetAddressOf() 
+			depthTexture.Get(),
+			nullptr,
+			mDepthStencilView.GetAddressOf()
 		);
 		if (FAILED(hr)) { std::cout << "DepthStencilView creation failed\n"; return; }
 
+		// Depth stencil state
 		D3D11_DEPTH_STENCIL_DESC dsDesc = {};
 		dsDesc.DepthEnable = TRUE;
 		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -71,8 +78,7 @@ namespace Engine
 		pDevice->CreateDepthStencilState(&dsDesc, depthState.GetAddressOf());
 		pContext->OMSetDepthStencilState(depthState.Get(), 0);
 
-
-		// === CHARGEMENT DES SHADERS (UNE SEULE FOIS) ===
+		// === CHARGEMENT DES SHADERS (une seule fois) ===
 		wrl::ComPtr<ID3DBlob> vsBlob;
 		wrl::ComPtr<ID3DBlob> psBlob;
 
@@ -84,7 +90,6 @@ namespace Engine
 			nullptr,
 			&mVertexShader);
 		if (FAILED(hr)) { std::cout << "CreateVertexShader failed\n"; return; }
-
 
 		hr = D3DReadFileToBlob(L"Shader/PixelShader.cso", psBlob.GetAddressOf());
 		if (FAILED(hr)) { std::cout << "Pixel shader load failed\n"; return; }
@@ -98,18 +103,22 @@ namespace Engine
 		// === INPUT LAYOUT (basé sur le VS) ===
 		const D3D11_INPUT_ELEMENT_DESC layout[] =
 		{
-				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position),D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal),D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv),D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, position),D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal),D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, uv),D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
-
+		// Constant buffer pour couleur/texture
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.ByteWidth = sizeof(ObjectColorBuffer);
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-		pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+		hr = pDevice->CreateBuffer(&bd, nullptr, mObjectColorBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			std::cout << "Failed to create ObjectColor constant buffer, hr=" << std::hex << hr << std::endl;
+			return;
+		}
 
 		hr = pDevice->CreateInputLayout(
 			layout,
@@ -119,8 +128,32 @@ namespace Engine
 			&mInputLayout);
 
 		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
+
+		D3D11_SAMPLER_DESC sampDesc = {};
+		sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.MaxAnisotropy = 16;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		hr = pDevice->CreateSamplerState(&sampDesc, mSampler.GetAddressOf());
+		if (FAILED(hr))
+		{
+			std::cout << "Failed to create sampler state\n";
+		}
+
+		D3D11_BUFFER_DESC mbDesc = {};
+		mbDesc.Usage = D3D11_USAGE_DEFAULT;
+		mbDesc.ByteWidth = sizeof(MatrixBuffer);
+		mbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		hr = pDevice->CreateBuffer(&mbDesc, nullptr, mMatrixBuffer.GetAddressOf());
 	}
 
+	// Sélection du meilleur adapter DXGI (VRAM max)
 	IDXGIAdapter1* D3D11::searchForAdapters()
 	{
 		wrl::ComPtr<IDXGIFactory1> pFactory = nullptr;
@@ -148,32 +181,33 @@ namespace Engine
 		return bestAdapter;
 	}
 
-
+	// Description par défaut du swap chain
 	DXGI_SWAP_CHAIN_DESC D3D11::initSwapChainDesc() {
 		DXGI_SWAP_CHAIN_DESC SwapChDesc = {};
-		SwapChDesc.BufferDesc.Width = 800; // Largeur du buffer
-		SwapChDesc.BufferDesc.Height = 600; // Hauteur du buffer
-		SwapChDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // Format du buffer
-		SwapChDesc.BufferDesc.RefreshRate.Numerator = 60; // Taux de rafraîchissement (numérateur)
-		SwapChDesc.BufferDesc.RefreshRate.Denominator = 1; // Taux de rafraîchissement (dénominateur)
-		SwapChDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; // Type de scaling
-		SwapChDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; // Ordre de balayage
-		SwapChDesc.SampleDesc.Count = 1; // Nombre d'échantillons pour l'anti-aliasing
-		SwapChDesc.SampleDesc.Quality = 0; // Qualité de l'anti-aliasing
-		SwapChDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // Usage du buffer
-		SwapChDesc.BufferCount = 1; // Nombre de buffers
-		SwapChDesc.OutputWindow = myWindow; // Fenêtre de sortie
-		SwapChDesc.Windowed = TRUE; // Mode fenêtré
-		SwapChDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; // Effet de swap
-		SwapChDesc.Flags = 0; // Flags supplémentaires
-		return SwapChDesc; // Retourne la description du swap chain
+		SwapChDesc.BufferDesc.Width = 0;
+		SwapChDesc.BufferDesc.Height = 0;
+		SwapChDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		SwapChDesc.BufferDesc.RefreshRate.Numerator = 60;
+		SwapChDesc.BufferDesc.RefreshRate.Denominator = 1;
+		SwapChDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		SwapChDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		SwapChDesc.SampleDesc.Count = 1;
+		SwapChDesc.SampleDesc.Quality = 0;
+		SwapChDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		SwapChDesc.BufferCount = 1;
+		SwapChDesc.OutputWindow = myWindow;
+		SwapChDesc.Windowed = TRUE;
+		SwapChDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		SwapChDesc.Flags = 0;
+		return SwapChDesc;
 	}
 
-
+	// Présentation du back buffer à l'écran
 	void D3D11::Present() {
-		pSwapChain->Present(1u, 0); // Présente le swap chain à l'écran, avec un intervalle de synchronisation de 1
+		pSwapChain->Present(1u, 0);
 	}
 
+	// Nettoyage back buffer + depth stencil
 	void D3D11::ClearBackBuffer(float r, float g, float b) noexcept {
 		float clearColor[] = { r, g, b, 1.0f };
 		if (!pTarget) return;
@@ -183,21 +217,49 @@ namespace Engine
 			pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
-	void D3D11::DrawShape(const MeshAsset& mesh)
+	void D3D11::SetViewProjection(const Maths::Mat4f& vp)
 	{
-		// Récupère le render target
+		MatrixBuffer mb{};
+
+		DirectX::XMMATRIX m = DirectX::XMMatrixTranspose(
+			DirectX::XMLoadFloat4x4((DirectX::XMFLOAT4X4*)&vp)
+		);
+
+		mb.view = DirectX::XMMatrixIdentity();
+		mb.projection = DirectX::XMMatrixIdentity();
+		mb.vp = m;
+
+		pContext->UpdateSubresource(
+			mMatrixBuffer.Get(),
+			0,
+			nullptr,
+			&mb,
+			0,
+			0
+		);
+
+		pContext->VSSetConstantBuffers(
+			0,
+			1,
+			mMatrixBuffer.GetAddressOf()
+		);
+	}
+
+	// Fonction de rendu d’un mesh avec material
+	void D3D11::DrawShape(const MeshAsset& mesh, const Material& material)
+	{
+		// Bind render target + depth stencil
 		wrl::ComPtr<ID3D11RenderTargetView> pTarget = GetRenderTargetView();
 		if (!pTarget || !mDepthStencilView) return;
 
-		// 1. Bind le render target + depth stencil
 		pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), mDepthStencilView.Get());
 
-		// 2. Clear la frame (couleur + depth)
-		float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f }; // couleur par défaut
+		// Clear frame
+		float clearColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 		pContext->ClearRenderTargetView(pTarget.Get(), clearColor);
 		pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-		// 3. Configure le viewport
+		// Configure viewport
 		RECT rect;
 		GetClientRect(myWindow, &rect);
 		D3D11_VIEWPORT viewport = {};
@@ -209,20 +271,30 @@ namespace Engine
 		viewport.TopLeftY = 0.0f;
 		pContext->RSSetViewports(1, &viewport);
 
-		// 4. Active les shaders
+		// Active shaders
 		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
 		pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-		// 5. Input layout
+
+		// Input layout
 		pContext->IASetInputLayout(mInputLayout.Get());
 
-		// 6. Bind le mesh
-		mesh.Bind(pContext.Get());
+		pContext->PSSetSamplers(0, 1, mSampler.GetAddressOf());
 
-		// 7. Constant buffer pour la couleur
+		// Bind mesh et material
+		mesh.Bind(pContext.Get());
+		material.Bind(pContext.Get());
+
+		if (!mObjectColorBuffer)
+		{
+			std::cout << "ObjectColor buffer is null, skipping draw\n";
+			return;
+		}
+
+		// Constant buffer couleur
 		ObjectColorBuffer buffer;
-		buffer.objColor = mesh.GetColor();
-		buffer.padding = 0.0f;
+		buffer.objColor = material.color;
+		buffer.useTexture = material.texture && material.texture->IsReady() ? 1 : 0;
 
 		pContext->UpdateSubresource(
 			mObjectColorBuffer.Get(),
@@ -233,13 +305,11 @@ namespace Engine
 			0
 		);
 
-		pContext->PSSetConstantBuffers(
-			0,
-			1,
-			mObjectColorBuffer.GetAddressOf()
-		);
+		pContext->PSSetConstantBuffers(0, 1, mObjectColorBuffer.GetAddressOf());
 
-		// 8. Draw le mesh
+		// Draw call
 		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
+
+
 }

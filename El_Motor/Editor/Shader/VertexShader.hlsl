@@ -1,3 +1,10 @@
+cbuffer MatrixBuffer : register(b0)
+{
+    matrix view;
+    matrix projection;
+    matrix vp;
+};
+
 struct VSIn
 {
     float3 position : POSITION;
@@ -15,10 +22,12 @@ struct VSOut
 VSOut main(VSIn vs)
 {
     VSOut output;
-    
-    // Fausse 3d
-    output.pos = float4(vs.position.x, vs.position.y, vs.position.z, 1.0f);
-    
+
+    float4 worldPos = float4(vs.position, 1.0f);
+
+    // transformation complète
+    output.pos = mul(worldPos, vp);
+
     output.normal = vs.normal;
     output.uv = vs.uv;
 

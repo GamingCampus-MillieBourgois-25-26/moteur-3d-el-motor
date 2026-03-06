@@ -20,12 +20,12 @@ Maths::Mat4<T>::Mat4(T u, T d, T t, T q, T c, T si, T se, T h, T n, T di, T on, 
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Identity()
 {
-	Mat4 matrix;
+	Mat4<T> matrix;
 	matrix.tabMat = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
+		static_cast<T>(1), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(1), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(1), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)
 	};
 	return matrix;
 }
@@ -35,10 +35,10 @@ Maths::Mat4<T> Maths::Mat4<T>::Zero()
 {
 	Mat4<T> matrix;
 	matrix.tabMat = {
-		0,0,0,0,
-		0,0,0,0,
-		0,0,0,0,
-		0,0,0,0
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+		static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0)
 	};
 	return matrix;
 }
@@ -52,49 +52,48 @@ Maths::Mat4<T> Maths::Mat4<T>::Rotation4x4(T angleX, T angleY, T angleZ)
 	T radY = angleY * deg2rad;
 	T radZ = angleZ * deg2rad;
 
-	Mat4 rotX, rotY, rotZ;
+	Mat4 rotX = Mat4::Identity();
+	Mat4 rotY = Mat4::Identity();
+	Mat4 rotZ = Mat4::Identity();
 
-	// on va commencer par l'axe X 
-	rotX.at(1, 1) = cos(radX);
-	rotX.at(1, 2) = -sin(radX);
-	rotX.at(2, 1) = sin(radX);
-	rotX.at(2, 2) = cos(radX);
+	rotX.at(1, 1) = std::cos(radX);
+	rotX.at(1, 2) = -std::sin(radX);
+	rotX.at(2, 1) = std::sin(radX);
+	rotX.at(2, 2) = std::cos(radX);
 
-	rotY.at(0, 0) = cos(radY);
-	rotY.at(0, 2) = -sin(radY);
-	rotY.at(2, 0) = sin(radY);
-	rotY.at(2, 2) = cos(radY);
+	rotY.at(0, 0) = std::cos(radY);
+	rotY.at(0, 2) = -std::sin(radY);
+	rotY.at(2, 0) = std::sin(radY);
+	rotY.at(2, 2) = std::cos(radY);
 
-	rotZ.at(0, 0) = cos(radZ);
-	rotZ.at(0, 1) = -sin(radZ);
-	rotZ.at(1, 0) = sin(radZ);
-	rotZ.at(1, 1) = cos(radZ);
+	rotZ.at(0, 0) = std::cos(radZ);
+	rotZ.at(0, 1) = -std::sin(radZ);
+	rotZ.at(1, 0) = std::sin(radZ);
+	rotZ.at(1, 1) = std::cos(radZ);
 
-	// normalement l'opérator est censé marcher inshallah
 	return rotX * rotY * rotZ;
 }
 
 
 template<typename T>
-std::array<T, 16> Maths::Mat4<T>::Transpose4x4(Maths::Mat4<T> mat)
-{  
+std::array<T, 16> Maths::Mat4<T>::Transpose4x4(const Mat4& mat)
+{
 	std::array<T, 16> transpo;
 
-	for (int i = 0; i < 4; i++){
-		for (int j = 0; j < 4; j++){
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
 			transpo[i * 4 + j] = mat.tabMat[j * 4 + i];
 		}
 	}
-	this->tabMat = transpo;
-	return this->tabMat;
+	return transpo;
 }
 
 template<typename T>
-std::array<T, 16> Maths::Mat4<T>::Inverse4x4()
+std::array<T, 16> Maths::Mat4<T>::Inverse4x4() const
 {
 	const auto& m = this->tabMat;
 	T det = this->Det4x4();
-	if (std::abs(det) < 1e-6) { // verification pour savoir si elle est inversible
+	if (std::abs(det) < static_cast<T>(1e-6)) { // verification pour savoir si elle est inversible
 		return std::array<T, 16>{};
 	}
 
@@ -131,7 +130,7 @@ std::array<T, 16> Maths::Mat4<T>::Inverse4x4()
 }
 
 template<typename T>
-Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4()
+Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4() const
 {
 	/*On prend les 3 colonnes de la matrice.
 	  On calcule leur longueur.
@@ -154,17 +153,17 @@ Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4()
 
 	// Colonne 0 → axe X transformé → sa longueur donne l’échelle sur X
 	// si on regarde sans la fonction at et length, on a :
-	scale.x(std::sqrt(
+	scale.SetX(std::sqrt(
 		(tabMat[0 * 4 + 0]) * (tabMat[0 * 4 + 0]) + // at(0,0)
 		(tabMat[1 * 4 + 0]) * (tabMat[1 * 4 + 0]) + // at(1,0)
 		(tabMat[2 * 4 + 0]) * (tabMat[2 * 4 + 0]))	// at(2,0)
 	);
 
 	// Colonne 1 → axe Y transformé → sa longueur donne l’échelle sur Y
-	scale.y(length(at(0, 1), at(1, 1), at(2, 1)));
+	scale.SetY(length(at(0, 1), at(1, 1), at(2, 1)));
 
 	// Colonne 2 → axe Z transformé → sa longueur donne l’échelle sur Z
-	scale.z(length(at(0, 2), at(1, 2), at(2, 2)));
+	scale.SetZ(length(at(0, 2), at(1, 2), at(2, 2)));
 
 	// donc avec les at et lenght c'est vachement plus simple et rapido :)
 
@@ -176,17 +175,17 @@ Maths::Vec3<T> Maths::Mat4<T>::LossyScale4x4()
 
 	// si le determinant est négatif alors on inverse le signe d'un axe
 	// c'est a dire que ca va faire un genre d'effet miroir chelou
-	if (det < 0)
-		scale.x(-scale.x());
+	if (det < static_cast<T>(0))
+		scale.SetX(-scale.x());
 
 	// enfin on retourne le vecteur de ses morts et paf ca fais des chocapics
 	return scale;
 }
 
 template<typename T>
-bool Maths::Mat4<T>::isIdentity4x4()
+bool Maths::Mat4<T>::isIdentity4x4() const
 {
-	const T eps = 1e-5;
+	const T eps = static_cast<T>(1e-6);
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == j) {
@@ -229,76 +228,68 @@ T& Maths::Mat4<T>::at(int r, int c) {
 
 //////// PUBLIC METHODS ////////
 template<typename T>
-Maths::Vec3<T> Maths::Mat4<T>::MultiplyPoint3x4_4x4(const Maths::Vec3<T>& vect)
+Maths::Vec3<T> Maths::Mat4<T>::MultiplyPoint3x4_4x4(const Vec3<T>& vector) const
 {
-	T x = vect.x();
-	T y = vect.y();
-	T z = vect.z();
+	T x = vector.x();
+	T y = vector.y();
+	T z = vector.z();
 
 	T resultX = at(0, 0) * x + at(0, 1) * y + at(0, 2) * z + at(0, 3);
 	T resultY = at(1, 0) * x + at(1, 1) * y + at(1, 2) * z + at(1, 3);
 	T resultZ = at(2, 0) * x + at(2, 1) * y + at(2, 2) * z + at(2, 3);
 
 	return Vec3<T>(resultX, resultY, resultZ);
-
 }
 
 template<typename T>
-Maths::Vec3<T> Maths::Mat4<T>::MultiplyVector4x4(Maths::Vec3<T>& vect)
+Maths::Vec3<T> Maths::Mat4<T>::MultiplyVector4x4(const Maths::Vec3<T>& vector) const
 {
-	T x = vect.x();
-	T y = vect.y();
-	T z = vect.z();
+	T x = vector.x();
+	T y = vector.y();
+	T z = vector.z();
 
-	// ici on utilise la meme méthode qu'avant : index = row ∗ 4  +col
+	T resultX = at(0, 0) * x + at(0, 1) * y + at(0, 2) * z;
+	T resultY = at(1, 0) * x + at(1, 1) * y + at(1, 2) * z;
+	T resultZ = at(2, 0) * x + at(2, 1) * y + at(2, 2) * z;
 
-	T resultX = at(0, 0) * x + at(0, 1) * y + at(0, 2) * z + at(0, 3);
-	T resultY = at(1, 0) * x + at(1, 1) * y + at(1, 2) * z + at(1, 3);
-	T resultZ = at(2, 0) * x + at(2, 1) * y + at(2, 2) * z + at(2, 3);
-	T resultW = at(3, 0) * x + at(3, 1) * y + at(3, 2) * z + at(3, 3);
-
-	// normalisation si besoin
-	if (resultW != 0 && resultW != 1) {
-		resultX /= resultW;
-		resultY /= resultW;
-		resultZ /= resultW;
-	}
 	return Maths::Vec3<T>(resultX, resultY, resultZ);
 }
 
 template<typename T>
-Maths::Vec3<T> Maths::Mat4<T>::MultiplyPoint4x4(Maths::Vec3<T>& vect)
+Maths::Vec3<T> Maths::Mat4<T>::MultiplyPoint4x4(const Maths::Vec3<T>& vector) const
 {
 	const auto& m = this->tabMat;
 
-	T x = vect.x();
-	T y = vect.y();
-	T z = vect.z();
+	T x = vector.x();
+	T y = vector.y();
+	T z = vector.z();
 
-	T resultX = m[0 * 4 + 0] * x + m[0 * 4 + 1] * y + m[0 * 4 + 2] * z + m[0 * 4 + 3];
-	T resultY = m[1 * 4 + 0] * x + m[1 * 4 + 1] * y + m[1 * 4 + 2] * z + m[1 * 4 + 3];
-	T resultZ = m[2 * 4 + 0] * x + m[2 * 4 + 1] * y + m[2 * 4 + 2] * z + m[2 * 4 + 3];
-	T resultW = 1;
+	T resultX = m[0] * x + m[1] * y + m[2] * z + m[3];
+	T resultY = m[4] * x + m[5] * y + m[6] * z + m[7];
+	T resultZ = m[8] * x + m[9] * y + m[10] * z + m[11];
+
+	T resultW = m[12] * x + m[13] * y + m[14] * z + m[15];
 
 	if (resultW != 0 && resultW != 1) {
 		resultX /= resultW;
 		resultY /= resultW;
 		resultZ /= resultW;
 	}
+
 	return Maths::Vec3<T>(resultX, resultY, resultZ);
 }
 
 template<typename T>
 Maths::Vec3<T> Maths::Mat4<T>::GetPosition4x4() const
 {
-	return Maths::Vec3<T>(tabMat[12], tabMat[13], tabMat[14]);
+	return Maths::Vec3<T>(at(0, 3), at(1, 3), at(2, 3));
 }
 
 
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::SetTRS(const Maths::Vec3<T>& translation, const Maths::Vec3<T>& rotationEulerDeg, const Maths::Vec3<T>& scale) {
+Maths::Mat4<T> Maths::Mat4<T>::SetTRS(const Vec3<T>& translation, const Vec3<T>& rotationEulerDeg, const Vec3<T>& scale) {
 	T rx = rotationEulerDeg.x() * static_cast<T>(deg2rad);
-	T ry = rotationEulerDeg.yy() * static_cast<T>(deg2rad);
+	T ry = rotationEulerDeg.y() * static_cast<T>(deg2rad);
 	T rz = rotationEulerDeg.z() * static_cast<T>(deg2rad);
 
 	Mat4<T> result = Mat4<T>::Identity();
@@ -329,22 +320,26 @@ Maths::Mat4<T> Maths::Mat4<T>::SetTRS(const Maths::Vec3<T>& translation, const M
 }
 
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::MultiplyMat4x4(Mat4<T>& A, Mat4<T>& B){
-	Mat4 result{}; // initialise tous les éléments à zéro
+Maths::Mat4<T> Maths::Mat4<T>::MultiplyMat4x4(const Mat4& A, const Mat4& B) const
+{
+	Mat4 result = Mat4::Zero();
 
 	for (int row = 0; row < 4; ++row) {
 		for (int col = 0; col < 4; ++col) {
+			T sum = 0;
 			for (int i = 0; i < 4; ++i) {
-				result.tabMat[row, col] += A.tabMat[row, i] * B.tabMat[i, col];
+				sum += A.tabMat[row * 4 + i] * B.tabMat[i * 4 + col];
 			}
+			result.tabMat[row * 4 + col] = sum;
 		}
 	}
+
 	return result;
 }
 
 
 template<typename T>
-void Maths::Mat4<T>::SetColumn4x4(T columnNumber, T number1, T number2, T number3, T number4){
+void Maths::Mat4<T>::SetColumn4x4(T columnNumber, T number1, T number2, T number3, T number4) {
 	int col = static_cast<int>(columnNumber);
 	if (col < 0 || col > 3) { return; }
 
@@ -357,7 +352,7 @@ void Maths::Mat4<T>::SetColumn4x4(T columnNumber, T number1, T number2, T number
 template<typename T>
 void Maths::Mat4<T>::SetRow4x4(T rowNumber, T number1, T number2, T number3, T number4) {
 	int row = static_cast<int>(rowNumber);
-	 if (row < 0 || row > 3) { return; }
+	if (row < 0 || row > 3) { return; }
 
 	this->tabMat[row * 4 + 0] = number1;
 	this->tabMat[row * 4 + 1] = number2;
@@ -368,7 +363,7 @@ void Maths::Mat4<T>::SetRow4x4(T rowNumber, T number1, T number2, T number3, T n
 template<typename T>
 void Maths::Mat4<T>::GetColumn4x4(T column)
 {
-	if (column < 0 || column > 3) {
+	if (column < static_cast<T>(0) || column > static_cast<T>(3)) {
 		std::cout << "Un mauvais numero a ete entre, il faut un numero entre 0 et 3.\n";
 		return;
 	}
@@ -383,7 +378,7 @@ void Maths::Mat4<T>::GetColumn4x4(T column)
 template<typename T>
 void Maths::Mat4<T>::GetRow4x4(T row)
 {
-	if (row < 0 || row > 3) {
+	if (row < static_cast<T>(0) || row > static_cast<T>(3)) {
 		std::cout << "Un mauvais numero a ete entre, il faut un numero entre 0 et 3.\n";
 		return;
 	}
@@ -398,8 +393,8 @@ void Maths::Mat4<T>::GetRow4x4(T row)
 }
 
 template<typename T>
-bool Maths::Mat4<T>::ValidTRS() {
-	const T EPS = 1e-6;
+bool Maths::Mat4<T>::ValidTRS() const {
+	const T EPS = static_cast<T>(1e-6);
 
 	T x0 = at(0, 0), x1 = at(1, 0), x2 = at(2, 0);
 	T y0 = at(0, 1), y1 = at(1, 1), y2 = at(2, 1);
@@ -426,7 +421,7 @@ bool Maths::Mat4<T>::ValidTRS() {
 
 
 template<typename T>
-std::string Maths::Mat4<T>::toString4x4()
+std::string Maths::Mat4<T>::toString4x4() const
 {
 	// en std
 	for (int i = 0; i < 4; ++i) {
@@ -454,7 +449,7 @@ std::string Maths::Mat4<T>::toString4x4()
 
 /////// STATIC METHODS ////////
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::TRS( const Maths::Vec3<T>& position, const Maths::Vec3<T>& rotationEuler, const Maths::Vec3<T>& scale) {
+Maths::Mat4<T> Maths::Mat4<T>::TRS(const Maths::Vec3<T>& position, const Maths::Vec3<T>& rotationEuler, const Maths::Vec3<T>& scale) {
 	Mat4<T> S = Maths::Mat4<T>::ScaleVec4x4(scale);
 
 	T cx = std::cos(rotationEuler.x()), sx = std::sin(rotationEuler.x());
@@ -475,43 +470,37 @@ Maths::Mat4<T> Maths::Mat4<T>::TRS( const Maths::Vec3<T>& position, const Maths:
 }
 
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3<T>& to, Maths::Vec3<T>& up)
+Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(const Maths::Vec3<T>& from,
+	const Maths::Vec3<T>& to,
+	const Maths::Vec3<T>& up)
 {
-	// forward = direction vers la cible
-	Maths::Vec3<T> forward = (to - from);
-	forward.Normalized();
+	Maths::Vec3<T> forward = (to - from).Normalized();
 
-	// right = perpendiculaire à forward et up
-	Maths::Vec3<T> right = up.Cross(up, forward).Normalized();
+	// cross statique (pas méthode d’instance)
+	Maths::Vec3<T> right = Maths::Vec3<T>::Cross(forward, up).Normalized();
 
-	// upCorrected = vecteur up corrigé (orthogonal)
-	Maths::Vec3<T> upCorrected = forward.Cross(forward, right);
+	Maths::Vec3<T> upCorrected = Maths::Vec3<T>::Cross(right, forward).Normalized();
 
-	// --- Création de la matrice LookAt ---
-	Mat4<T> result;
+	Mat4<T> result = Mat4<T>::Identity();
 
-	// colonne 0 → axe droit (X)
 	result.tabMat[0] = right.x();
 	result.tabMat[1] = right.y();
 	result.tabMat[2] = right.z();
 	result.tabMat[3] = 0;
 
-	// colonne 1 → axe up (Y)
 	result.tabMat[4] = upCorrected.x();
 	result.tabMat[5] = upCorrected.y();
 	result.tabMat[6] = upCorrected.z();
 	result.tabMat[7] = 0;
 
-	// colonne 2 → -forward (Z)
 	result.tabMat[8] = -forward.x();
 	result.tabMat[9] = -forward.y();
 	result.tabMat[10] = -forward.z();
 	result.tabMat[11] = 0;
 
-	// colonne 3 → translation
-	result.tabMat[12] = -right.Dot(from);
-	result.tabMat[13] = -upCorrected.Dot(from);
-	result.tabMat[14] = forward.Dot(from); // note le signe selon convention
+	result.tabMat[12] = -Maths::Vec3<T>::Dot(right, from);
+	result.tabMat[13] = -Maths::Vec3<T>::Dot(upCorrected, from);
+	result.tabMat[14] = -Maths::Vec3<T>::Dot(forward, from);
 	result.tabMat[15] = 1;
 
 	return result;
@@ -520,46 +509,45 @@ Maths::Mat4<T> Maths::Mat4<T>::LookAt4x4(Maths::Vec3<T>& from, const Maths::Vec3
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Ortho4x4(T left, T right, T bottom, T top, T zNear, T zFar)
 {
-	Mat4 matrix;
+	Mat4<T> matrix;
 
-	matrix.tabMat[0] = 2 / (right - left);
-	matrix.tabMat[1] = 0;
-	matrix.tabMat[2] = 0;
-	matrix.tabMat[3] = 0;
-	matrix.tabMat[4] = 0;
-	matrix.tabMat[5] = 2 / (top - bottom);
-	matrix.tabMat[6] = 0;
-	matrix.tabMat[7] = 0;
-	matrix.tabMat[8] = 0;
-	matrix.tabMat[9] = 0;
-	matrix.tabMat[10] = -2 / (zFar - zNear);
-	matrix.tabMat[11] = 0;
+	matrix.tabMat[0] = static_cast<T>(2) / (right - left);
+	matrix.tabMat[1] = static_cast<T>(0);
+	matrix.tabMat[2] = static_cast<T>(0);
+	matrix.tabMat[3] = static_cast<T>(0);
+	matrix.tabMat[4] = static_cast<T>(0);
+	matrix.tabMat[5] = static_cast<T>(2) / (top - bottom);
+	matrix.tabMat[6] = static_cast<T>(0);
+	matrix.tabMat[7] = static_cast<T>(0);
+	matrix.tabMat[8] = static_cast<T>(0);
+	matrix.tabMat[9] = static_cast<T>(0);
+	matrix.tabMat[10] = static_cast<T>(-2) / (zFar - zNear);
+	matrix.tabMat[11] = static_cast<T>(0);
 	matrix.tabMat[12] = -(right + left) / (right - left);
 	matrix.tabMat[13] = -(top + bottom) / (top - bottom);
 	matrix.tabMat[14] = -(zFar + zNear) / (zFar - zNear);
-	matrix.tabMat[15] = -1;
-
+	matrix.tabMat[15] = static_cast<T>(1);
 	return matrix;
 }
 
 template<typename T>
-Maths::Mat4<T> Maths::Mat4<T>::Perspective4x4(T fovY, T aspect, T near, T far) {
+Maths::Mat4<T> Maths::Mat4<T>::Perspective4x4(T fovY, T aspect, T nearP, T farP) {
 
 	Mat4<T> result;
 
 	// Calcul du facteur f = 1 / tan(fov/2)
-	T f = 1 / std::tan(fovY * 0.5);
+	T f = static_cast<T>(1) / std::tan(fovY * static_cast<T>(0.5));
 
 	// Mise à zéro de la matrice
-	for (int i = 0; i < 16; ++i) result.tabMat[i] = 0;
+	for (int i = 0; i < 16; ++i) result.tabMat[i] = static_cast<T>(0);
 
 	// Remplissage des éléments
 	result.tabMat[0] = f / aspect;  // m00
 	result.tabMat[5] = f;           // m11
-	result.tabMat[10] = (far + near) / (near - far);  // m22
-	result.tabMat[11] = -1;          // m23
-	result.tabMat[14] = (2 * far * near) / (near - far); // m32
-	result.tabMat[15] = 0;           // m33
+	result.tabMat[10] = (farP + nearP) / (nearP - farP);  // m22
+	result.tabMat[11] = static_cast<T>(-1);          // m23
+	result.tabMat[14] = static_cast<T>(2) * (farP * nearP) / (nearP - farP); // m32
+	result.tabMat[15] = static_cast<T>(0);           // m33
 
 	return result;
 }
@@ -628,11 +616,11 @@ Maths::Mat4<T> Maths::Mat4<T>::ScaleVec4x4(const Maths::Vec3<T>& s)
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::Translate4x4(T tx, T ty, T tz)
 {
-	Mat4 result = Identity();
+	Mat4<T> result = Identity();
 	result.at(0, 3) = tx;
 	result.at(1, 3) = ty;
 	result.at(2, 3) = tz;
-	result.at(3, 3) = 1;
+	result.at(3, 3) = static_cast<T>(1);
 	return result;
 }
 
@@ -650,14 +638,15 @@ Maths::Mat4<T> Maths::Mat4<T>::Scale4x4(T x, T y, T z)
 //////// OPERATOR ////////
 template<typename T>
 Maths::Mat4<T> Maths::Mat4<T>::operator*(const Mat4<T>& other) const {
-	Mat4<T> result;
+	Mat4<T> result = Mat4<T>::Zero();
 
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 4; ++j) {
-			result.tabMat[i * 4 + j] = static_cast<T>(0);
-			for (int k = 0; k < 4; ++k) {
-				result.tabMat[i * 4 + j] += tabMat[i * 4 + k] * other.tabMat[k * 4 + j];
+	for (int row = 0; row < 4; ++row) {
+		for (int col = 0; col < 4; ++col) {
+			T sum = 0;
+			for (int i = 0; i < 4; ++i) {
+				sum += tabMat[row * 4 + i] * other.tabMat[i * 4 + col];
 			}
+			result.tabMat[row * 4 + col] = sum;
 		}
 	}
 	return result;

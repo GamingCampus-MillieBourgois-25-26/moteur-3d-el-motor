@@ -1,55 +1,54 @@
 #pragma once
 #include <iostream>
+#include <unordered_map>
 #include <array>
 #include "InputState.hpp"
-#include "KeyCode.hpp"
+#include "Scancode.hpp"
 #include "MouseButton.hpp"
-#include "Vec2.hpp"
-namespace Engine
+#include "Maths/Headers/MVec2.hpp"
 
-{
-class InputManager {
+namespace Engine{
+    class InputManager {
+    public:
 
-public:
+        InputManager();
 
-    InputManager();
-
-    ~InputManager();
+        ~InputManager();
 
 
-    //Global
-    void init();
-    void update();
+        //Global
+        void init();
+        void update();
 
-    //Clavier
-    void updateKey(KeyCode key, bool isDown);
-    bool isKeyPressed(KeyCode key) const;
-    bool isKeyHeld(KeyCode key) const;
-    bool isKeyReleased(KeyCode key) const;
+        //Clavier - Utilise les scancodes
+        void updateKey(Scancode scancode, bool isDown);
+        bool isKeyPressed(Scancode scancode) const;
+        bool isKeyHeld(Scancode scancode) const;
+        bool isKeyReleased(Scancode scancode) const;
 
-    //Souris
-    void updateMouseButton(MouseButton button, bool isDown);
-    bool isMousePressed(MouseButton button) const;
-    bool isMouseHeld(MouseButton button) const;
-    bool isMouseReleased(MouseButton button) const;
+        //Souris
+        void updateMouseButton(MouseButton button, bool isDown);
+        bool isMousePressed(MouseButton button) const;
+        bool isMouseHeld(MouseButton button) const;
+        bool isMouseReleased(MouseButton button) const;
 
-    void setMousePosition(Vec2 pos);
-    Vec2 getMousePosition() const;
-    Vec2 getMouseDelta() const;
-    Vec2 getPreviousMousePosition() const;
+        void setMousePosition(Maths::Vec2f pos);
+        Maths::Vec2f getMousePosition() const;
+        Maths::Vec2f getMouseDelta() const;
+        Maths::Vec2f getPreviousMousePosition() const;
 
 
-private:
+    private:
 
-    //clavier
-    std::array<InputState, (size_t)KeyCode::COUNT> keyStates;
-    bool initialized = false;
+        // Clavier - Utilise une map pour supporter tous les scancodes
+        std::unordered_map<int, InputState> keyStates;
+        bool initialized = false;
 
-    //Souris
-    std::array<InputState, (size_t)MouseButton::COUNT> mouseStates;
+        //Souris
+        std::array<InputState, (size_t)MouseButton::COUNT> mouseStates;
 
-    Vec2 mousePosition;
-    Vec2 previousMousePosition;
-    Vec2 mouseDelta;
-};
+        Maths::Vec2f mousePosition;
+        Maths::Vec2f previousMousePosition;
+        Maths::Vec2f mouseDelta;
+    };
 }

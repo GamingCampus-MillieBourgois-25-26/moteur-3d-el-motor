@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 #include <memory>
-
 #include "IWindow.hpp"
+
 
 namespace Engine
 {
@@ -22,7 +22,7 @@ namespace Engine
 		void windowPollEvents() override { glfwPollEvents(); } // Recupere les evenements de la fenetre via GLFW
 
 		bool shouldClose() const { return glfwWindowShouldClose(window.get()); }
-
+		void CloseWindow() { glfwSetWindowShouldClose(window.get(), true); }
 		GLFWwindow* getMyWindow() const { return window.get(); } // recupere le pointeur brut de la fenetre pour l'utiliser plus tard
 
 	};

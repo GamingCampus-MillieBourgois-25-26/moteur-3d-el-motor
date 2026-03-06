@@ -7,7 +7,6 @@
 
 
 
-
 Editor::ProjectManager& Editor::ProjectManager::Get()
 {
     static ProjectManager instance;
@@ -23,7 +22,7 @@ Editor::ProjectManager::~ProjectManager() = default;
 
 void Editor::ProjectManager::createProject(const std::string& name, std::shared_ptr<Engine::Scene>& scene) {
 
-    std::filesystem::path path = "Projects/" + name;
+    std::filesystem::path path = "../../../../Game/Projects/" + name;
     std::filesystem::create_directories(path);
     std::filesystem::create_directories(path / "Assets");
     std::filesystem::create_directories(path / "Scenes");
@@ -67,7 +66,7 @@ void Editor::ProjectManager::loadProject(const std::filesystem::path& path, std:
     nlohmann::json config;
     configFile >> config;
     std::cout << "Loaded project: " << config["name"] << std::endl;
-
+	SetLoadedProjectName(config["name"]);
     // Load the main scene only (single scene)
     std::filesystem::path mainScenePath = path / "Scenes" / "MainScene.json";
     loadScene(mainScenePath, scene);
@@ -103,19 +102,19 @@ void Editor::ProjectManager::loadScene(const std::filesystem::path& scenePath, s
                 Engine::Transform* t = go->GetTransform();
 
                 auto pos = compJson["position"];
-                t->position.x = pos[0];
-                t->position.y = pos[1];
-                t->position.z = pos[2];
+                t->position.m_x = pos[0];
+                t->position.m_y = pos[1];
+                t->position.m_z = pos[2];
 
                 auto rot = compJson["rotation"];
-                t->rotation.x = rot[0];
-                t->rotation.y = rot[1];
-                t->rotation.z = rot[2];
+                t->rotation.m_x = rot[0];
+                t->rotation.m_y = rot[1];
+                t->rotation.m_z = rot[2];
 
                 auto scale = compJson["scale"];
-                t->scale.x = scale[0];
-                t->scale.y = scale[1];
-                t->scale.z = scale[2];
+                t->scale.m_x = scale[0];
+                t->scale.m_y = scale[1];
+                t->scale.m_z = scale[2];
             }
             else if (type == "MeshRenderer")
             {
@@ -168,9 +167,9 @@ void Editor::ProjectManager::saveScene(const Engine::Scene& scene, const std::fi
 
             if (auto* t = dynamic_cast<Engine::Transform*>(comp))
             {
-                compJson["position"] = { t->position.x, t->position.y, t->position.z };
-                compJson["rotation"] = { t->rotation.x, t->rotation.y, t->rotation.z };
-                compJson["scale"] = { t->scale.x, t->scale.y, t->scale.z };
+                compJson["position"] = { t->position.m_x, t->position.m_y, t->position.m_z };
+                compJson["rotation"] = { t->rotation.m_x, t->rotation.m_y, t->rotation.m_z };
+                compJson["scale"] = { t->scale.m_x, t->scale.m_y, t->scale.m_z };
             }
 
             entityJson["components"].push_back(compJson);
@@ -181,4 +180,21 @@ void Editor::ProjectManager::saveScene(const Engine::Scene& scene, const std::fi
 
     std::ofstream file(scenePath);
     file << sceneJson.dump(4);
+}
+
+
+
+void Editor::ProjectManager::SetLastProject(const std::string& name)
+{
+    std::filesystem::path root = "../../../../Editor";
+    std::ofstream file(root / "LastProject.txt");
+    file << name;
+    file.close();
+}
+void Editor::ProjectManager::clearLastProject()
+{
+    std::filesystem::path root = "../../../../Editor";
+    std::ofstream file(root / "LastProject.txt");
+    file.clear();
+    file.close();
 }

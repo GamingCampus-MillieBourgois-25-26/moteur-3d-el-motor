@@ -6,6 +6,7 @@
 #include "Logger/Logger.hpp"
 #include "Application/App.hpp"
 #include "Scene/Scene.hpp"
+#include "Camera/EditorCamera.hpp"
 
 namespace Engine
 {
@@ -18,6 +19,7 @@ namespace Engine
 		LoggerManager loggerManager;
 		AssetManager assetManager;
 		std::shared_ptr<Scene> defaultScene;
+		EditorCamera camera;
         //.... assetManager;
 
         bool running = false;
@@ -27,7 +29,7 @@ namespace Engine
 
 		CoreEngine() = default;
 
-		void init();         // initialisation du moteur
+		void init(Engine::Application& app);         // initialisation du moteur
         void run();         // boucle principale
 		void shutdown();   // shutdown du moteur
 		bool isRunning() const { return running; } // vérifie si le moteur est en cours d'exécution
@@ -41,6 +43,7 @@ namespace Engine
 		Application& getApplication() { return application; }*/
 		AssetManager& getAssetManager() { return assetManager; }
 		std::shared_ptr<Scene>& getScene() { return defaultScene; }
+		EditorCamera& getCamera() { return camera; }
 		float getDeltaTime() const { return dt; }
 
 

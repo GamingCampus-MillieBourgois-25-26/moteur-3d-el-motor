@@ -20,7 +20,7 @@ protected:
     float farPlane;
     float fov;
 
-    float moveSpeed = 1.f;
+    float moveSpeed = 0.5f;
     float sensitivity = 0.01f;
 
     bool firstMousePos = true;
@@ -44,13 +44,14 @@ protected:
 
     //////// GETTERS //////////
 
-    Maths::Mat4f Getprojection() const;
-    Maths::Mat4f Getview() const;
-    Maths::Mat4f GetVP() const;
-
 public:
     Camera();
 
     virtual void Update(Engine::InputManager& input) = 0;
     float ToRadians(float degree);
+
+    Maths::Mat4f Getprojection() const;
+    Maths::Mat4f Getview() const;
+    Maths::Mat4f GetVP() const;
+
 };

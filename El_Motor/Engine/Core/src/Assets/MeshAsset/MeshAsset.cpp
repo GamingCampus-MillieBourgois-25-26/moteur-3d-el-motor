@@ -4,16 +4,111 @@
 #include <sstream>
 #include <stdexcept>
 #include <cstdio>
-
-
-//MeshAsset::MeshAsset(const std::string& path,const DirectX::XMFLOAT3& color): mColor(color)
-//{
-//    this->path = path;
-//}
-
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 void MeshAsset::Load()
 {
+    // Reset des données CPU du mesh
+    vertices.clear();
+    indices.clear();
+
+    // Détection de l'extension du fichier
+    std::string extension;
+    size_t dot = path.find_last_of('.');
+    if (dot != std::string::npos)
+        extension = path.substr(dot + 1);
+
+    // ============================================================
+    // FBX / GLTF / DAE / OBJ via Assimp
+    // ============================================================
+
+    if (extension == "fbx" || extension == "FBX" ||
+        extension == "gltf" || extension == "GLTF" ||
+        extension == "dae" || extension == "DAE")
+    {
+        Assimp::Importer importer;
+
+        // Chargement du mesh via Assimp avec quelques post-process
+        const aiScene* scene = importer.ReadFile(
+            path,
+            aiProcess_Triangulate |
+            aiProcess_FlipUVs |
+            aiProcess_GenNormals |
+            aiProcess_JoinIdenticalVertices
+        );
+
+        if (!scene || !scene->HasMeshes())
+            throw std::runtime_error("Assimp failed to load mesh: " + path);
+
+        aiMesh* mesh = scene->mMeshes[0];
+
+        // Extraction des vertices
+        for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+        {
+            Vertex v{};
+
+            v.position =
+            {
+                mesh->mVertices[i].x,
+                mesh->mVertices[i].y,
+                mesh->mVertices[i].z
+            };
+
+            // Normales si disponibles
+            if (mesh->HasNormals())
+            {
+                v.normal =
+                {
+                    mesh->mNormals[i].x,
+                    mesh->mNormals[i].y,
+                    mesh->mNormals[i].z
+                };
+            }
+            else
+            {
+                v.normal = Maths::Vec3f(0.0f, 1.0f, 0.0f);
+            }
+
+            // UV si disponibles
+            if (mesh->HasTextureCoords(0))
+            {
+                v.uv =
+                {
+                    mesh->mTextureCoords[0][i].x,
+                    mesh->mTextureCoords[0][i].y
+                };
+            }
+            else
+            {
+                v.uv = Maths::Vec2f(0.0f, 0.0f);
+            }
+
+            vertices.push_back(v);
+        }
+
+        // Extraction des indices
+        for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+        {
+            const aiFace& face = mesh->mFaces[i];
+
+            for (unsigned int j = 0; j < face.mNumIndices; j++)
+            {
+                indices.push_back(face.mIndices[j]);
+            }
+        }
+
+        if (vertices.empty() || indices.empty())
+            throw std::runtime_error("Assimp mesh empty: " + path);
+
+        return;
+    }
+
+    // ============================================================
+    // Loader OBJ simple (fallback)
+    // ============================================================
+
     std::ifstream file(path);
 
     if (!file.is_open())
@@ -22,12 +117,13 @@ void MeshAsset::Load()
     vertices.clear();
     indices.clear();
 
-    std::vector<DirectX::XMFLOAT3> positions;
-    std::vector<DirectX::XMFLOAT3> normals;
-    std::vector<DirectX::XMFLOAT2> uvs;
+    std::vector<Maths::Vec3f> positions;
+    std::vector<Maths::Vec3f> normals;
+    std::vector<Maths::Vec2f> uvs;
 
     std::string line;
 
+    // Parsing ligne par ligne du fichier OBJ
     while (std::getline(file, line))
     {
         if (line.empty())
@@ -37,32 +133,25 @@ void MeshAsset::Load()
         std::string prefix;
         ss >> prefix;
 
-        // Positions
-        if (prefix == "v")
+        if (prefix == "v") // position
         {
-            DirectX::XMFLOAT3 pos{};
-            ss >> pos.x >> pos.y >> pos.z;
+            Maths::Vec3f pos{};
+            ss >> pos.m_x >> pos.m_y >> pos.m_z;
             positions.push_back(pos);
         }
-
-        // Normales
-        else if (prefix == "vn")
+        else if (prefix == "vn") // normal
         {
-            DirectX::XMFLOAT3 normal{};
-            ss >> normal.x >> normal.y >> normal.z;
+            Maths::Vec3f normal{};
+            ss >> normal.m_x >> normal.m_y >> normal.m_z;
             normals.push_back(normal);
         }
-
-        // UV
-        else if (prefix == "vt")
+        else if (prefix == "vt") // uv
         {
-            DirectX::XMFLOAT2 uv{};
-            ss >> uv.x >> uv.y;
+            Maths::Vec2f uv{};
+            ss >> uv.m_x >> uv.m_y;
             uvs.push_back(uv);
         }
-
-        // Faces
-        else if (prefix == "f")
+        else if (prefix == "f") // face
         {
             std::vector<std::string> faceVerts;
             std::string vert;
@@ -70,6 +159,7 @@ void MeshAsset::Load()
             while (ss >> vert)
                 faceVerts.push_back(vert);
 
+            // Triangulation simple des faces
             for (size_t i = 1; i + 1 < faceVerts.size(); ++i)
             {
                 std::string triangle[3] =
@@ -81,37 +171,30 @@ void MeshAsset::Load()
 
                 for (int j = 0; j < 3; ++j)
                 {
-                    int p = 0;
-                    int t = 0;
-                    int n = 0;
+                    int v_idx = 0;
+                    int vt_idx = 0;
+                    int vn_idx = 0;
 
-                   
-
-                    if (sscanf_s(triangle[j].c_str(), "%d/%d/%d", &p, &t, &n) < 1)
-                        throw std::runtime_error("Invalid face format in OBJ");
+                    sscanf_s(triangle[j].c_str(), "%d/%d/%d",
+                        &v_idx, &vt_idx, &vn_idx);
 
                     Vertex vertex{};
 
-                    // Position 
-                    if (p > 0 && p <= positions.size())
-                        vertex.position = positions[p - 1];
-                    else
-                        throw std::runtime_error("Invalid position index");
+                    if (v_idx > 0 && v_idx <= positions.size())
+                        vertex.position = positions[v_idx - 1];
 
-                    // UV 
-                    if (t > 0 && t <= uvs.size())
-                        vertex.uv = uvs[t - 1];
+                    if (vt_idx > 0 && vt_idx <= uvs.size())
+                        vertex.uv = uvs[vt_idx - 1];
                     else
-                        vertex.uv = DirectX::XMFLOAT2(0.0f, 0.0f);
+                        vertex.uv = Maths::Vec2f(0.0f, 0.0f);
 
-                    // Normal 
-                    if (n > 0 && n <= normals.size())
-                        vertex.normal = normals[n - 1];
+                    if (vn_idx > 0 && vn_idx <= normals.size())
+                        vertex.normal = normals[vn_idx - 1];
                     else
-                        vertex.normal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+                        vertex.normal = Maths::Vec3f(1.0f, 1.0f, 1.0f);
 
                     vertices.push_back(vertex);
-                    indices.push_back(static_cast<uint32_t>(indices.size()));
+                    indices.push_back((uint32_t)indices.size());
                 }
             }
         }
@@ -119,61 +202,14 @@ void MeshAsset::Load()
 
     file.close();
 
-    if (vertices.empty())
-        throw std::runtime_error("Mesh has no vertices: " + path);
-
-    if (indices.empty())
-        throw std::runtime_error("Mesh has no indices: " + path);
+    if (vertices.empty() || indices.empty())
+        throw std::runtime_error("OBJ mesh empty: " + path);
 }
-void MeshAsset::LoadTestCube()
-{
-    vertices.clear();
-    indices.clear();
 
-    Vertex v[] =
-    {
-        // Face avant (proche)
-        {{-0.5f, -0.5f, 0.0f}, {0,0,-1}, {0,1}},
-        {{ 0.5f, -0.5f, 0.0f}, {0,0,-1}, {1,1}},
-        {{ 0.5f,  0.5f, 0.0f}, {0,0,-1}, {1,0}},
-        {{-0.5f,  0.5f, 0.0f}, {0,0,-1}, {0,0}},
-
-        // Face arrière (plus loin, légèrement décalée pour “profil”)
-        {{-0.3f, -0.3f, 0.5f}, {0,0,1}, {0,1}},
-        {{ 0.7f, -0.3f, 0.5f}, {0,0,1}, {1,1}},
-        {{ 0.7f,  0.7f, 0.5f}, {0,0,1}, {1,0}},
-        {{-0.3f,  0.7f, 0.5f}, {0,0,1}, {0,0}},
-    };
-
-    vertices.assign(std::begin(v), std::end(v));
-
-    uint32_t ind[] =
-    {
-        0,1,2,
-        0,2,3,
-
-        4,6,5,
-        4,7,6,
-
-        4,5,1,
-        4,1,0,
-
-        3,2,6,
-        3,6,7,
-
-        1,5,6,
-        1,6,2,
-
-        4,0,3,
-        4,3,7
-    };
-    //this->SetColor(0.0f, 0.0f, 1.0f);
-
-    indices.assign(std::begin(ind), std::end(ind));
-}
 
 void MeshAsset::CreateBuffers(ID3D11Device* device)
 {
+    // Création des buffers GPU à partir des données CPU
     if (!device)
         throw std::runtime_error("Device is null");
 
@@ -184,8 +220,6 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
     vbd.Usage = D3D11_USAGE_DEFAULT;
     vbd.ByteWidth = UINT(vertices.size() * sizeof(Vertex));
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-
 
     D3D11_SUBRESOURCE_DATA vinit{};
     vinit.pSysMem = vertices.data();
@@ -211,6 +245,7 @@ void MeshAsset::CreateBuffers(ID3D11Device* device)
 
 void MeshAsset::Bind(ID3D11DeviceContext* context) const
 {
+    // Bind des buffers dans l'Input Assembler
     UINT stride = sizeof(Vertex);
     UINT offset = 0;
 
@@ -229,13 +264,14 @@ void MeshAsset::Bind(ID3D11DeviceContext* context) const
     );
 
     context->IASetPrimitiveTopology(
-        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
+        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
     );
 }
 
 
 bool MeshAsset::IsReady() const
 {
+    // Mesh prêt si les buffers GPU existent
     return vertexBuffer && indexBuffer;
 }
 
@@ -246,6 +282,7 @@ UINT MeshAsset::GetIndexCount() const
 
 void MeshAsset::Unload()
 {
+    // Libération des ressources CPU et GPU
     vertices.clear();
     indices.clear();
 
