@@ -30,8 +30,7 @@
 #include "Colliders.hpp"
 #include "PhysicSystem.hpp"
 
-
-class RigidBody{
+class RigidBody {
 public:
 	RigidBody() = default;
 	RigidBody(PShape shape, bool isStatic);

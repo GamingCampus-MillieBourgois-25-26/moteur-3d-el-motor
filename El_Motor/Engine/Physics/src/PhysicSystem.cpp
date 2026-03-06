@@ -1,4 +1,6 @@
 #include "PhysicSystem.hpp"
+#include "Maths/Headers/MQuaternion.hpp"
+#include "Entity/Component/RigidBodyComponent.hpp"
 
 namespace BroadPhaseLayers
 {
@@ -156,8 +158,10 @@ void PhysicSystem::OnStart(Engine::Scene& scene) {
 	for (auto& it : objects) {
 		for (auto& comp : it->GetAllComponents()) {
 			if (comp->GetTypeName() == "RigidBody") {
+				auto* rbComp = static_cast<Engine::RigidBodyComponent*>(comp);
+				JPH::Body* body = rbComp->GetRigidBody().GetBody();
 
-				/*sPhysics.mBodyInterface->AddBody(, JPH::EActivation::Activate);*/
+				sPhysics.mBodyInterface->AddBody(body->GetID(), JPH::EActivation::Activate);
 			}
 		}
 	}
@@ -169,9 +173,11 @@ void PhysicSystem::OnEnd(Engine::Scene& scene) {
 	for (auto& it : objects) {
 		for (auto& comp : it->GetAllComponents()) {
 			if (comp->GetTypeName() == "RigidBody") {
+				auto* rbComp = static_cast<Engine::RigidBodyComponent*>(comp);
+				JPH::Body* body = rbComp->GetRigidBody().GetBody();
 
-				/*sPhysics.mBodyInterface->RemoveBody();
-				sPhysics.mBodyInterface->DestroyBody();*/
+				sPhysics.mBodyInterface->RemoveBody(body->GetID());
+				sPhysics.mBodyInterface->DestroyBody(body->GetID());
 			}
 		}
 	}
@@ -188,17 +194,29 @@ void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 	auto objects = scene.GetRootObjects();
 
 	for (auto& it : objects){
-		for (auto& comp : it->GetAllComponents()) {
-			if (comp->GetTypeName() == "RigidBody") {
-				// Update pos
-				// JPH::Vec3 pos = ;
-				// JPH::Quat pos = ;
-				// it->GetTransform()->SetPosition(Maths::Vec3f(pos.x(), pos.y(), pos.z()));
+		for (auto& comp : it->GetAllComponents()){
+			if (comp->GetTypeName() == "RigidBody"){
+				auto* rbComp = static_cast<Engine::RigidBodyComponent*>(comp);
 
-				// Update rot
-				// it->GetTransform()->SeRotation(Maths::Quatf(rot.x(), rot.y(), rot.z(), rot.w()));
+				JPH::Body* body = rbComp->GetRigidBody().GetBody();
+
+				if (!body)
+					continue;
+
+				// Position / Rotation depuis Jolt
+				JPH::Vec3 pos = body->GetPosition();
+				JPH::Quat rot = body->GetRotation();
+
+				auto* transform = it->GetTransform();
+				if (!transform)
+					continue;
+
+				// Update position
+				transform->SetPosition(Maths::Vec3f(pos.GetX(), pos.GetY(), pos.GetZ()));
+
+				// Update rotation
+				transform->SetRotation(Maths::Quatf(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW()));
 			}
 		}
-
 	}
 }
