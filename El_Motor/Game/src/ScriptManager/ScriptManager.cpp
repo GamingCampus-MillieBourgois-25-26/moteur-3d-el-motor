@@ -163,7 +163,7 @@ void ScriptManager::updateScripts(float deltaTime)
 /// </summary>
 void ScriptManager::Restart()
 {
-    std::filesystem::path root = "../../../../";
+    std::filesystem::path root = FindProjectRoot();
     std::filesystem::path buildDir = root / "out/build/x64-Debug";
 
     //Reconfigure CMake
@@ -190,4 +190,19 @@ void ScriptManager::Restart()
     std::system(runCmd.c_str());
 
     exit(0);
+}
+
+std::filesystem::path ScriptManager::FindProjectRoot()
+{
+    std::filesystem::path p = std::filesystem::current_path();
+
+    while (!std::filesystem::exists(p / "CMakeLists.txt"))
+    {
+        p = p.parent_path();
+
+        if (p.empty())
+            throw std::runtime_error("CMakeLists.txt not found");
+    }
+
+    return p;
 }

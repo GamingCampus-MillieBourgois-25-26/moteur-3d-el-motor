@@ -26,6 +26,9 @@ public:
     // Deletes a script by name, with options to delete the corresponding .cpp and .hpp files
     void DeleteScript(const std::string& projectPath,const std::string& scriptName);
 
+    
+    std::filesystem::path FindProjectRoot();
+
 
 	// 
 	void Restart();
