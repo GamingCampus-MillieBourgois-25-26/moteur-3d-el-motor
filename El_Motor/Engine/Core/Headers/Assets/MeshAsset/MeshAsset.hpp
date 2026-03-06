@@ -41,9 +41,6 @@ public:
     // Charge un mesh depuis le fichier path
     void Load() override;
 
-    // Génère un cube de test
-    void LoadTestCube();
-
     // Libère les données CPU et GPU
     void Unload() override;
 

@@ -10,9 +10,4 @@ namespace Engine
 
 	}
 
-	void Application::PresentDx() {
-		if (d3d11) {
-			// Ici ajout des appels pour dessiner les formes ou objets 3D en utilisant d3d11->DrawShape() 
-		}
-	}
 }

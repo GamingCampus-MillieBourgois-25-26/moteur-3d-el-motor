@@ -77,10 +77,11 @@ void Maths::Quat<T>::SetLookRotation(const Vec3<T>& forward, const Vec3<T>& up)
     Vec3<T> u = up.Normalized();
 
     // Right = forward x up
-    Vec3<T> r = f.Cross(u).Normalized();
+    Vec3<T> r = Vec3<T>::Cross(f, u).Normalized();
+
 
     // Recompute orthogonal up
-    u = r.Cross(f);
+    u = Vec3<T>::Cross(r, f).Normalized();
 
     // 3x3 rotation matrix
     T m00 = r.m_x, m01 = r.m_y, m02 = r.m_z;
@@ -124,6 +125,7 @@ void Maths::Quat<T>::SetLookRotation(const Vec3<T>& forward, const Vec3<T>& up)
 
     Normalize();
 }
+
 template<typename T>
 void Maths::Quat<T>::ToAngleAxis(T& angle, Vec3<T>& axis)
 {

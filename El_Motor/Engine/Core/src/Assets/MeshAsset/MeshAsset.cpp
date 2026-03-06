@@ -207,42 +207,6 @@ void MeshAsset::Load()
 }
 
 
-void MeshAsset::LoadTestCube()
-{
-    // Génère un cube simple pour les tests moteur
-    vertices.clear();
-    indices.clear();
-
-    Vertex v[] =
-    {
-        // Face avant
-        {{-0.5f, -0.5f, 0.0f}, {0,0,-1}, {0,1}},
-        {{ 0.5f, -0.5f, 0.0f}, {0,0,-1}, {1,1}},
-        {{ 0.5f,  0.5f, 0.0f}, {0,0,-1}, {1,0}},
-        {{-0.5f,  0.5f, 0.0f}, {0,0,-1}, {0,0}},
-
-        // Face arrière
-        {{-0.3f, -0.3f, 0.5f}, {0,0,1}, {0,1}},
-        {{ 0.7f, -0.3f, 0.5f}, {0,0,1}, {1,1}},
-        {{ 0.7f,  0.7f, 0.5f}, {0,0,1}, {1,0}},
-        {{-0.3f,  0.7f, 0.5f}, {0,0,1}, {0,0}},
-    };
-
-    vertices.assign(std::begin(v), std::end(v));
-
-    uint32_t ind[] =
-    {
-        0,1,2, 0,2,3,
-        4,6,5, 4,7,6,
-        4,5,1, 4,1,0,
-        3,2,6, 3,6,7,
-        1,5,6, 1,6,2,
-        4,0,3, 4,3,7
-    };
-
-    indices.assign(std::begin(ind), std::end(ind));
-}
-
 void MeshAsset::CreateBuffers(ID3D11Device* device)
 {
     // Création des buffers GPU à partir des données CPU
