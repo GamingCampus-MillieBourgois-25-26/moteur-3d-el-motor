@@ -45,6 +45,7 @@ void Editor::HubManager::HubRun()
         {
             DrawEditorUI();
             coreEditor.editorRun(app);
+            app.getD3D11()->SetViewProjection(camera.GetVP());
             camera.Update(coreEditor.GetEngine().getInputManager());
 
 
@@ -67,6 +68,7 @@ void Editor::HubManager::HubRun()
             float dt = coreEditor.GetEngine().getDeltaTime();
             coreEditor.editorRun(app);
             scriptManager.updateScripts(dt);
+            app.getD3D11()->SetViewProjection(camera.GetVP());
             camera.Update(coreEditor.GetEngine().getInputManager());
 
 

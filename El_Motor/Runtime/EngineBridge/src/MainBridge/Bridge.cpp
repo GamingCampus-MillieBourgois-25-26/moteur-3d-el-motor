@@ -14,7 +14,6 @@ void Runtime::Bridge::run() {
 		app.windowOpener->windowPollEvents();
 		engine.run();
 		inputBridge.update(engine,app);
-		app.PresentDx();
 	}
 	shutdown();
 }

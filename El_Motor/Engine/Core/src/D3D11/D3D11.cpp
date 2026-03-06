@@ -128,6 +128,29 @@ namespace Engine
 			&mInputLayout);
 
 		if (FAILED(hr)) { std::cout << "CreateInputLayout failed\n"; return; }
+
+		D3D11_SAMPLER_DESC sampDesc = {};
+		sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.MaxAnisotropy = 16;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		hr = pDevice->CreateSamplerState(&sampDesc, mSampler.GetAddressOf());
+		if (FAILED(hr))
+		{
+			std::cout << "Failed to create sampler state\n";
+		}
+
+		D3D11_BUFFER_DESC mbDesc = {};
+		mbDesc.Usage = D3D11_USAGE_DEFAULT;
+		mbDesc.ByteWidth = sizeof(MatrixBuffer);
+		mbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		hr = pDevice->CreateBuffer(&mbDesc, nullptr, mMatrixBuffer.GetAddressOf());
 	}
 
 	// Sélection du meilleur adapter DXGI (VRAM max)
@@ -194,6 +217,34 @@ namespace Engine
 			pContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
+	void D3D11::SetViewProjection(const Maths::Mat4f& vp)
+	{
+		MatrixBuffer mb{};
+
+		DirectX::XMMATRIX m = DirectX::XMMatrixTranspose(
+			DirectX::XMLoadFloat4x4((DirectX::XMFLOAT4X4*)&vp)
+		);
+
+		mb.view = DirectX::XMMatrixIdentity();
+		mb.projection = DirectX::XMMatrixIdentity();
+		mb.vp = m;
+
+		pContext->UpdateSubresource(
+			mMatrixBuffer.Get(),
+			0,
+			nullptr,
+			&mb,
+			0,
+			0
+		);
+
+		pContext->VSSetConstantBuffers(
+			0,
+			1,
+			mMatrixBuffer.GetAddressOf()
+		);
+	}
+
 	// Fonction de rendu d’un mesh avec material
 	void D3D11::DrawShape(const MeshAsset& mesh, const Material& material)
 	{
@@ -224,8 +275,11 @@ namespace Engine
 		pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
 		pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
+
 		// Input layout
 		pContext->IASetInputLayout(mInputLayout.Get());
+
+		pContext->PSSetSamplers(0, 1, mSampler.GetAddressOf());
 
 		// Bind mesh et material
 		mesh.Bind(pContext.Get());
@@ -256,4 +310,6 @@ namespace Engine
 		// Draw call
 		pContext->DrawIndexed(mesh.GetIndexCount(), 0, 0);
 	}
+
+
 }
