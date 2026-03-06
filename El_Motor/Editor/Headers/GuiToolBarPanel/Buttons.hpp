@@ -89,7 +89,8 @@ namespace Editor
 		void stopPlayingSound(Engine::MiniAudioSystem sound);
 
 
-
+		//Guizmo
+		void Guizmo();
 
 
 		//Editor save level

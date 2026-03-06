@@ -431,6 +431,7 @@ void Editor::Buttons::showCmpnt(const AssetManager& assetM)
 
  
 	ImGui::BeginChild("ComponentList", ImVec2(0,0), true);//Component list child
+    Guizmo();
 	addComponent();//Button to add component to the selected entity
     ChangeGOName();
     auto& components = selectedEntity->GetAllComponents();
@@ -569,6 +570,27 @@ void Editor::Buttons::stopPlayingSound(Engine::MiniAudioSystem sound)
     }
 }
 
+void Editor::Buttons::Guizmo()
+{
+    if (ImGui::Button("Position", ImVec2(100, 50)))
+    {
+        return;
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Rotation", ImVec2(100, 50)))
+    {
+        return;
+    }
+
+
+    ImGui::SameLine();
+    if (ImGui::Button("Scale", ImVec2(100, 50)))
+    {
+        return;
+    }
+}
+
 bool Editor::Buttons::saveProject()
 {
     if (ImGui::Button("Save", ImVec2(150, 50)))
@@ -614,7 +636,7 @@ static char buffer[256] = "";
     }
 
 
-    if (ImGui::InputText("Name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
+    if (ImGui::InputText(" ", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue))//active only after user press enter
     {
         if (CheckGoNameValid(buffer) || !CheckCaraterValid(buffer))//true if there is only spaces in the buffer
         {
