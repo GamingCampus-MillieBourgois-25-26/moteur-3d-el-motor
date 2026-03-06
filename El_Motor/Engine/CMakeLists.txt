@@ -19,7 +19,11 @@ file(GLOB_RECURSE ENGINE_HEADERS
 add_library(Engine
     ${ENGINE_SOURCES}
     ${ENGINE_HEADERS}
+<<<<<<< Updated upstream
  "Core/src/Assets/TextureAsset/TextureAsset.cpp")
+=======
+ "Core/Headers/API_Sound/audio.h")
+>>>>>>> Stashed changes
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers 
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Externals
                                          ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers
