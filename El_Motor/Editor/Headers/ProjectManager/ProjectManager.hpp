@@ -11,7 +11,6 @@ namespace Editor {
 
 	private:
 		std::string loadedProjectName;
-
 	protected:
 		std::filesystem::path currentProjectPath;
 		void loadScene(const std::filesystem::path& path, std::shared_ptr<Engine::Scene>& scene);
@@ -47,10 +46,6 @@ namespace Editor {
 		//Getter
 		const std::filesystem::path& GetProjectPath() const;
 		std::string GetLoadedProjectName() const { return loadedProjectName; }
-
-
-
-
 
 
 	};
