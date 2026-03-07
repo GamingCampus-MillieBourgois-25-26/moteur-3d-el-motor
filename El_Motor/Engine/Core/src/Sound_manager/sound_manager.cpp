@@ -30,7 +30,6 @@ namespace EI
             return;
 
         audioSystem_->Shutdown();
-        delete audioSystem_;
         audioSystem_ = nullptr;
     }
 

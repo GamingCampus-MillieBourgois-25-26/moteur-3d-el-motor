@@ -126,4 +126,10 @@ namespace Engine
         if (engine_)
             ma_engine_set_volume(engine_, masterVolume_);
     }
+
+}
+
+std::unique_ptr<Engine::IAudioSystem> CreateMiniAudioSystem()
+{
+    return std::make_unique<Engine::MiniAudioSystem>();
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "API_Sound/IAudioSystem.hpp"
 #include "API_Sound/AudioTypes.hpp"
 
@@ -26,6 +28,6 @@ namespace EI
         void SetMasterVolume(float volume);
 
     private:
-        Engine::IAudioSystem* audioSystem_;
+        std::unique_ptr<Engine::IAudioSystem> audioSystem_;
     };
 }

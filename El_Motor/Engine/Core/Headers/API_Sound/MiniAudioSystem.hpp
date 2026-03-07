@@ -3,6 +3,8 @@
 #include "API_Sound/IAudioSystem.hpp"
 #include "API_Sound/AudioTypes.hpp"
 
+#include <memory>
+
 // Forward declaration miniaudio
 struct ma_engine;
 struct ma_sound;
@@ -27,6 +29,7 @@ namespace Engine
 
         void SetMasterVolume(float volume) override;
 
+
     private:
         struct SoundRes
         {
@@ -40,6 +43,7 @@ namespace Engine
         };
 
     private:
+
         ma_engine* engine_ = nullptr;
 
         float masterVolume_ = 1.0f;
@@ -51,3 +55,5 @@ namespace Engine
         std::unordered_map<EI::VoiceHandle, VoiceInst> voices_;
     };
 }
+
+std::unique_ptr<Engine::IAudioSystem> CreateMiniAudioSystem();
