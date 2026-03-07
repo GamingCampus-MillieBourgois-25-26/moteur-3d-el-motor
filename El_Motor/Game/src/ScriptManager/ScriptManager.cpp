@@ -6,6 +6,8 @@
 #include <fstream>
 #include <algorithm>
 #include <windows.h>
+#include <cstdlib>
+
 
 /// <summary>
 /// Creates a new script with the specified name, generating header and implementation files
@@ -166,28 +168,31 @@ void ScriptManager::Restart()
     std::filesystem::path root = "../../../../";
     std::filesystem::path buildDir = root / "out/build/x64-Debug";
 
-    //Reconfigure CMake
+    // Reconfigure CMake
     std::string configureCmd =
         "cmake -S \"" + root.string() +
         "\" -B \"" + buildDir.string() +
-        "\" -G \"Visual Studio 17 2022\" -A x64";
+        "\" -G \"Ninja\"";
 
     std::system(configureCmd.c_str());
 
-    //Build
+    // Build
     std::string buildCmd =
-        "cmake --build \"" + buildDir.string() +
-        "\" --config Debug";
+        "cmake --build \"" + buildDir.string() + "\"";
 
     std::system(buildCmd.c_str());
 
-    // Relancer l'éditeur
     std::filesystem::path exePath =
-        buildDir / "Editor/Debug/Editor.exe";
+        std::filesystem::absolute(buildDir / "Editor/Editor.exe");
 
-    std::string runCmd = "\"" + exePath.string() + "\"";
+    ShellExecuteA(
+        nullptr,
+        "open",
+        exePath.string().c_str(),
+        nullptr,
+        nullptr,
+        SW_SHOWNORMAL
+    );
 
-    std::system(runCmd.c_str());
-
-    exit(0);
+    ExitProcess(0);
 }
