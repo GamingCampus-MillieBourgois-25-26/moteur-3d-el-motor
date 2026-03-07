@@ -11,8 +11,6 @@ namespace Engine
 {
 	class WindowOpener : public IWindow {
 	private:
-		const int WIDTH = 800;
-		const int HEIGHT = 600;
 
 		std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> window{ nullptr, glfwDestroyWindow };
 

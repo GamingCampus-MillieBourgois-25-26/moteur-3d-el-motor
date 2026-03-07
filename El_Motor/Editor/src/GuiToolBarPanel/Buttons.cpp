@@ -11,7 +11,6 @@
 #include "Assets/Asset.hpp"
 #include "Entity/GameObject.hpp"
 #include "Entity/Component/RigidBodyComponent.hpp"
-
 #include <iostream>
 
 
@@ -299,6 +298,7 @@ void Editor::Buttons::showScripts(ScriptManager& scriptM)
 
     ImGui::EndChild();
 }
+
 bool Editor::Buttons::CheckScriptNameValid(const std::string& str)
 {
 
@@ -388,7 +388,6 @@ void Editor::Buttons::loadAssets(AssetManager& manager)
         }
     }
 }
-
 
 void Editor::Buttons::selectGO(std::shared_ptr<Engine::Scene>& scene)
 {
