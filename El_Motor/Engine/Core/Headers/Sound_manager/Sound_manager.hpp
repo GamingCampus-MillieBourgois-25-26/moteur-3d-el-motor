@@ -26,6 +26,6 @@ namespace EI
         void SetMasterVolume(float volume);
 
     private:
-        IAudioSystem* audioSystem_;
+        Engine::IAudioSystem* audioSystem_;
     };
 }
