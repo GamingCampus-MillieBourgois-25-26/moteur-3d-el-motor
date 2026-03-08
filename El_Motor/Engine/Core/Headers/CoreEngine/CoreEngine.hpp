@@ -11,44 +11,140 @@
 namespace Engine
 {
 
+    /// <summary>
+    /// Core class of the engine.
+    /// Responsible for initializing systems, running the main loop,
+    /// and shutting down the engine properly.
+    /// </summary>
     class CoreEngine {
     private:
-		// Besoin d'ajouter les autres systemes comme le rendu, la gestion des scenes, etc.
-        InputManager inputManager;
-        TimeManager timeManager;
-		LoggerManager loggerManager;
-		AssetManager assetManager;
-		std::shared_ptr<Scene> defaultScene;
-		EditorCamera camera;
-        //.... assetManager;
 
+        /// <summary>
+        /// Manages user input (keyboard, mouse, etc.)
+        /// </summary>
+        InputManager inputManager;
+
+        /// <summary>
+        /// Handles time calculations (delta time, frame timing)
+        /// </summary>
+        TimeManager timeManager;
+
+        /// <summary>
+        /// Handles logging and debug messages
+        /// </summary>
+        LoggerManager loggerManager;
+
+        /// <summary>
+        /// Manages loading and storage of engine assets
+        /// </summary>
+        AssetManager assetManager;
+
+        /// <summary>
+        /// Default active scene of the engine
+        /// </summary>
+        std::shared_ptr<Scene> defaultScene;
+
+        /// <summary>
+        /// Editor camera used for debugging or editor mode
+        /// </summary>
+        EditorCamera camera;
+
+        /// <summary>
+        /// Indicates whether the engine main loop is running
+        /// </summary>
         bool running = false;
-		float dt = 0.0f;
+
+        /// <summary>
+        /// Delta time between frames
+        /// </summary>
+        float dt = 0.0f;
 
     public:
 
-		CoreEngine() = default;
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        CoreEngine() = default;
 
-		void init(Engine::Application& app);         // initialisation du moteur
-        void run();         // boucle principale
-		void shutdown();   // shutdown du moteur
-		bool isRunning() const { return running; } // vérifie si le moteur est en cours d'exécution
-		
+        /// <summary>
+        /// Initializes the engine systems.
+        /// </summary>
+        /// <param name="app">Reference to the application instance</param>
+        void init(Engine::Application& app);
 
-		// Getters pour les différents systèmes du moteur
-		InputManager& getInputManager() { return inputManager; }
-		TimeManager& getTimeManager() { return timeManager; }
-		LoggerManager& getLoggerManager() { return loggerManager; }
-		/*WindowOpener& getWindowOpener() { return application.getWindowOpener(); }
-		Application& getApplication() { return application; }*/
-		AssetManager& getAssetManager() { return assetManager; }
-		std::shared_ptr<Scene>& getScene() { return defaultScene; }
-		EditorCamera& getCamera() { return camera; }
-		float getDeltaTime() const { return dt; }
+        /// <summary>
+        /// Runs the main engine loop.
+        /// Handles update logic, rendering, and input processing.
+        /// </summary>
+        void run();
+
+        /// <summary>
+        /// Shuts down the engine and releases resources.
+        /// </summary>
+        void shutdown();
+
+        /// <summary>
+        /// Checks whether the engine is currently running.
+        /// </summary>
+        /// <returns>True if the engine loop is active</returns>
+        bool isRunning() const { return running; }
 
 
-		void SetScene(std::shared_ptr<Scene> scene) { defaultScene = scene; }
-		void SetDeltaTime(float delta) { dt = delta; }
+        // =========================
+        // System Getters
+        // =========================
+
+        /// <summary>
+        /// Returns the input manager.
+        /// </summary>
+        InputManager& getInputManager() { return inputManager; }
+
+        /// <summary>
+        /// Returns the time manager.
+        /// </summary>
+        TimeManager& getTimeManager() { return timeManager; }
+
+        /// <summary>
+        /// Returns the logger manager.
+        /// </summary>
+        LoggerManager& getLoggerManager() { return loggerManager; }
+
+        /// <summary>
+        /// Returns the asset manager.
+        /// </summary>
+        AssetManager& getAssetManager() { return assetManager; }
+
+        /// <summary>
+        /// Returns the active scene.
+        /// </summary>
+        std::shared_ptr<Scene>& getScene() { return defaultScene; }
+
+        /// <summary>
+        /// Returns the editor camera.
+        /// </summary>
+        EditorCamera& getCamera() { return camera; }
+
+        /// <summary>
+        /// Returns the delta time between frames.
+        /// </summary>
+        float getDeltaTime() const { return dt; }
+
+
+        // =========================
+        // Setters
+        // =========================
+
+        /// <summary>
+        /// Sets the active scene of the engine.
+        /// </summary>
+        /// <param name="scene">Scene to activate</param>
+        void SetScene(std::shared_ptr<Scene> scene) { defaultScene = scene; }
+
+        /// <summary>
+        /// Sets the delta time between frames.
+        /// </summary>
+        /// <param name="delta">Frame delta time</param>
+        void SetDeltaTime(float delta) { dt = delta; }
 
     };
 }

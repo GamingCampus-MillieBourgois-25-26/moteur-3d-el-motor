@@ -6,19 +6,44 @@
 #include <vector>
 
 namespace Engine {
-	class Scene {
-	private:
-		std::vector<GameObject*> rootObjects;
 
-	public:
-		Scene() = default;
-		~Scene();
+    /// <summary>
+    /// Represents a scene containing multiple GameObjects.
+    /// Manages creation, destruction, and updating of root GameObjects.
+    /// </summary>
+    class Scene {
+    private:
+        /// <summary>
+        /// Root GameObjects in the scene (no parent)
+        /// </summary>
+        std::vector<GameObject*> rootObjects;
 
-		GameObject* CreateGameObject();
-		void DestroyGameObject(GameObject* go);
+    public:
+        Scene() = default;
+        ~Scene();
 
-		void Update(float dt);
+        /// <summary>
+        /// Creates a new GameObject and adds it to the rootObjects list.
+        /// </summary>
+        /// <returns>Pointer to the newly created GameObject</returns>
+        GameObject* CreateGameObject();
 
-		const std::vector<GameObject*>& GetRootObjects() const;
-	};
+        /// <summary>
+        /// Destroys a GameObject and removes it from the scene.
+        /// </summary>
+        /// <param name="go">Pointer to the GameObject to destroy</param>
+        void DestroyGameObject(GameObject* go);
+
+        /// <summary>
+        /// Updates all root GameObjects and their children recursively.
+        /// </summary>
+        /// <param name="dt">Delta time in seconds</param>
+        void Update(float dt);
+
+        /// <summary>
+        /// Returns a reference to the root GameObjects of the scene.
+        /// </summary>
+        /// <returns>Const reference to the vector of root GameObjects</returns>
+        const std::vector<GameObject*>& GetRootObjects() const;
+    };
 }

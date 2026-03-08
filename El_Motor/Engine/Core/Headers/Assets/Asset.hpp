@@ -3,26 +3,61 @@
 #include <cstdint>
 #include <d3d11.h>
 
-// Type unique pour identifier chaque asset
+/// <summary>
+/// Unique type used to identify each asset in the engine.
+/// </summary>
 using AssetID = uint64_t;
 
-// Classe de base pour tous les assets du moteur
+/// <summary>
+/// Base class for all assets in the engine.
+/// Defines the interface for loading, unloading, creating GPU resources,
+/// and binding the asset to the graphics pipeline.
+/// </summary>
 class Asset {
 public:
-    AssetID id;           // Identifiant unique de l'asset
-    std::string path;     // Chemin vers le fichier source
 
-    // Charge les données CPU de l'asset
+    /// <summary>
+    /// Unique identifier of the asset
+    /// </summary>
+    AssetID id;
+
+    /// <summary>
+    /// File path of the source asset
+    /// </summary>
+    std::string path;
+
+    // =========================
+    // Asset interface
+    // =========================
+
+    /// <summary>
+    /// Loads the asset data into CPU memory.
+    /// Must be implemented by derived asset classes.
+    /// </summary>
     virtual void Load() = 0;
 
-    // Libère les ressources CPU et GPU si nécessaire
+    /// <summary>
+    /// Frees CPU and GPU resources if applicable.
+    /// Must be implemented by derived asset classes.
+    /// </summary>
     virtual void Unload() = 0;
 
-    // Crée les ressources GPU (vertex/index buffers, textures, etc.)
+    /// <summary>
+    /// Creates GPU resources for the asset (e.g., vertex/index buffers, textures).
+    /// Can be overridden if the asset needs GPU-side resources.
+    /// </summary>
+    /// <param name="device">D3D11 device used to create GPU resources</param>
     virtual void CreateBuffers(ID3D11Device* device) {}
 
-    // Bind l'asset dans le pipeline si applicable (ex: textures, meshes)
+    /// <summary>
+    /// Binds the asset to the graphics pipeline if applicable
+    /// (for example, textures or meshes).
+    /// </summary>
+    /// <param name="context">Device context used for rendering</param>
     virtual void Bind(ID3D11DeviceContext* context) const {}
 
+    /// <summary>
+    /// Virtual destructor
+    /// </summary>
     virtual ~Asset() = default;
 };

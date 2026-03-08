@@ -5,44 +5,87 @@
 #include <fstream>
 #include <filesystem>
 
-namespace Engine
-{
+namespace Engine {
 
-	//Types de log
+    /// <summary>
+    /// Singleton class responsible for logging messages to console and file.
+    /// Supports Info, Warning, and Error log types.
+    /// </summary>
+    class LoggerManager {
+    public:
 
-	class LoggerManager
-	{
-	protected:
-		
-	public:
+        /// <summary>
+        /// Returns the singleton instance of the LoggerManager.
+        /// </summary>
+        static LoggerManager& Get();
 
-		static LoggerManager& Get();
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        LoggerManager() = default;
 
-		//Constructeur et destructeur
-		LoggerManager() = default;
-		~LoggerManager() = default;
-		LoggerManager(const LoggerManager&) = delete; // Empêche la copie de l'instance
-		LoggerManager& operator=(const LoggerManager&) = delete; // Empêche l'assignation de l'instance
+        /// <summary>
+        /// Default destructor.
+        /// </summary>
+        ~LoggerManager() = default;
 
-		//Fonctions d'init et de shutdown du logger
-		void LogInitialize();
-		void LogShutdown();
+        // Prevent copy/assignment
+        LoggerManager(const LoggerManager&) = delete;
+        LoggerManager& operator=(const LoggerManager&) = delete;
 
-		
-		// Fonctions de log spécifiques pour chaque type de message
-		void LogError(const std::string& message);
-		void LogWarning(const std::string& message);
-		void LogInfo(const std::string& message);
+        // =========================
+        // Initialization / Shutdown
+        // =========================
 
-		
+        /// <summary>
+        /// Initializes the logger (e.g., opens log file).
+        /// </summary>
+        void LogInitialize();
 
-	private:
+        /// <summary>
+        /// Shuts down the logger (e.g., closes log file).
+        /// </summary>
+        void LogShutdown();
 
-	enum class LogType{Error,Warning,Info};
+        // =========================
+        // Logging functions
+        // =========================
 
-	std::string logFilePath = "..\\UserLog.txt"; // Chemin par défaut pour les logs
+        /// <summary>
+        /// Logs an error message.
+        /// </summary>
+        void LogError(const std::string& message);
 
-	void Log(const std::string& message, LogType type = LogType::Info);
-	void LogToFile(const std::string& message);
-	};
+        /// <summary>
+        /// Logs a warning message.
+        /// </summary>
+        void LogWarning(const std::string& message);
+
+        /// <summary>
+        /// Logs an info message.
+        /// </summary>
+        void LogInfo(const std::string& message);
+
+    private:
+
+        /// <summary>
+        /// Internal log type enumeration.
+        /// </summary>
+        enum class LogType { Error, Warning, Info };
+
+        /// <summary>
+        /// Default path for the log file.
+        /// </summary>
+        std::string logFilePath = "..\\UserLog.txt";
+
+        /// <summary>
+        /// Internal function to log a message with a given type.
+        /// </summary>
+        void Log(const std::string& message, LogType type = LogType::Info);
+
+        /// <summary>
+        /// Writes a message to the log file.
+        /// </summary>
+        void LogToFile(const std::string& message);
+    };
 }

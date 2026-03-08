@@ -2,11 +2,14 @@
 
 namespace Engine {
 
+    /// <summary>
+    /// Represents the current state of a key or mouse button.
+    /// </summary>
     enum class InputState {
-        Up,       // pas pressée
-        Pressed,  // appuyée
-        Held,     // maintenue
-        Released  // relâchée
+        Up,       // Not pressed
+        Pressed,  // Pressed this frame
+        Held,     // Being held down
+        Released  // Released this frame
     };
 
 }

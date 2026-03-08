@@ -6,26 +6,58 @@
 
 #include "Assets/TextureAsset/TextureAsset.hpp"
 
-// Material simple : couleur + texture
+/// <summary>
+/// Simple material class.
+/// Contains a diffuse color and an optional texture.
+/// Handles binding to the GPU pipeline.
+/// </summary>
 class Material
 {
 public:
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
     Material() = default;
+
+    /// <summary>
+    /// Destructor
+    /// </summary>
     ~Material() = default;
 
-    // Texture associée au material
+    // =========================
+    // Material properties
+    // =========================
+
+    /// <summary>
+    /// Texture associated with this material
+    /// </summary>
     std::shared_ptr<TextureAsset> texture = nullptr;
 
-    // Couleur diffuse du material
+    /// <summary>
+    /// Diffuse color of the material (RGB, 0..1)
+    /// </summary>
     DirectX::XMFLOAT3 color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 
-    // Vérifie si le material est prêt à être utilisé (texture chargée)
+    // =========================
+    // Utility functions
+    // =========================
+
+    /// <summary>
+    /// Checks if the material is ready to be used (texture loaded)
+    /// </summary>
+    /// <returns>True if texture exists and is ready, false otherwise</returns>
     bool IsReady() const
     {
         return texture && texture->IsReady();
     }
 
-    // Bind le material (texture + pipeline)
+    /// <summary>
+    /// Binds the material to the GPU pipeline.
+    /// If a texture is set and ready, it will be bound.
+    /// Otherwise, a null shader resource view is bound.
+    /// </summary>
+    /// <param name="context">Device context used for binding</param>
     void Bind(ID3D11DeviceContext* context) const
     {
         if (!context)
@@ -37,7 +69,7 @@ public:
         }
         else
         {
-            // Bind un null SRV si pas de texture
+            // Bind a null SRV if no texture is available
             ID3D11ShaderResourceView* nullSRV = nullptr;
             context->PSSetShaderResources(0, 1, &nullSRV);
         }
