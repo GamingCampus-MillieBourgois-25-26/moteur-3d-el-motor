@@ -5,65 +5,67 @@
 #include <GLFW/glfw3.h>
 #include <d3d11.h>
 
-/// <summary>
-/// Class responsible for managing the GUI layer using ImGui.
-/// Handles initialization, frame management, and rendering
-/// of the graphical user interface with DirectX11 and GLFW.
-/// </summary>
+/**
+ * @brief Class responsible for managing the GUI layer using ImGui.
+ *
+ * Handles initialization, frame management, and rendering
+ * of the graphical user interface with DirectX11 and GLFW.
+ */
 class GuiLayer
 {
 public:
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
+    /**
+     * @brief Default constructor
+     */
     GuiLayer() = default;
 
-    /// <summary>
-    /// Destructor
-    /// </summary>
+    /**
+     * @brief Destructor
+     */
     ~GuiLayer() = default;
 
-    /// <summary>
-    /// Initializes the ImGui GUI layer with the required rendering context.
-    /// </summary>
-    /// <param name="window">Pointer to the GLFW window</param>
-    /// <param name="device">DirectX11 device used for rendering</param>
-    /// <param name="context">DirectX11 device context</param>
-    /// <param name="rtv">Render target view used for GUI rendering</param>
+    /**
+     * @brief Initializes the ImGui GUI layer with the required rendering context.
+     *
+     * @param window Pointer to the GLFW window
+     * @param device DirectX11 device used for rendering
+     * @param context DirectX11 device context
+     * @param rtv Render target view used for GUI rendering
+     */
     void Init(GLFWwindow* window, ID3D11Device* device, ID3D11DeviceContext* context, ID3D11RenderTargetView* rtv);
 
-    /// <summary>
-    /// Begins a new ImGui frame.
-    /// Must be called before drawing any GUI elements.
-    /// </summary>
+    /**
+     * @brief Begins a new ImGui frame.
+     *
+     * Must be called before drawing any GUI elements.
+     */
     void BeginFrame();
 
-    /// <summary>
-    /// Ends the ImGui frame and renders all GUI elements.
-    /// </summary>
+    /**
+     * @brief Ends the ImGui frame and renders all GUI elements.
+     */
     void EndFrame();
 
-    /// <summary>
-    /// Clears the render target with a specific color.
-    /// </summary>
-    /// <param name="r">Red color component</param>
-    /// <param name="g">Green color component</param>
-    /// <param name="b">Blue color component</param>
-    /// <param name="a">Alpha color component</param>
+    /**
+     * @brief Clears the render target with a specific color.
+     *
+     * @param r Red color component
+     * @param g Green color component
+     * @param b Blue color component
+     * @param a Alpha color component
+     */
     void Clear(float r, float g, float b, float a);
 
 private:
-
-    /// Pointer to the GLFW window used by the GUI
+    /// @brief Pointer to the GLFW window used by the GUI
     GLFWwindow* m_Window = nullptr;
 
-    /// DirectX11 device used for rendering
+    /// @brief DirectX11 device used for rendering
     ID3D11Device* m_Device = nullptr;
 
-    /// DirectX11 device context used to issue rendering commands
+    /// @brief DirectX11 device context used to issue rendering commands
     ID3D11DeviceContext* m_Context = nullptr;
 
-    /// Render target view used by DirectX11 to render the GUI
+    /// @brief Render target view used by DirectX11 to render the GUI
     ID3D11RenderTargetView* m_RTV = nullptr;
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#define GLFW_EXPOSE_NATIVE_WIN32 // Allows glfwGetWin32Window() to be defined
+#define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 #include <memory>
@@ -8,50 +8,80 @@
 
 namespace Engine
 {
-    /// <summary>
-    /// Concrete implementation of IWindow using GLFW.
-    /// Manages window creation, events, and access to native handles.
-    /// </summary>
+    /**
+     * @brief Concrete implementation of IWindow using GLFW.
+     *
+     * Manages window creation, event polling, and access to the native HWND on Windows.
+     */
     class WindowOpener : public IWindow {
     private:
-        /// <summary>
-        /// Unique pointer managing the GLFW window with automatic cleanup via glfwDestroyWindow.
-        /// </summary>
+        /**
+         * @brief Smart pointer managing the GLFW window.
+         * Custom deleter ensures glfwDestroyWindow is called automatically.
+         */
         std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> window{ nullptr, glfwDestroyWindow };
 
     public:
-        /// <summary>
-        /// Initializes the GLFW window and sets up necessary parameters.
-        /// </summary>
-        void WindowInit();
+        WindowOpener() = default;
 
-        /// <summary>
-        /// Returns the native platform window handle (HWND on Windows).
-        /// </summary>
-        /// <returns>Pointer to native window</returns>
-        void* GetNativeWindow() const override { return glfwGetWin32Window(window.get()); }
+        ~WindowOpener() = default;
 
-        /// <summary>
-        /// Polls for window events (input, resize, etc.) using GLFW.
-        /// Should be called once per frame.
-        /// </summary>
-        void windowPollEvents() override { glfwPollEvents(); }
+        /**
+         * @brief Initializes GLFW and creates a window.
+         *
+         * Should be called once before using the window.
+         */
+        void WindowInit(int width = 1280, int height = 720, const char* title = "Engine Window") {
+            if (!glfwInit()) {
+                throw std::runtime_error("Failed to initialize GLFW");
+            }
 
-        /// <summary>
-        /// Checks if the window should close.
-        /// </summary>
-        /// <returns>True if window should close</returns>
-        bool shouldClose() const { return glfwWindowShouldClose(window.get()); }
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // No OpenGL context
+            GLFWwindow* win = glfwCreateWindow(width, height, title, nullptr, nullptr);
+            if (!win) {
+                glfwTerminate();
+                throw std::runtime_error("Failed to create GLFW window");
+            }
 
-        /// <summary>
-        /// Sets the window to close.
-        /// </summary>
-        void CloseWindow() { glfwSetWindowShouldClose(window.get(), true); }
+            window.reset(win);
+        }
 
-        /// <summary>
-        /// Returns the raw GLFWwindow pointer for direct access if needed.
-        /// </summary>
-        /// <returns>Raw GLFWwindow pointer</returns>
-        GLFWwindow* getMyWindow() const { return window.get(); }
+        /**
+         * @brief Returns the native platform window handle.
+         * @return HWND pointer on Windows.
+         */
+        void* GetNativeWindow() const override {
+            return glfwGetWin32Window(window.get());
+        }
+
+        /**
+         * @brief Polls window events.
+         * Should be called once per frame.
+         */
+        void windowPollEvents() override {
+            glfwPollEvents();
+        }
+
+        /**
+         * @brief Checks whether the window should close.
+         * @return true if window should close.
+         */
+        bool shouldClose() const {
+            return glfwWindowShouldClose(window.get());
+        }
+
+        /**
+         * @brief Sets the window to close.
+         */
+        void CloseWindow() {
+            glfwSetWindowShouldClose(window.get(), true);
+        }
+
+        /**
+         * @brief Returns the raw GLFWwindow pointer for advanced usage.
+         */
+        GLFWwindow* getMyWindow() const {
+            return window.get();
+        }
     };
 }

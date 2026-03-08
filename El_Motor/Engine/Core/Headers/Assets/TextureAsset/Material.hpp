@@ -6,58 +6,57 @@
 
 #include "Assets/TextureAsset/TextureAsset.hpp"
 
-/// <summary>
-/// Simple material class.
-/// Contains a diffuse color and an optional texture.
-/// Handles binding to the GPU pipeline.
-/// </summary>
+/**
+ * @brief Simple material class.
+ *
+ * Contains a diffuse color and an optional texture.
+ * Can be bound to the GPU pipeline for rendering.
+ */
 class Material
 {
 public:
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
+    /**
+     * @brief Default constructor
+     */
     Material() = default;
 
-    /// <summary>
-    /// Destructor
-    /// </summary>
+    /**
+     * @brief Destructor
+     */
     ~Material() = default;
 
     // =========================
     // Material properties
     // =========================
 
-    /// <summary>
-    /// Texture associated with this material
-    /// </summary>
+    /// Texture associated with this material (optional)
     std::shared_ptr<TextureAsset> texture = nullptr;
 
-    /// <summary>
     /// Diffuse color of the material (RGB, 0..1)
-    /// </summary>
     DirectX::XMFLOAT3 color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 
     // =========================
     // Utility functions
     // =========================
 
-    /// <summary>
-    /// Checks if the material is ready to be used (texture loaded)
-    /// </summary>
-    /// <returns>True if texture exists and is ready, false otherwise</returns>
+    /**
+     * @brief Checks if the material is ready to be used.
+     *
+     * A material is considered ready if it has a texture and the texture is ready.
+     * @return true if the texture exists and is ready, false otherwise
+     */
     bool IsReady() const
     {
         return texture && texture->IsReady();
     }
 
-    /// <summary>
-    /// Binds the material to the GPU pipeline.
-    /// If a texture is set and ready, it will be bound.
-    /// Otherwise, a null shader resource view is bound.
-    /// </summary>
-    /// <param name="context">Device context used for binding</param>
+    /**
+     * @brief Binds the material to the GPU pipeline.
+     *
+     * If a texture is set and ready, it will be bound to slot 0.
+     * Otherwise, a null shader resource view (SRV) is bound.
+     * @param context The device context used for binding
+     */
     void Bind(ID3D11DeviceContext* context) const
     {
         if (!context)

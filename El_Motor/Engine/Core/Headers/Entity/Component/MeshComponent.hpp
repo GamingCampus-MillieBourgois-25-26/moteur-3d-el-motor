@@ -8,36 +8,35 @@
 
 namespace Engine {
 
-    /// <summary>
-    /// Component responsible for storing and managing a mesh for an entity.
-    /// Used by the rendering system to draw geometry.
-    /// </summary>
+    /**
+     * @brief Component responsible for storing and managing a mesh for an entity.
+     *
+     * This component is used by the rendering system to draw geometry.
+     */
     class MeshComponent : public Component {
     private:
 
-        /// <summary>
-        /// Shared pointer to the mesh asset associated with this component.
-        /// </summary>
+        /// @brief Shared pointer to the mesh asset associated with this component.
         std::shared_ptr<MeshAsset> m_mesh;
 
     public:
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
+        /// @brief Default constructor
         MeshComponent() = default;
 
-        /// <summary>
-        /// Returns the mesh assigned to this component.
-        /// </summary>
-        /// <returns>Shared pointer to the MeshAsset</returns>
+        /**
+         * @brief Returns the mesh assigned to this component.
+         * @return Shared pointer to the MeshAsset
+         */
         std::shared_ptr<MeshAsset> GetMesh() const { return m_mesh; }
 
-        /// <summary>
-        /// Assigns a mesh to this component.
-        /// Logs the operation for debugging purposes.
-        /// </summary>
-        /// <param name="mesh">Mesh asset to assign</param>
+        /**
+         * @brief Assigns a mesh to this component.
+         *
+         * Logs the operation for debugging purposes.
+         *
+         * @param mesh Mesh asset to assign
+         */
         void SetMesh(std::shared_ptr<MeshAsset> mesh) {
             m_mesh = mesh;
 
@@ -55,29 +54,35 @@ namespace Engine {
             }
         }
 
-        /// <summary>
-        /// Called when the component starts.
-        /// </summary>
+        /**
+         * @brief Called when the component starts.
+         *
+         * Override to implement initialization logic.
+         */
         void Start() override {}
 
-        /// <summary>
-        /// Called every frame to update the component.
-        /// </summary>
-        /// <param name="dt">Delta time between frames</param>
+        /**
+         * @brief Called every frame to update the component.
+         *
+         * @param dt Delta time between frames
+         */
         void Update(float dt) override {}
 
-        /// <summary>
-        /// Called when the component is destroyed.
-        /// Releases the mesh reference.
-        /// </summary>
+        /**
+         * @brief Called when the component is destroyed.
+         *
+         * Releases the reference to the mesh asset.
+         */
         void OnDestroy() override { m_mesh.reset(); }
 
-        /// <summary>
-        /// Returns the type name of the component.
-        /// Used for debugging, serialization, or editor systems.
-        /// </summary>
-        /// <returns>Component type name</returns>
+        /**
+         * @brief Returns the type name of the component.
+         *
+         * Useful for debugging, serialization, or editor systems.
+         *
+         * @return Component type name
+         */
         std::string GetTypeName() const override { return "MeshRenderer"; }
     };
 
-}
+} // namespace Engine

@@ -9,138 +9,88 @@
 #include "API_Sound/MiniAudioSystem.hpp"
 #include <vector>
 
-namespace Editor
-{
-	/// <summary>
-	/// Main hub manager for the El Motor editor.
-	/// Manages overall editor state, UI rendering, and transitions between different editor modes.
-	/// Coordinates between the GUI layer, the core editor, and the asset/script managers.
-	/// </summary>
-	class HubManager
-	{
-	protected:
-		/// <summary>
-		/// Enumeration defining the different states the editor can be in.
-		/// Controls which UI and functionality is displayed and active.
-		/// </summary>
-		enum EditorState
-		{
-			Hub,	///< Project selection and creation hub
-			Editor, ///< Main editor for scene and GameObject editing
-			Run		///< Game runtime/play mode
-		};
+namespace Editor {
 
-		/// <summary>
-		/// The application instance managing window and rendering.
-		/// </summary>
-		Engine::Application app;
+    /**
+     * @brief Main hub manager for the El Motor editor.
+     *
+     * Handles overall editor state, UI rendering, and transitions between different editor modes.
+     * Coordinates between the GUI layer, the core editor, and asset/script managers.
+     */
+    class HubManager {
+    protected:
+        /**
+         * @brief Enumeration of the different states the editor can be in.
+         *
+         * Controls which UI and functionality is active and displayed.
+         */
+        enum EditorState {
+            Hub,    ///< Project selection and creation hub
+            Editor, ///< Main editor for scene and GameObject editing
+            Run     ///< Game runtime/play mode
+        };
 
-	private:
-		/// <summary>
-		/// UI button panel manager.
-		/// </summary>
-		Buttons buttons;
+        /// Application instance managing window and rendering
+        Engine::Application app;
 
-		/// <summary>
-		/// The core editor with scene editing functionality.
-		/// </summary>
-		EditorCore coreEditor;
+    private:
+        /// UI button panel manager
+        Buttons buttons;
 
-		/// <summary>
-		/// GUI layer for ImGui rendering.
-		/// </summary>
-		GuiLayer guiLayer;
+        /// Core editor with scene editing functionality
+        EditorCore coreEditor;
 
-		/// <summary>
-		/// Current editor state (Hub, Editor, or Run).
-		/// </summary>
-		EditorState editorState = Hub;
+        /// GUI layer for ImGui rendering
+        GuiLayer guiLayer;
 
-		/// <summary>
-		/// Logger for debug output.
-		/// </summary>
-		Engine::LoggerManager logger;
+        /// Current editor state (Hub, Editor, or Run)
+        EditorState editorState = Hub;
 
-		/// <summary>
-		/// Script manager for project scripts.
-		/// </summary>
-		ScriptManager scriptManager;
+        /// Logger for debug output
+        Engine::LoggerManager logger;
 
-		/// <summary>
-		/// Camera for the editor.
-		/// </summary>
-		EditorCamera camera;
+        /// Script manager for project scripts
+        ScriptManager scriptManager;
 
-	public:
-		/// <summary>
-		/// Constructor for HubManager.
-		/// </summary>
-		HubManager();
+        /// Camera for the editor
+        EditorCamera camera;
 
-		/// <summary>
-		/// Destructor for HubManager.
-		/// </summary>
-		~HubManager();
+    public:
+        /// @brief Constructor for HubManager
+        HubManager();
 
+        /// @brief Destructor for HubManager
+        ~HubManager();
 
+        /// @brief Shuts down the editor hub and cleans up resources
+        void Shutdown();
 
-		/// <summary>
-		/// Initializes the editor hub including the application, GUI layer, and systems.
-		/// Must be called before HubRun().
-		/// </summary>
-		void Shutdown();
+        /// @brief Initializes the editor hub including the application, GUI layer, and systems
+        void Init();
 
+        /// @brief Main editor loop. Runs until the window is closed.
+        /// Handles rendering, input, and state transitions
+        void HubRun();
 
+        /// @brief Initializes a new project in the editor
+        void CreateProject();
 
+        /// @brief Loads an existing project into the editor
+        void LoadProject();
 
-		/// <summary>
-		/// Initializes the editor hub including the application, GUI layer, and systems.
-		/// Must be called before HubRun().
-		/// </summary>
-		void Init();
+        /// @brief Renders the hub UI for project selection and creation
+        void DrawHubUI();
 
-		/// <summary>
-		/// Main editor loop. Runs until the window is closed.
-		/// Handles rendering, input, and state transitions.
-		/// </summary>
-		void HubRun();
+        /// @brief Renders the main editor UI for scene and GameObject editing
+        void DrawEditorUI();
 
-		/// <summary>
-		/// Initializes a new project in the editor.
-		/// </summary>
-		void CreateProject();
+        /// @brief Gets the current editor state
+        /// @return Reference to the current EditorState
+        EditorState& GetEditorState() { return editorState; }
 
-		/// <summary>
-		/// Loads an existing project into the editor.
-		/// </summary>
-		void LoadProject();
+        /// @brief Sets the current editor state
+        /// @param state The new editor state
+        void SetEditorState(EditorState state) { editorState = state; }
+    };
 
-		/// <summary>
-		/// Renders the hub UI for project selection and creation.
-		/// </summary>
-		void DrawHubUI();
-
-		/// <summary>
-		/// Renders the main editor UI for scene and GameObject editing.
-		/// </summary>
-		void DrawEditorUI();
-
-		/// <summary>
-		/// Gets the current editor state.
-		/// </summary>
-		/// <returns>Reference to the current EditorState</returns>
-		EditorState& GetEditorState() { return editorState; }
-
-		/// <summary>
-		/// Sets the current editor state.
-		/// </summary>
-		/// <param name="state">The new editor state</param>
-		void SetEditorState(EditorState state) { editorState = state; }
-
-
-
-
-
-
-	};
-}
+} // namespace Editor

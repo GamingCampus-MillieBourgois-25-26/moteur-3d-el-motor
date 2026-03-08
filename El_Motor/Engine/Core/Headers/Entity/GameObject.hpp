@@ -11,102 +11,101 @@
 
 namespace Engine {
 
-    /// <summary>
-    /// Represents an object in the scene.
-    /// A GameObject can contain multiple components and be part of a hierarchy.
-    /// </summary>
+    /**
+     * @brief Represents an object in the scene.
+     *
+     * A GameObject can contain multiple components and be part of a hierarchy
+     * with parent and child GameObjects. Components define the behavior or
+     * data of the GameObject.
+     */
     class GameObject {
     private:
 
-        /// <summary>
-        /// Name of the GameObject (useful for debugging or editor).
-        /// </summary>
+        /// @brief Name of the GameObject (useful for debugging or editor)
         std::string name;
 
-        /// <summary>
-        /// List of components attached to this GameObject.
-        /// </summary>
+        /// @brief List of components attached to this GameObject
         std::vector<Component*> components;
 
-        /// <summary>
-        /// Parent GameObject in the hierarchy.
-        /// </summary>
+        /// @brief Parent GameObject in the hierarchy
         GameObject* parent = nullptr;
 
-        /// <summary>
-        /// Children GameObjects in the hierarchy.
-        /// </summary>
+        /// @brief Children GameObjects in the hierarchy
         std::vector<GameObject*> children;
 
     public:
 
-        /// <summary>
-        /// Creates a GameObject with an optional name.
-        /// </summary>
-        /// <param name="name">Name of the GameObject</param>
+        /**
+         * @brief Creates a GameObject with an optional name.
+         * @param name Name of the GameObject
+         */
         GameObject(const std::string& name = "GameObject");
 
-        /// <summary>
-        /// Destructor responsible for cleaning up components.
-        /// </summary>
+        /**
+         * @brief Destructor responsible for cleaning up components.
+         */
         ~GameObject();
 
         // =========================
         // Update
         // =========================
 
-        /// <summary>
-        /// Updates all components attached to this GameObject.
-        /// </summary>
-        /// <param name="dt">Delta time between frames</param>
+        /**
+         * @brief Updates all components attached to this GameObject.
+         * @param dt Delta time between frames
+         */
         void Update(float dt);
 
         // =========================
         // Name
         // =========================
 
-        /// <summary>
-        /// Returns the GameObject name.
-        /// </summary>
+        /**
+         * @brief Returns the GameObject name.
+         * @return Name of the GameObject
+         */
         const std::string& GetName() const;
 
-        /// <summary>
-        /// Sets a new name for the GameObject.
-        /// </summary>
-        /// <param name="newName">New object name</param>
+        /**
+         * @brief Sets a new name for the GameObject.
+         * @param newName New object name
+         */
         void SetName(const std::string& newName);
 
         // =========================
         // Hierarchy
         // =========================
 
-        /// <summary>
-        /// Sets the parent GameObject.
-        /// Updates the hierarchy structure.
-        /// </summary>
-        /// <param name="newParent">Parent GameObject</param>
+        /**
+         * @brief Sets the parent GameObject.
+         * Updates the hierarchy structure automatically.
+         * @param newParent Parent GameObject
+         */
         void SetParent(GameObject* newParent);
 
-        /// <summary>
-        /// Returns the parent GameObject.
-        /// </summary>
+        /**
+         * @brief Returns the parent GameObject.
+         * @return Pointer to the parent GameObject
+         */
         GameObject* GetParent() const;
 
-        /// <summary>
-        /// Returns the children GameObjects.
-        /// </summary>
+        /**
+         * @brief Returns the children GameObjects.
+         * @return Vector of pointers to child GameObjects
+         */
         const std::vector<GameObject*>& GetChildren() const;
 
         // =========================
         // Components
         // =========================
 
-        /// <summary>
-        /// Adds a new component of type T to this GameObject.
-        /// </summary>
-        /// <typeparam name="T">Component type</typeparam>
-        /// <typeparam name="Args">Constructor arguments</typeparam>
-        /// <returns>Pointer to the created component</returns>
+        /**
+         * @brief Adds a new component of type T to this GameObject.
+         * @tparam T Component type (must inherit from Component)
+         * @tparam Args Constructor argument types
+         * @param args Arguments forwarded to the component constructor
+         * @return Pointer to the newly created component
+         */
         template<typename T, typename... Args>
         T* AddComponent(Args&&... args) {
             static_assert(std::is_base_of<Component, T>::value,
@@ -119,11 +118,11 @@ namespace Engine {
             return comp;
         }
 
-        /// <summary>
-        /// Returns the first component of type T attached to this GameObject.
-        /// </summary>
-        /// <typeparam name="T">Component type</typeparam>
-        /// <returns>Pointer to the component if found</returns>
+        /**
+         * @brief Returns the first component of type T attached to this GameObject.
+         * @tparam T Component type
+         * @return Pointer to the component if found, nullptr otherwise
+         */
         template<typename T>
         T* GetComponent() {
             for (Component* c : components) {
@@ -133,11 +132,11 @@ namespace Engine {
             return nullptr;
         }
 
-        /// <summary>
-        /// Checks whether the GameObject contains a component of type T.
-        /// </summary>
-        /// <typeparam name="T">Component type</typeparam>
-        /// <returns>True if the component exists</returns>
+        /**
+         * @brief Checks whether the GameObject contains a component of type T.
+         * @tparam T Component type
+         * @return True if a component of type T exists
+         */
         template<typename T>
         bool HasComponent() const {
             for (Component* c : components) {
@@ -147,11 +146,11 @@ namespace Engine {
             return false;
         }
 
-        /// <summary>
-        /// Removes a component of type T from this GameObject.
-        /// </summary>
-        /// <typeparam name="T">Component type</typeparam>
-        /// <returns>True if the component was removed</returns>
+        /**
+         * @brief Removes a component of type T from this GameObject.
+         * @tparam T Component type
+         * @return True if the component was successfully removed
+         */
         template<typename T>
         bool RemoveComponent() {
             static_assert(std::is_base_of<Component, T>::value,
@@ -176,21 +175,22 @@ namespace Engine {
             return false;
         }
 
-        /// <summary>
-        /// Returns all components attached to the GameObject.
-        /// </summary>
+        /**
+         * @brief Returns all components attached to the GameObject.
+         * @return Vector of pointers to all components
+         */
         const std::vector<Component*>& GetAllComponents() const;
 
         // =========================
         // Transform Shortcut
         // =========================
 
-        /// <summary>
-        /// Returns the Transform component of the GameObject.
-        /// Every GameObject should have one.
-        /// </summary>
-        /// <returns>Pointer to the Transform component</returns>
+        /**
+         * @brief Returns the Transform component of the GameObject.
+         * Every GameObject should have a Transform component.
+         * @return Pointer to the Transform component
+         */
         Transform* GetTransform();
     };
 
-}
+} // namespace Engine

@@ -11,82 +11,68 @@
 namespace Engine
 {
 
-    /// <summary>
-    /// Core class of the engine.
-    /// Responsible for initializing systems, running the main loop,
-    /// and shutting down the engine properly.
-    /// </summary>
+    /**
+     * @brief Core class of the engine.
+     *
+     * Responsible for initializing systems, running the main loop,
+     * and shutting down the engine properly. Provides access to
+     * core subsystems like input, time, logging, assets, scenes, and camera.
+     */
     class CoreEngine {
     private:
 
-        /// <summary>
         /// Manages user input (keyboard, mouse, etc.)
-        /// </summary>
         InputManager inputManager;
 
-        /// <summary>
         /// Handles time calculations (delta time, frame timing)
-        /// </summary>
         TimeManager timeManager;
 
-        /// <summary>
         /// Handles logging and debug messages
-        /// </summary>
         LoggerManager loggerManager;
 
-        /// <summary>
         /// Manages loading and storage of engine assets
-        /// </summary>
         AssetManager assetManager;
 
-        /// <summary>
         /// Default active scene of the engine
-        /// </summary>
         std::shared_ptr<Scene> defaultScene;
 
-        /// <summary>
         /// Editor camera used for debugging or editor mode
-        /// </summary>
         EditorCamera camera;
 
-        /// <summary>
         /// Indicates whether the engine main loop is running
-        /// </summary>
         bool running = false;
 
-        /// <summary>
         /// Delta time between frames
-        /// </summary>
         float dt = 0.0f;
 
     public:
 
-        /// <summary>
         /// Default constructor
-        /// </summary>
         CoreEngine() = default;
 
-        /// <summary>
-        /// Initializes the engine systems.
-        /// </summary>
-        /// <param name="app">Reference to the application instance</param>
+        /**
+         * @brief Initializes the engine systems.
+         *
+         * @param app Reference to the application instance
+         */
         void init(Engine::Application& app);
 
-        /// <summary>
-        /// Runs the main engine loop.
-        /// Handles update logic, rendering, and input processing.
-        /// </summary>
+        /**
+         * @brief Runs the main engine loop.
+         *
+         * Handles update logic, rendering, and input processing.
+         */
         void run();
 
-        /// <summary>
-        /// Shuts down the engine and releases resources.
-        /// </summary>
+        /**
+         * @brief Shuts down the engine and releases all resources.
+         */
         void shutdown();
 
-        /// <summary>
-        /// Checks whether the engine is currently running.
-        /// </summary>
-        /// <returns>True if the engine loop is active</returns>
+        /**
+         * @brief Checks whether the engine is currently running.
+         * @return true if the engine loop is active
+         */
         bool isRunning() const { return running; }
 
 
@@ -94,39 +80,25 @@ namespace Engine
         // System Getters
         // =========================
 
-        /// <summary>
-        /// Returns the input manager.
-        /// </summary>
+        /// @brief Returns the input manager
         InputManager& getInputManager() { return inputManager; }
 
-        /// <summary>
-        /// Returns the time manager.
-        /// </summary>
+        /// @brief Returns the time manager
         TimeManager& getTimeManager() { return timeManager; }
 
-        /// <summary>
-        /// Returns the logger manager.
-        /// </summary>
+        /// @brief Returns the logger manager
         LoggerManager& getLoggerManager() { return loggerManager; }
 
-        /// <summary>
-        /// Returns the asset manager.
-        /// </summary>
+        /// @brief Returns the asset manager
         AssetManager& getAssetManager() { return assetManager; }
 
-        /// <summary>
-        /// Returns the active scene.
-        /// </summary>
+        /// @brief Returns the active scene
         std::shared_ptr<Scene>& getScene() { return defaultScene; }
 
-        /// <summary>
-        /// Returns the editor camera.
-        /// </summary>
+        /// @brief Returns the editor camera
         EditorCamera& getCamera() { return camera; }
 
-        /// <summary>
-        /// Returns the delta time between frames.
-        /// </summary>
+        /// @brief Returns the delta time between frames
         float getDeltaTime() const { return dt; }
 
 
@@ -134,17 +106,17 @@ namespace Engine
         // Setters
         // =========================
 
-        /// <summary>
-        /// Sets the active scene of the engine.
-        /// </summary>
-        /// <param name="scene">Scene to activate</param>
+        /**
+         * @brief Sets the active scene of the engine
+         * @param scene Scene to activate
+         */
         void SetScene(std::shared_ptr<Scene> scene) { defaultScene = scene; }
 
-        /// <summary>
-        /// Sets the delta time between frames.
-        /// </summary>
-        /// <param name="delta">Frame delta time</param>
+        /**
+         * @brief Sets the delta time between frames
+         * @param delta Frame delta time
+         */
         void SetDeltaTime(float delta) { dt = delta; }
 
     };
-}
+} // namespace Engine

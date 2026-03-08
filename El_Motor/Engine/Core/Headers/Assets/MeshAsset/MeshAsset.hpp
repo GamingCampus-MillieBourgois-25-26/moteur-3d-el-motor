@@ -10,10 +10,11 @@
 
 namespace wrl = Microsoft::WRL;
 
-/// <summary>
-/// Structure representing a simple vertex.
-/// Contains position, normal, and texture coordinates.
-/// </summary>
+/**
+ * @brief Structure representing a simple vertex.
+ *
+ * Contains position, normal, and texture coordinates.
+ */
 struct Vertex
 {
     /// Position of the vertex in 3D space
@@ -26,19 +27,19 @@ struct Vertex
     Maths::Vec2f uv;
 };
 
-/// <summary>
-/// Asset representing a 3D mesh.
-/// Handles CPU and GPU data, including vertex and index buffers.
-/// </summary>
+/**
+ * @brief Asset representing a 3D mesh.
+ *
+ * Handles CPU and GPU data, including vertex and index buffers.
+ * Inherits from Asset for integration with the engine asset pipeline.
+ */
 class MeshAsset : public Asset
 {
 private:
-
     /// Color used for rendering/debugging
     Maths::Vec3f mColor = Maths::Vec3f(1.0f, 1.0f, 1.0f);
 
 public:
-
     // =========================
     // CPU-side data
     // =========================
@@ -63,55 +64,55 @@ public:
     // Color accessors
     // =========================
 
-    /// <summary>
-    /// Returns the mesh color
-    /// </summary>
-    /// <returns>Current mesh color</returns>
+    /**
+     * @brief Returns the mesh color
+     * @return Current mesh color
+     */
     const Maths::Vec3f& GetColor() const { return mColor; }
 
-    /// <summary>
-    /// Sets the mesh color
-    /// </summary>
-    /// <param name="r">Red component (0..1)</param>
-    /// <param name="g">Green component (0..1)</param>
-    /// <param name="b">Blue component (0..1)</param>
+    /**
+     * @brief Sets the mesh color
+     * @param r Red component (0..1)
+     * @param g Green component (0..1)
+     * @param b Blue component (0..1)
+     */
     void SetColor(float r, float g, float b) { mColor = Maths::Vec3f(r, g, b); }
 
     // =========================
     // Asset interface
     // =========================
 
-    /// <summary>
-    /// Loads the mesh from file and prepares CPU data
-    /// </summary>
+    /**
+     * @brief Loads the mesh from file and prepares CPU-side data
+     */
     void Load() override;
 
-    /// <summary>
-    /// Frees CPU and GPU resources
-    /// </summary>
+    /**
+     * @brief Frees CPU and GPU resources associated with the mesh
+     */
     void Unload() override;
 
-    /// <summary>
-    /// Creates GPU vertex and index buffers
-    /// </summary>
-    /// <param name="device">D3D11 device used for buffer creation</param>
+    /**
+     * @brief Creates GPU vertex and index buffers
+     * @param device D3D11 device used for buffer creation
+     */
     void CreateBuffers(ID3D11Device* device) override;
 
-    /// <summary>
-    /// Binds the mesh buffers to the pipeline for rendering
-    /// </summary>
-    /// <param name="context">Device context used for rendering</param>
+    /**
+     * @brief Binds the mesh buffers to the pipeline for rendering
+     * @param context Device context used for rendering
+     */
     void Bind(ID3D11DeviceContext* context) const override;
 
-    /// <summary>
-    /// Checks if the mesh is ready to be rendered
-    /// </summary>
-    /// <returns>True if GPU buffers are valid</returns>
+    /**
+     * @brief Checks if the mesh is ready to be rendered
+     * @return True if GPU buffers are valid
+     */
     bool IsReady() const;
 
-    /// <summary>
-    /// Returns the number of indices used for DrawIndexed
-    /// </summary>
-    /// <returns>Index count</returns>
+    /**
+     * @brief Returns the number of indices used for DrawIndexed
+     * @return Index count
+     */
     UINT GetIndexCount() const;
 };

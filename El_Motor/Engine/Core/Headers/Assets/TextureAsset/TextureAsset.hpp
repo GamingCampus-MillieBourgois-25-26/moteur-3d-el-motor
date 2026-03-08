@@ -8,83 +8,80 @@
 
 namespace wrl = Microsoft::WRL;
 
-/// <summary>
-/// Asset representing a texture that can be used in the DirectX rendering pipeline.
-/// Handles CPU/GPU resources, including shader resource view and underlying texture resource.
-/// </summary>
+/**
+ * @brief Asset representing a GPU texture for DirectX rendering.
+ *
+ * Handles CPU and GPU resources, including the shader resource view (SRV)
+ * and underlying DirectX resource. Supports loading, binding, and readiness checks.
+ */
 class TextureAsset : public Asset
 {
 private:
-
-    /// <summary>
-    /// Shader Resource View (SRV) used by shaders to access the texture
-    /// </summary>
+    /// Shader Resource View (SRV) for shaders to access the texture
     wrl::ComPtr<ID3D11ShaderResourceView> shaderResourceView = nullptr;
 
-    /// <summary>
     /// Underlying DirectX resource containing the texture data
-    /// </summary>
     wrl::ComPtr<ID3D11Resource> resource = nullptr;
 
-    /// <summary>
     /// Width of the texture in pixels
-    /// </summary>
     UINT width = 0;
 
-    /// <summary>
     /// Height of the texture in pixels
-    /// </summary>
     UINT height = 0;
 
 public:
-
     // =========================
     // Asset interface
     // =========================
 
-    /// <summary>
-    /// Loads the texture from the file associated with this asset.
-    /// </summary>
+    /**
+     * @brief Loads the texture from the file associated with this asset.
+     */
     void Load() override;
 
-    /// <summary>
-    /// Releases CPU and GPU resources associated with this texture.
-    /// </summary>
+    /**
+     * @brief Releases CPU and GPU resources for the texture.
+     */
     void Unload() override;
 
-    /// <summary>
-    /// Creates GPU resources for the texture (SRV and underlying resource).
-    /// </summary>
-    /// <param name="device">D3D11 device used for creating GPU resources</param>
+    /**
+     * @brief Creates GPU resources for the texture.
+     *
+     * Sets up the SRV and underlying D3D11 resource.
+     * @param device D3D11 device used for resource creation
+     */
     void CreateBuffers(ID3D11Device* device) override;
 
-    /// <summary>
-    /// Binds the texture to the graphics pipeline.
-    /// </summary>
-    /// <param name="context">Device context used for rendering</param>
+    /**
+     * @brief Binds the texture to the graphics pipeline.
+     *
+     * @param context Device context used for rendering
+     */
     void Bind(ID3D11DeviceContext* context) const override;
 
-    /// <summary>
-    /// Checks if the texture is ready to be used (SRV created and valid).
-    /// </summary>
-    /// <returns>True if ready</returns>
+    /**
+     * @brief Checks if the texture is ready to be used.
+     *
+     * Returns true if the SRV is valid and created.
+     * @return true if ready
+     */
     bool IsReady() const;
 
-    /// <summary>
-    /// Returns the Shader Resource View of the texture.
-    /// </summary>
-    /// <returns>ID3D11ShaderResourceView pointer</returns>
+    /**
+     * @brief Returns the Shader Resource View (SRV) of the texture.
+     * @return ID3D11ShaderResourceView pointer
+     */
     ID3D11ShaderResourceView* GetSRV() const;
 
-    /// <summary>
-    /// Returns the width of the texture in pixels.
-    /// </summary>
-    /// <returns>Texture width</returns>
+    /**
+     * @brief Returns the width of the texture in pixels.
+     * @return Texture width
+     */
     UINT GetWidth() const;
 
-    /// <summary>
-    /// Returns the height of the texture in pixels.
-    /// </summary>
-    /// <returns>Texture height</returns>
+    /**
+     * @brief Returns the height of the texture in pixels.
+     * @return Texture height
+     */
     UINT GetHeight() const;
 };

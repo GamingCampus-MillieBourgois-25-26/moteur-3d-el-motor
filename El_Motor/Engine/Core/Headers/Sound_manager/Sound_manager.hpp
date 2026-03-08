@@ -8,79 +8,95 @@
 
 namespace EI {
 
-    /// <summary>
-    /// High-level sound manager that wraps around an IAudioSystem.
-    /// Provides functionality for loading, playing, and stopping sounds.
-    /// </summary>
+    /**
+     * @brief High-level sound manager wrapping an IAudioSystem.
+     *
+     * Provides functionality for loading, playing, stopping, and managing sounds.
+     * Acts as a central interface for audio playback in the engine.
+     */
     class SoundManager {
     public:
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
+        /**
+         * @brief Default constructor.
+         */
         SoundManager();
 
-        /// <summary>
-        /// Destructor, shuts down audio system if necessary.
-        /// </summary>
+        /**
+         * @brief Destructor.
+         *
+         * Shuts down the audio system and releases resources if necessary.
+         */
         ~SoundManager();
 
-        /// <summary>
-        /// Initializes the underlying audio system.
-        /// </summary>
-        /// <returns>True if initialization succeeded</returns>
+        /**
+         * @brief Initializes the underlying audio system.
+         *
+         * Must be called before loading or playing sounds.
+         *
+         * @return True if initialization succeeded, false otherwise.
+         */
         bool Init();
 
-        /// <summary>
-        /// Shuts down the audio system and releases resources.
-        /// </summary>
+        /**
+         * @brief Shuts down the audio system and releases all resources.
+         */
         void Shutdown();
 
-        /// <summary>
-        /// Updates the audio system (call once per frame).
-        /// </summary>
-        /// <param name="dt">Delta time in seconds</param>
+        /**
+         * @brief Updates the audio system.
+         *
+         * Should be called once per frame to process audio events.
+         *
+         * @param dt Delta time in seconds since the last frame.
+         */
         void Update(float dt);
 
-        /// <summary>
-        /// Loads a sound file into memory and returns a handle.
-        /// </summary>
-        /// <param name="path">Path to the sound file</param>
-        /// <param name="desc">Optional sound description</param>
-        /// <returns>SoundHandle to the loaded sound</returns>
+        /**
+         * @brief Loads a sound file into memory.
+         *
+         * @param path Path to the sound file.
+         * @param desc Optional sound description (looping, 3D, etc.)
+         * @return SoundHandle representing the loaded sound.
+         */
         SoundHandle LoadSound(const std::string& path, const SoundDesc& desc = {});
 
-        /// <summary>
-        /// Unloads a previously loaded sound.
-        /// </summary>
-        /// <param name="sound">Handle of the sound to unload</param>
+        /**
+         * @brief Unloads a previously loaded sound.
+         *
+         * @param sound Handle of the sound to unload.
+         */
         void UnloadSound(SoundHandle sound);
 
-        /// <summary>
-        /// Plays a sound with the given parameters.
-        /// </summary>
-        /// <param name="sound">Handle of the sound to play</param>
-        /// <param name="params">Optional playback parameters</param>
-        /// <returns>VoiceHandle representing the playing instance</returns>
+        /**
+         * @brief Plays a sound.
+         *
+         * @param sound Handle of the sound to play.
+         * @param params Optional playback parameters (volume, pitch, 3D position, etc.)
+         * @return VoiceHandle representing the playing instance.
+         */
         VoiceHandle Play(SoundHandle sound, const VoiceParams& params = {});
 
-        /// <summary>
-        /// Stops a currently playing voice.
-        /// </summary>
-        /// <param name="voice">Handle of the voice to stop</param>
+        /**
+         * @brief Stops a currently playing voice.
+         *
+         * @param voice Handle of the voice to stop.
+         */
         void Stop(VoiceHandle voice);
 
-        /// <summary>
-        /// Sets the global/master volume of the audio system.
-        /// </summary>
-        /// <param name="volume">Volume value (0.0f = silent, 1.0f = full)</param>
+        /**
+         * @brief Sets the global/master volume of the audio system.
+         *
+         * @param volume Volume value, where 0.0f = silent, 1.0f = full volume.
+         */
         void SetMasterVolume(float volume);
 
     private:
 
-        /// <summary>
-        /// Underlying audio system implementation (IAudioSystem)
-        /// </summary>
+        /**
+         * @brief Underlying audio system implementation.
+         */
         std::unique_ptr<Engine::IAudioSystem> audioSystem_;
     };
-}
+
+} // namespace EI

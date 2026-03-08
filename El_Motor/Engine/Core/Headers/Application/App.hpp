@@ -4,42 +4,50 @@
 
 namespace Engine {
 
-    /// <summary>
-    /// Main engine application class.
-    /// Manages the window and Direct3D11 context.
-    /// </summary>
+    /**
+     * @brief Main engine application class.
+     *
+     * Manages the window and Direct3D11 context. Provides
+     * access to the renderer and window manager.
+     */
     class Application {
     private:
 
-        /// <summary>
-        /// Direct3D11 renderer instance
-        /// </summary>
+        /**
+         * @brief Direct3D11 renderer instance.
+         *
+         * Manages the graphics pipeline and rendering resources.
+         */
         std::unique_ptr<D3D11> d3d11;
 
     public:
 
-        /// <summary>
-        /// Window manager responsible for creating and handling the application window
-        /// </summary>
+        /**
+         * @brief Window manager responsible for creating and handling the application window.
+         */
         std::unique_ptr<WindowOpener> windowOpener;
 
-        /// <summary>
-        /// Returns a raw pointer to the D3D11 instance.
-        /// Useful for accessing Direct3D features in other parts of the engine.
-        /// </summary>
-        /// <returns>Pointer to the D3D11 instance</returns>
+        /**
+         * @brief Returns a raw pointer to the D3D11 instance.
+         *
+         * Useful for accessing Direct3D features in other parts of the engine.
+         * @return Pointer to the D3D11 instance
+         */
         D3D11* getD3D11() { return d3d11.get(); }
 
-        /// <summary>
-        /// Returns a reference to the WindowOpener instance.
-        /// Allows controlling the window from other engine modules.
-        /// </summary>
-        /// <returns>Reference to the WindowOpener</returns>
+        /**
+         * @brief Returns a reference to the WindowOpener instance.
+         *
+         * Allows controlling the window from other engine modules.
+         * @return Reference to the WindowOpener
+         */
         WindowOpener& getWindowOpener() { return *windowOpener; }
 
-        /// <summary>
-        /// Initializes the application, including the window and D3D11 context.
-        /// </summary>
+        /**
+         * @brief Initializes the application, including the window and D3D11 context.
+         *
+         * Must be called before using the renderer or window.
+         */
         void initApp();
 
     };

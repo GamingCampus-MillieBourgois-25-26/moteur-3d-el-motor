@@ -9,36 +9,45 @@
 
 namespace Engine {
 
-    /// <summary>
-    /// Component responsible for storing a texture associated with a GameObject.
-    /// This texture can later be used by the rendering system.
-    /// </summary>
+    /**
+     * @brief Component responsible for storing a texture associated with a GameObject.
+     *
+     * The texture can later be used by the rendering system to apply
+     * visual appearance to the object.
+     */
     class TextureComponent : public Component {
     private:
 
-        /// <summary>
-        /// Shared pointer to the texture asset.
-        /// </summary>
+        /// @brief Shared pointer to the assigned texture asset
         std::shared_ptr<TextureAsset> m_texture;
 
     public:
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
+        /// @brief Default constructor
         TextureComponent() = default;
 
-        /// <summary>
-        /// Returns the texture assigned to this component.
-        /// </summary>
-        /// <returns>Shared pointer to the TextureAsset</returns>
+        // =========================
+        // Getters
+        // =========================
+
+        /**
+         * @brief Returns the currently assigned texture.
+         * @return Shared pointer to the TextureAsset
+         */
         std::shared_ptr<TextureAsset> GetTexture() const { return m_texture; }
 
-        /// <summary>
-        /// Assigns a texture to the GameObject.
-        /// Logs the operation for debugging purposes.
-        /// </summary>
-        /// <param name="texture">Texture asset to assign</param>
+        // =========================
+        // Setters
+        // =========================
+
+        /**
+         * @brief Assigns a texture to the GameObject.
+         *
+         * Logs the operation for debugging purposes.
+         * Passing nullptr clears the texture.
+         *
+         * @param texture Shared pointer to the TextureAsset
+         */
         void SetTexture(std::shared_ptr<TextureAsset> texture)
         {
             m_texture = texture;
@@ -58,29 +67,36 @@ namespace Engine {
             }
         }
 
-        /// <summary>
-        /// Called when the component starts.
-        /// </summary>
+        // =========================
+        // Component Lifecycle
+        // =========================
+
+        /**
+         * @brief Called when the component starts.
+         * Can be used for initialization logic.
+         */
         void Start() override {}
 
-        /// <summary>
-        /// Called every frame to update the component.
-        /// </summary>
-        /// <param name="dt">Delta time between frames</param>
+        /**
+         * @brief Called every frame to update the component.
+         * @param dt Delta time since last frame
+         */
         void Update(float dt) override {}
 
-        /// <summary>
-        /// Called when the component is destroyed.
-        /// Releases the texture reference.
-        /// </summary>
+        /**
+         * @brief Called when the component is destroyed.
+         *
+         * Releases the reference to the texture asset to free memory.
+         */
         void OnDestroy() override { m_texture.reset(); }
 
-        /// <summary>
-        /// Returns the component type name.
-        /// Useful for debugging, serialization, or editor systems.
-        /// </summary>
-        /// <returns>Component type name</returns>
+        /**
+         * @brief Returns the type name of the component.
+         *
+         * Useful for debugging, serialization, or editor systems.
+         * @return Component type name
+         */
         std::string GetTypeName() const override { return "TextureRenderer"; }
     };
 
-}
+} // namespace Engine

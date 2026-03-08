@@ -7,29 +7,32 @@
 
 namespace Engine {
 
-    /// <summary>
-    /// Singleton class responsible for logging messages to console and file.
-    /// Supports Info, Warning, and Error log types.
-    /// </summary>
+    /**
+     * @brief Singleton class responsible for logging messages to console and file.
+     *
+     * Supports three log levels: Info, Warning, and Error.
+     * Messages are written both to the console and to a log file.
+     */
     class LoggerManager {
     public:
 
-        /// <summary>
-        /// Returns the singleton instance of the LoggerManager.
-        /// </summary>
+        /**
+         * @brief Returns the singleton instance of LoggerManager.
+         * @return Reference to the LoggerManager instance.
+         */
         static LoggerManager& Get();
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
+        /**
+         * @brief Default constructor.
+         */
         LoggerManager() = default;
 
-        /// <summary>
-        /// Default destructor.
-        /// </summary>
+        /**
+         * @brief Default destructor.
+         */
         ~LoggerManager() = default;
 
-        // Prevent copy/assignment
+        // Disable copy and assignment
         LoggerManager(const LoggerManager&) = delete;
         LoggerManager& operator=(const LoggerManager&) = delete;
 
@@ -37,55 +40,74 @@ namespace Engine {
         // Initialization / Shutdown
         // =========================
 
-        /// <summary>
-        /// Initializes the logger (e.g., opens log file).
-        /// </summary>
+        /**
+         * @brief Initializes the logger.
+         *
+         * Opens the log file for writing and prepares internal structures.
+         */
         void LogInitialize();
 
-        /// <summary>
-        /// Shuts down the logger (e.g., closes log file).
-        /// </summary>
+        /**
+         * @brief Shuts down the logger.
+         *
+         * Closes the log file and cleans up resources.
+         */
         void LogShutdown();
 
         // =========================
         // Logging functions
         // =========================
 
-        /// <summary>
-        /// Logs an error message.
-        /// </summary>
+        /**
+         * @brief Logs an error message.
+         *
+         * The message will be written with "ERROR" prefix and sent to both
+         * the console and log file.
+         * @param message Message to log.
+         */
         void LogError(const std::string& message);
 
-        /// <summary>
-        /// Logs a warning message.
-        /// </summary>
+        /**
+         * @brief Logs a warning message.
+         *
+         * The message will be written with "WARNING" prefix.
+         * @param message Message to log.
+         */
         void LogWarning(const std::string& message);
 
-        /// <summary>
-        /// Logs an info message.
-        /// </summary>
+        /**
+         * @brief Logs an info message.
+         *
+         * The message will be written with "INFO" prefix.
+         * @param message Message to log.
+         */
         void LogInfo(const std::string& message);
 
     private:
 
-        /// <summary>
-        /// Internal log type enumeration.
-        /// </summary>
+        /**
+         * @brief Internal enumeration of log types.
+         */
         enum class LogType { Error, Warning, Info };
 
-        /// <summary>
-        /// Default path for the log file.
-        /// </summary>
+        /**
+         * @brief Default path for the log file.
+         */
         std::string logFilePath = "..\\UserLog.txt";
 
-        /// <summary>
-        /// Internal function to log a message with a given type.
-        /// </summary>
+        /**
+         * @brief Internal function to log a message with a specific type.
+         *
+         * @param message Message to log.
+         * @param type Type of log (Info, Warning, Error). Defaults to Info.
+         */
         void Log(const std::string& message, LogType type = LogType::Info);
 
-        /// <summary>
-        /// Writes a message to the log file.
-        /// </summary>
+        /**
+         * @brief Writes a message directly to the log file.
+         *
+         * @param message Message to write.
+         */
         void LogToFile(const std::string& message);
     };
-}
+} // namespace Engine

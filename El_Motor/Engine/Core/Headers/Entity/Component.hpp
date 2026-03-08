@@ -4,52 +4,53 @@ namespace Engine {
 
     class GameObject;
 
-    /// <summary>
-    /// Base class for all components in the engine.
-    /// Components define behavior that can be attached to a GameObject.
-    /// </summary>
+    /**
+     * @brief Base class for all components in the engine.
+     *
+     * Components define behaviors or functionality that can be attached to a GameObject.
+     * Examples include physics, rendering, and asset management.
+     */
     class Component {
     public:
 
-        /// <summary>
-        /// Pointer to the GameObject that owns this component.
-        /// </summary>
+        /// @brief Pointer to the GameObject that owns this component
         GameObject* gameObject = nullptr;
 
-        /// <summary>
-        /// Virtual destructor to allow proper cleanup of derived components.
-        /// </summary>
+        /// @brief Virtual destructor to allow proper cleanup of derived components
         virtual ~Component() = default;
 
-        /// <summary>
-        /// Called once when the component is first initialized.
-        /// </summary>
+        /**
+         * @brief Called once when the component is first initialized.
+         *
+         * Can be used for setup logic that depends on the GameObject or other components.
+         */
         virtual void Start() {}
 
-        /// <summary>
-        /// Called every frame to update the component logic.
-        /// </summary>
-        /// <param name="dt">Delta time between frames</param>
+        /**
+         * @brief Called every frame to update the component logic.
+         * @param dt Delta time in seconds since the last frame
+         */
         virtual void Update(float dt) {}
 
-        /// <summary>
-        /// Called when the component is destroyed or removed from the GameObject.
-        /// </summary>
+        /**
+         * @brief Called when the component is destroyed or removed from the GameObject.
+         *
+         * Can be used to release resources, unregister from systems, or cleanup references.
+         */
         virtual void OnDestroy() {}
 
-        /// <summary>
-        /// Returns the name of the component type.
-        /// Useful for debugging, logging, or editor systems.
-        /// </summary>
-        /// <returns>Component type name</returns>
+        /**
+         * @brief Returns the type name of the component.
+         *
+         * Useful for debugging, logging, or editor tools.
+         * @return Component type name as a string
+         */
         virtual std::string GetTypeName() const = 0;
 
     protected:
 
-        /// <summary>
-        /// Protected constructor to prevent direct instantiation of the base class.
-        /// </summary>
+        /// @brief Protected constructor to prevent direct instantiation of the base Component class
         Component() = default;
     };
 
-}
+} // namespace Engine

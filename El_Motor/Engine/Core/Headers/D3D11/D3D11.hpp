@@ -21,168 +21,137 @@ namespace wrl = Microsoft::WRL;
 
 namespace Engine {
 
-	/// <summary>
-	/// Constant buffer used to store camera matrices.
-	/// Sent to the GPU each frame.
-	/// </summary>
-	struct MatrixBuffer
-	{
-		DirectX::XMMATRIX view;        // View matrix
-		DirectX::XMMATRIX projection;  // Projection matrix
-		DirectX::XMMATRIX vp;          // Combined ViewProjection matrix
-	};
+    /**
+     * @brief Constant buffer used to store camera matrices.
+     *
+     * This buffer is sent to the GPU each frame to update view and projection transformations.
+     */
+    struct MatrixBuffer
+    {
+        DirectX::XMMATRIX view;        ///< View matrix
+        DirectX::XMMATRIX projection;  ///< Projection matrix
+        DirectX::XMMATRIX vp;          ///< Combined ViewProjection matrix
+    };
 
-	/// <summary>
-	/// Constant buffer used to send object color data to the pixel shader.
-	/// </summary>
-	struct ObjectColorBuffer
-	{
-		DirectX::XMFLOAT3 objColor; // Base color of the object
-		int useTexture;             // Flag indicating whether a texture is used
-	};
+    /**
+     * @brief Constant buffer used to send object color data to the pixel shader.
+     */
+    struct ObjectColorBuffer
+    {
+        DirectX::XMFLOAT3 objColor; ///< Base color of the object
+        int useTexture;             ///< Flag indicating whether a texture is used
+    };
 
-	/// <summary>
-	/// Wrapper class responsible for initializing and managing Direct3D 11.
-	/// Handles device creation, swap chain, rendering targets, and draw calls.
-	/// </summary>
-	class D3D11 {
-	public:
+    /**
+     * @brief Wrapper class responsible for initializing and managing Direct3D 11.
+     *
+     * Handles device creation, swap chain, render targets, shaders, and draw calls.
+     */
+    class D3D11 {
+    public:
 
-		/// <summary>
-		/// Constructs the D3D11 renderer using the provided window.
-		/// </summary>
-		/// <param name="window">Window interface used to retrieve the native handle</param>
-		D3D11(IWindow& window);
+        /**
+         * @brief Constructs the D3D11 renderer using the provided window.
+         * @param window Window interface used to retrieve the native handle
+         */
+        D3D11(IWindow& window);
 
-		/// Disable copy constructor
-		D3D11(const D3D11& other) = delete;
+        /// Disable copy constructor
+        D3D11(const D3D11& other) = delete;
 
-		/// Disable assignment operator
-		D3D11& operator=(const D3D11& other) = delete;
+        /// Disable assignment operator
+        D3D11& operator=(const D3D11& other) = delete;
 
-		/// <summary>
-		/// Default destructor
-		/// </summary>
-		~D3D11() = default;
+        /// @brief Default destructor
+        ~D3D11() = default;
 
-		/// <summary>
-		/// Presents the swap chain to the screen (displays the rendered frame).
-		/// </summary>
-		void Present();
+        /**
+         * @brief Presents the swap chain to the screen (displays the rendered frame)
+         */
+        void Present();
 
-		/// <summary>
-		/// Clears the back buffer with the specified color.
-		/// </summary>
-		/// <param name="r">Red component</param>
-		/// <param name="g">Green component</param>
-		/// <param name="b">Blue component</param>
-		void ClearBackBuffer(float r, float g, float b) noexcept;
+        /**
+         * @brief Clears the back buffer with the specified color.
+         * @param r Red component (0..1)
+         * @param g Green component (0..1)
+         * @param b Blue component (0..1)
+         */
+        void ClearBackBuffer(float r, float g, float b) noexcept;
 
-		/// <summary>
-		/// Updates the view-projection matrix used by the shaders.
-		/// </summary>
-		/// <param name="vp">ViewProjection matrix</param>
-		void SetViewProjection(const Maths::Mat4f& vp);
+        /**
+         * @brief Updates the view-projection matrix used by the shaders.
+         * @param vp ViewProjection matrix
+         */
+        void SetViewProjection(const Maths::Mat4f& vp);
 
-		/// <summary>
-		/// Returns the D3D11 device.
-		/// </summary>
-		ID3D11Device* GetDevice() const noexcept { return pDevice.Get(); }
+        /// @brief Returns the D3D11 device
+        ID3D11Device* GetDevice() const noexcept { return pDevice.Get(); }
 
-		/// <summary>
-		/// Returns the D3D11 device context.
-		/// </summary>
-		ID3D11DeviceContext* GetContext() const noexcept { return pContext.Get(); }
+        /// @brief Returns the D3D11 device context
+        ID3D11DeviceContext* GetContext() const noexcept { return pContext.Get(); }
 
-		/// <summary>
-		/// Returns the swap chain.
-		/// </summary>
-		IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain.Get(); }
+        /// @brief Returns the swap chain
+        IDXGISwapChain* GetSwapChain() const noexcept { return pSwapChain.Get(); }
 
-		/// <summary>
-		/// Returns the render target view.
-		/// </summary>
-		ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget.Get(); }
+        /// @brief Returns the render target view
+        ID3D11RenderTargetView* GetRenderTargetView() const noexcept { return pTarget.Get(); }
 
-		/// <summary>
-		/// Draws a mesh using the provided material.
-		/// </summary>
-		/// <param name="mesh">Mesh asset containing vertex/index buffers</param>
-		/// <param name="material">Material containing textures and parameters</param>
-		void DrawShape(const MeshAsset& mesh, const Material& material);
+        /**
+         * @brief Draws a mesh using the provided material.
+         * @param mesh Mesh asset containing vertex/index buffers
+         * @param material Material containing textures and parameters
+         */
+        void DrawShape(const MeshAsset& mesh, const Material& material);
 
-	private:
+    private:
 
-		/// <summary>
-		/// Native window handle used for DirectX initialization.
-		/// </summary>
-		HWND myWindow;
+        /// Native window handle used for DirectX initialization
+        HWND myWindow;
 
-		/// <summary>
-		/// Direct3D device responsible for resource creation.
-		/// </summary>
-		wrl::ComPtr<ID3D11Device> pDevice = nullptr;
+        /// Direct3D device responsible for resource creation
+        wrl::ComPtr<ID3D11Device> pDevice = nullptr;
 
-		/// <summary>
-		/// Device context used for rendering commands.
-		/// </summary>
-		wrl::ComPtr<ID3D11DeviceContext> pContext = nullptr;
+        /// Device context used for rendering commands
+        wrl::ComPtr<ID3D11DeviceContext> pContext = nullptr;
 
-		/// <summary>
-		/// Swap chain used to present frames to the screen.
-		/// </summary>
-		wrl::ComPtr<IDXGISwapChain> pSwapChain = nullptr;
+        /// Swap chain used to present frames to the screen
+        wrl::ComPtr<IDXGISwapChain> pSwapChain = nullptr;
 
-		/// <summary>
-		/// Render target view representing the back buffer.
-		/// </summary>
-		wrl::ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
+        /// Render target view representing the back buffer
+        wrl::ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
 
-		/// <summary>
-		/// Depth stencil buffer used for depth testing.
-		/// </summary>
-		wrl::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
+        /// Depth stencil buffer used for depth testing
+        wrl::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
 
-		/// <summary>
-		/// Sampler state used for texture sampling.
-		/// </summary>
-		wrl::ComPtr<ID3D11SamplerState> mSampler;
+        /// Sampler state used for texture sampling
+        wrl::ComPtr<ID3D11SamplerState> mSampler;
 
-		/// <summary>
-		/// Constant buffer storing object color parameters.
-		/// </summary>
-		wrl::ComPtr<ID3D11Buffer> mObjectColorBuffer;
+        /// Constant buffer storing object color parameters
+        wrl::ComPtr<ID3D11Buffer> mObjectColorBuffer;
 
-		/// <summary>
-		/// Constant buffer storing camera matrices.
-		/// </summary>
-		wrl::ComPtr<ID3D11Buffer> mMatrixBuffer;
+        /// Constant buffer storing camera matrices
+        wrl::ComPtr<ID3D11Buffer> mMatrixBuffer;
 
-		/// <summary>
-		/// Vertex shader used for rendering meshes.
-		/// </summary>
-		wrl::ComPtr<ID3D11VertexShader> mVertexShader;
+        /// Vertex shader used for rendering meshes
+        wrl::ComPtr<ID3D11VertexShader> mVertexShader;
 
-		/// <summary>
-		/// Pixel shader used for fragment shading.
-		/// </summary>
-		wrl::ComPtr<ID3D11PixelShader>  mPixelShader;
+        /// Pixel shader used for fragment shading
+        wrl::ComPtr<ID3D11PixelShader>  mPixelShader;
 
-		/// <summary>
-		/// Input layout describing vertex structure.
-		/// </summary>
-		wrl::ComPtr<ID3D11InputLayout>  mInputLayout;
+        /// Input layout describing vertex structure
+        wrl::ComPtr<ID3D11InputLayout>  mInputLayout;
 
-		/// <summary>
-		/// Searches for available GPU adapters and selects the best one.
-		/// </summary>
-		/// <returns>Pointer to the selected adapter</returns>
-		IDXGIAdapter1* searchForAdapters();
+        /**
+         * @brief Searches for available GPU adapters and selects the best one.
+         * @return Pointer to the selected adapter
+         */
+        IDXGIAdapter1* searchForAdapters();
 
-		/// <summary>
-		/// Initializes the swap chain description with desired parameters.
-		/// </summary>
-		/// <returns>Configured swap chain description</returns>
-		DXGI_SWAP_CHAIN_DESC initSwapChainDesc();
-	};
-}
+        /**
+         * @brief Initializes the swap chain description with desired parameters.
+         * @return Configured swap chain description
+         */
+        DXGI_SWAP_CHAIN_DESC initSwapChainDesc();
+    };
+
+} // namespace Engine

@@ -2,83 +2,80 @@
 #include "CoreEngine/CoreEngine.hpp"
 #include "Application/App.hpp"
 
-namespace Editor
-{
-	/// <summary>
-	/// Classe responsable de la gestion du cœur de l'éditeur.
-	/// Coordonne l'initialisation, l'exécution et l'arrêt de l'éditeur,
-	/// ainsi que la gestion des entrées utilisateur et du moteur graphique.
-	/// </summary>
-	class EditorCore
-	{
-	private:
-		/// Moteur graphique principal de l'éditeur
-		Engine::CoreEngine coreEngine;
-		
-		/// Position X de la souris dans l'espace de l'éditeur
-		double x = 0.0;
-		
-		/// Position Y de la souris dans l'espace de l'éditeur
-		double y = 0.0;
+namespace Editor {
 
-	protected:
-		// Espace réservé pour les membres protégés
+    /**
+     * @brief Manages the core of the editor.
+     *
+     * Coordinates initialization, execution, and shutdown of the editor,
+     * as well as user input handling and the graphics engine.
+     */
+    class EditorCore {
+    private:
+        /// Main graphics engine of the editor
+        Engine::CoreEngine coreEngine;
 
-	public:
-		/// <summary>
-		/// Constructeur par défaut
-		/// </summary>
-		EditorCore() {}
-		
-		/// <summary>
-		/// Destructeur
-		/// </summary>
-		~EditorCore() {}
+        /// Mouse X position in editor space
+        double x = 0.0;
 
-		/// <summary>
-		/// Initialise l'éditeur et ses composants.
-		/// </summary>
-		/// <param name="app">Référence à l'application principale</param>
-		void editorInit(Engine::Application& app);
-		
-		/// <summary>
-		/// Boucle principale d'exécution de l'éditeur.
-		/// </summary>
-		/// <param name="app">Référence à l'application principale</param>
-		void editorRun(Engine::Application& app);
-		
-		/// <summary>
-		/// Arrête l'éditeur et libère les ressources.
-		/// </summary>
-		void editorShutdown();
-		
-		/// <summary>
-		/// Lance le mode d'exécution du jeu/projet.
-		/// </summary>
-		void startRuntime();
+        /// Mouse Y position in editor space
+        double y = 0.0;
 
-		/// <summary>
-		/// Met à jour les entrées utilisateur (clavier, souris, etc.).
-		/// </summary>
-		/// <param name="app">Référence à l'application principale</param>
-		void InputUpdate(Engine::Application& app);
-		
-		/// <summary>
-		/// Retourne la position X actuelle de la souris dans l'éditeur.
-		/// </summary>
-		/// <returns>Coordonnée X de la souris</returns>
-		double getMouseEditorX() const { return x; }
-		
-		/// <summary>
-		/// Retourne la position Y actuelle de la souris dans l'éditeur.
-		/// </summary>
-		/// <returns>Coordonnée Y de la souris</returns>
-		double getMouseEditorY() const { return y; }
+    protected:
+        // Reserved for protected members
 
-		/// <summary>
-		/// Accède au moteur graphique principal.
-		/// </summary>
-		/// <returns>Référence non-const au moteur graphique</returns>
-		Engine::CoreEngine& GetEngine() { return coreEngine; }
-	};
+    public:
+        /// @brief Default constructor
+        EditorCore() {}
+
+        /// @brief Destructor
+        ~EditorCore() {}
+
+        /**
+         * @brief Initializes the editor and its components.
+         * @param app Reference to the main application
+         */
+        void editorInit(Engine::Application& app);
+
+        /**
+         * @brief Main execution loop of the editor.
+         * @param app Reference to the main application
+         */
+        void editorRun(Engine::Application& app);
+
+        /**
+         * @brief Shuts down the editor and releases resources.
+         */
+        void editorShutdown();
+
+        /**
+         * @brief Starts the runtime mode of the game/project.
+         */
+        void startRuntime();
+
+        /**
+         * @brief Updates user input (keyboard, mouse, etc.).
+         * @param app Reference to the main application
+         */
+        void InputUpdate(Engine::Application& app);
+
+        /**
+         * @brief Gets the current mouse X position in the editor.
+         * @return Mouse X coordinate
+         */
+        double getMouseEditorX() const { return x; }
+
+        /**
+         * @brief Gets the current mouse Y position in the editor.
+         * @return Mouse Y coordinate
+         */
+        double getMouseEditorY() const { return y; }
+
+        /**
+         * @brief Accesses the main graphics engine.
+         * @return Non-const reference to the core engine
+         */
+        Engine::CoreEngine& GetEngine() { return coreEngine; }
+    };
+
 }

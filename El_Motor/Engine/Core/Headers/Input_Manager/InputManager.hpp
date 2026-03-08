@@ -9,102 +9,129 @@
 
 namespace Engine {
 
-    /// <summary>
-    /// Handles keyboard and mouse input.
-    /// Tracks key states, mouse buttons, and mouse movement.
-    /// </summary>
+    /**
+     * @brief Handles keyboard and mouse input.
+     *
+     * Tracks key states, mouse buttons, and mouse movement.
+     * Provides functions to query pressed, held, and released states.
+     */
     class InputManager {
     public:
 
+        /**
+         * @brief Default constructor.
+         */
         InputManager();
+
+        /**
+         * @brief Destructor.
+         */
         ~InputManager();
 
         // =========================
         // Global
         // =========================
 
-        /// <summary>
-        /// Initializes the input system.
-        /// Must be called before using input functions.
-        /// </summary>
+        /**
+         * @brief Initializes the input system.
+         *
+         * Must be called before using input functions.
+         */
         void init();
 
-        /// <summary>
-        /// Updates the internal input state.
-        /// Should be called once per frame.
-        /// </summary>
+        /**
+         * @brief Updates the internal input state.
+         *
+         * Should be called once per frame.
+         */
         void update();
 
         // =========================
         // Keyboard
         // =========================
 
-        /// <summary>
-        /// Updates the state of a keyboard key.
-        /// </summary>
-        /// <param name="scancode">Key scancode</param>
-        /// <param name="isDown">Whether the key is pressed</param>
+        /**
+         * @brief Updates the state of a keyboard key.
+         * @param scancode Key scancode
+         * @param isDown Whether the key is pressed
+         */
         void updateKey(Scancode scancode, bool isDown);
 
-        /// <summary>
-        /// Checks if the key was pressed this frame.
-        /// </summary>
+        /**
+         * @brief Checks if the key was pressed this frame.
+         * @param scancode Key scancode
+         * @return True if the key was pressed this frame
+         */
         bool isKeyPressed(Scancode scancode) const;
 
-        /// <summary>
-        /// Checks if the key is being held down.
-        /// </summary>
+        /**
+         * @brief Checks if the key is being held down.
+         * @param scancode Key scancode
+         * @return True if the key is currently held
+         */
         bool isKeyHeld(Scancode scancode) const;
 
-        /// <summary>
-        /// Checks if the key was released this frame.
-        /// </summary>
+        /**
+         * @brief Checks if the key was released this frame.
+         * @param scancode Key scancode
+         * @return True if the key was released this frame
+         */
         bool isKeyReleased(Scancode scancode) const;
 
         // =========================
         // Mouse
         // =========================
 
-        /// <summary>
-        /// Updates the state of a mouse button.
-        /// </summary>
-        /// <param name="button">Mouse button</param>
-        /// <param name="isDown">Whether the button is pressed</param>
+        /**
+         * @brief Updates the state of a mouse button.
+         * @param button Mouse button
+         * @param isDown Whether the button is pressed
+         */
         void updateMouseButton(MouseButton button, bool isDown);
 
-        /// <summary>
-        /// Checks if the mouse button was pressed this frame.
-        /// </summary>
+        /**
+         * @brief Checks if the mouse button was pressed this frame.
+         * @param button Mouse button
+         * @return True if the button was pressed this frame
+         */
         bool isMousePressed(MouseButton button) const;
 
-        /// <summary>
-        /// Checks if the mouse button is being held down.
-        /// </summary>
+        /**
+         * @brief Checks if the mouse button is being held down.
+         * @param button Mouse button
+         * @return True if the button is currently held
+         */
         bool isMouseHeld(MouseButton button) const;
 
-        /// <summary>
-        /// Checks if the mouse button was released this frame.
-        /// </summary>
+        /**
+         * @brief Checks if the mouse button was released this frame.
+         * @param button Mouse button
+         * @return True if the button was released this frame
+         */
         bool isMouseReleased(MouseButton button) const;
 
-        /// <summary>
-        /// Sets the current mouse position.
-        /// </summary>
+        /**
+         * @brief Sets the current mouse position.
+         * @param pos New mouse position
+         */
         void setMousePosition(Maths::Vec2f pos);
 
-        /// <summary>
-        /// Returns the current mouse position.
-        /// </summary>
+        /**
+         * @brief Returns the current mouse position.
+         * @return Current mouse position
+         */
         Maths::Vec2f getMousePosition() const;
 
-        /// <summary>
-        /// Returns the delta movement of the mouse since last frame.
-        /// </summary>
+        /**
+         * @brief Returns the delta movement of the mouse since last frame.
+         * @return Mouse movement delta
+         */
         Maths::Vec2f getMouseDelta() const;
 
-        /// <summary>
-        /// Returns the previous mouse position.
-        /// </summary>
+        /**
+         * @brief Returns the previous mouse position.
+         * @return Previous mouse position
+         */
         Maths::Vec2f getPreviousMousePosition() const;
 
     private:
@@ -113,38 +140,27 @@ namespace Engine {
         // Keyboard states
         // =========================
 
-        /// <summary>
-        /// Stores the state of each key using scancodes.
-        /// </summary>
+        /// @brief Stores the state of each key using scancodes
         std::unordered_map<int, InputState> keyStates;
 
-        /// <summary>
-        /// Whether the input manager has been initialized.
-        /// </summary>
+        /// @brief Whether the input manager has been initialized
         bool initialized = false;
 
         // =========================
         // Mouse states
         // =========================
 
-        /// <summary>
-        /// Stores the state of each mouse button.
-        /// </summary>
+        /// @brief Stores the state of each mouse button
         std::array<InputState, (size_t)MouseButton::COUNT> mouseStates;
 
-        /// <summary>
-        /// Current mouse position.
-        /// </summary>
+        /// @brief Current mouse position
         Maths::Vec2f mousePosition;
 
-        /// <summary>
-        /// Mouse position from the previous frame.
-        /// </summary>
+        /// @brief Mouse position from the previous frame
         Maths::Vec2f previousMousePosition;
 
-        /// <summary>
-        /// Mouse movement delta (current - previous).
-        /// </summary>
+        /// @brief Mouse movement delta (current - previous)
         Maths::Vec2f mouseDelta;
     };
-}
+
+} // namespace Engine

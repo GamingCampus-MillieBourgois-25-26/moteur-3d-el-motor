@@ -1,92 +1,87 @@
 #pragma once
 
 #include "Component.hpp"
-
 #include "Maths/Headers/MVec2.hpp"
 #include "Maths/Headers/MVec3.hpp"
 
 namespace Engine {
 
-    /// <summary>
-    /// Transform component responsible for storing spatial data of a GameObject.
-    /// Defines position, rotation, and scale in 3D space.
-    /// Every GameObject should have exactly one Transform.
-    /// </summary>
+    /**
+     * @brief Transform component responsible for storing spatial data of a GameObject.
+     *
+     * Defines position, rotation, and scale in 3D space.
+     * Every GameObject should have exactly one Transform.
+     */
     class Transform : public Component {
     public:
 
-        /// <summary>
-        /// Returns the component type name.
-        /// </summary>
-        /// <returns>Component type name</returns>
+        /**
+         * @brief Returns the component type name.
+         * @return Component type name
+         */
         std::string GetTypeName() const override {
             return "Transform";
         }
 
-        /// <summary>
-        /// Position of the object in world space.
-        /// </summary>
+        /// @brief Position of the object in world space
         Maths::Vec3f position{};
 
-        /// <summary>
-        /// Rotation of the object (usually Euler angles).
-        /// </summary>
+        /// @brief Rotation of the object (usually Euler angles)
         Maths::Vec3f rotation{};
 
-        /// <summary>
-        /// Scale of the object.
-        /// Default value is (1,1,1).
-        /// </summary>
+        /// @brief Scale of the object. Default value is (1,1,1)
         Maths::Vec3f scale{ 1.f, 1.f, 1.f };
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
+        /**
+         * @brief Default constructor
+         */
         Transform() = default;
 
-        /// <summary>
-        /// Creates a transform with specified position, rotation, and scale.
-        /// </summary>
-        /// <param name="pos">Initial position</param>
-        /// <param name="rot">Initial rotation</param>
-        /// <param name="scl">Initial scale</param>
+        /**
+         * @brief Creates a transform with specified position, rotation, and scale
+         * @param pos Initial position
+         * @param rot Initial rotation (default: zero vector)
+         * @param scl Initial scale (default: (1,1,1))
+         */
         Transform(const Maths::Vec3f& pos,
             const Maths::Vec3f& rot = Maths::Vec3f(),
             const Maths::Vec3f& scl = Maths::Vec3f(1.f, 1.f, 1.f))
             : position(pos), rotation(rot), scale(scl) {
         }
 
-        /// <summary>
-        /// Moves the object by a given offset.
-        /// </summary>
-        /// <param name="delta">Translation vector</param>
+        /**
+         * @brief Moves the object by a given offset
+         * @param delta Translation vector to apply
+         */
         void Translate(const Maths::Vec3f& delta) {
             position = position + delta;
         }
 
-        /// <summary>
-        /// Sets the world position of the object.
-        /// </summary>
-        /// <param name="p">New position</param>
+        /**
+         * @brief Sets the world position of the object
+         * @param p New position vector
+         */
         void SetPosition(const Maths::Vec3f& p) {
             position = p;
         }
 
-        /// <summary>
-        /// Returns the current position of the object.
-        /// </summary>
-        /// <returns>Reference to position vector</returns>
+        /**
+         * @brief Returns the current position of the object
+         * @return Reference to position vector
+         */
         const Maths::Vec3f& GetPosition() const {
             return position;
         }
 
-        /// <summary>
-        /// Called every frame to update the transform.
-        /// Currently unused but kept for future logic.
-        /// </summary>
-        /// <param name="dt">Delta time between frames</param>
+        /**
+         * @brief Called every frame to update the transform
+         * @param dt Delta time between frames
+         *
+         * Currently unused but kept for potential future logic.
+         */
         void Update(float dt) override {
             // Empty for now
         }
     };
-}
+
+} // namespace Engine
