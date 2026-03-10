@@ -1,0 +1,41 @@
+# Regen with this: cmake . -G "Visual Studio 17" -B out
+
+file(GLOB_RECURSE ENGINE_SOURCES
+    Core/src/**/*.cpp 
+    Components/UserComponents/**/*.cpp
+    Externals/**/*.cpp
+    Externals/**/*.inl
+)
+
+
+
+file(GLOB_RECURSE ENGINE_HEADERS
+    Core/Headers/**/*.hpp
+    Components/UserComponents/**/*.hpp
+    Externals/**/*.h
+    Externals/**/*.hpp
+)
+
+add_library(Engine
+    ${ENGINE_SOURCES}
+    ${ENGINE_HEADERS}
+
+ "Core/src/Assets/TextureAsset/TextureAsset.cpp"
+ "Core/Headers/API_Sound/audio.h")
+
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Headers 
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/Externals
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/Core/Headers
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/Components/UserComponents/Headers
+
+)
+
+
+target_link_libraries(Engine PRIVATE
+    glfw
+    d3d11
+    dxgi
+    d3dcompiler
+    DirectXTK
+    assimp
+)
