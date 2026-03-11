@@ -679,13 +679,22 @@ Maths::Quat<T> Maths::Mat4<T>::operator*(const Maths::Quat<T>& v) {
 
 template<typename T>
 Maths::Vec3<T> Maths::Mat4<T>::operator*(const Maths::Vec3<T>& v) {
+    T x = v.x();
+    T y = v.y();
+    T z = v.z();
 
-	return Maths::Vec3<T>(
-		this->at(0, 0) * v.m_x + this->at(0, 1) * v.m_y + this->at(0, 2) * v.m_z,
-		this->at(1, 0) * v.m_x + this->at(1, 1) * v.m_y + this->at(1, 2) * v.m_z,
-		this->at(2, 0) * v.m_x + this->at(2, 1) * v.m_y + this->at(2, 2) * v.m_z,
-		this->at(3, 0) * v.m_x + this->at(3, 1) * v.m_y + this->at(3, 2) * v.m_z
-	);
+    T resultX = this->at(0, 0) * x + this->at(0, 1) * y + this->at(0, 2) * z + this->at(0, 3);
+    T resultY = this->at(1, 0) * x + this->at(1, 1) * y + this->at(1, 2) * z + this->at(1, 3);
+    T resultZ = this->at(2, 0) * x + this->at(2, 1) * y + this->at(2, 2) * z + this->at(2, 3);
+    T resultW = this->at(3, 0) * x + this->at(3, 1) * y + this->at(3, 2) * z + this->at(3, 3);
+
+    if (resultW != static_cast<T>(0) && resultW != static_cast<T>(1)) {
+        resultX /= resultW;
+        resultY /= resultW;
+        resultZ /= resultW;
+    }
+
+    return Maths::Vec3<T>(resultX, resultY, resultZ);
 }
 
 template<typename T>
