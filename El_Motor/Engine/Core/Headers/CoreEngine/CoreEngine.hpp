@@ -6,7 +6,7 @@
 #include "Logger/Logger.hpp"
 #include "Application/App.hpp"
 #include "Scene/Scene.hpp"
-#include "Camera/EditorCamera.hpp"
+#include "PhysicSystem.hpp"
 
 namespace Engine
 {
@@ -19,14 +19,13 @@ namespace Engine
 		LoggerManager loggerManager;
 		AssetManager assetManager;
 		std::shared_ptr<Scene> defaultScene;
-		EditorCamera camera;
+		PhysicSystem physicSystem;
         //.... assetManager;
 
         bool running = false;
 		float dt = 0.0f;
 
     public:
-
 		CoreEngine() = default;
 
 		void init(Engine::Application& app);         // initialisation du moteur
@@ -43,8 +42,8 @@ namespace Engine
 		Application& getApplication() { return application; }*/
 		AssetManager& getAssetManager() { return assetManager; }
 		std::shared_ptr<Scene>& getScene() { return defaultScene; }
-		EditorCamera& getCamera() { return camera; }
 		float getDeltaTime() const { return dt; }
+		PhysicSystem& GetPhysicSystem() { return physicSystem; }
 
 
 		void SetScene(std::shared_ptr<Scene> scene) { defaultScene = scene; }

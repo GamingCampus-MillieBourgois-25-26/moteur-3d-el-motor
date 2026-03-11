@@ -54,6 +54,7 @@ void Editor::HubManager::HubRun()
         case EditorState::Run:
         {
             float dt = coreEditor.GetEngine().getDeltaTime();
+			coreEditor.GetEngine().GetPhysicSystem().Update(coreEditor.GetEngine().getScene(), dt);
             coreEditor.editorRun(app);
             scriptManager.updateScripts(dt);
             app.getD3D11()->SetViewProjection(camera.GetVP());
@@ -141,6 +142,7 @@ void Editor::HubManager::DrawEditorUI()
     if (buttons.startRuntime())
     {
         logger.LogInfo("RUN STARTED");
+        coreEditor.GetEngine().GetPhysicSystem().OnStart(coreEditor.GetEngine().getScene());
         scriptManager.Initialize();
         scriptManager.StartAll();
 		SetEditorState(EditorState::Run);

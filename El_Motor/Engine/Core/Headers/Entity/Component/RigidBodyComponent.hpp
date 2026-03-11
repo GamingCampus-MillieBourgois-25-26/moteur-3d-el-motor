@@ -4,11 +4,13 @@
 #include "Logger/Logger.hpp"
 #include "Maths/Headers/MVec3.hpp"
 #include "Rigidbody.hpp"
+#include "Colliders.hpp"
 
 namespace Engine {
     class RigidBodyComponent : public Component {
     public:
         RigidBodyComponent() = default;
+        RigidBodyComponent(PShape& shape, bool isStatic) { m_rigidBody = RigidBody(shape, isStatic); }
 
         void Start() override{
             LoggerManager::Get().LogInfo(

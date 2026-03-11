@@ -6,6 +6,7 @@ void Engine::CoreEngine::init(Engine::Application& app) {
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	assetManager.Initialize(app.getD3D11()->GetDevice(), app.getD3D11()->GetContext());
+	physicSystem.Init();
 
 	running = true;
 
@@ -15,12 +16,13 @@ void Engine::CoreEngine::run() {
 		timeManager.Update();
 		SetDeltaTime(timeManager.GetDeltaTime());
 		inputManager.update();
-		getCamera().Update(inputManager);
 		getScene()->Update(getDeltaTime());
 }
 
 void Engine::CoreEngine::shutdown() {
 	// Nettoyage du moteur, lib�ration de m�moires(� faire)
 	loggerManager.LogShutdown();
+	physicSystem.OnEnd(getScene());
+	physicSystem.Exit();
 	running = false;
 }

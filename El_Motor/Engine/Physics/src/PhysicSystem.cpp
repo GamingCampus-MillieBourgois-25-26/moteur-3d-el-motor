@@ -2,6 +2,8 @@
 #include "Maths/Headers/MQuaternion.hpp"
 #include "Entity/Component/RigidBodyComponent.hpp"
 
+//PhysicSystem::PhysicsStruct PhysicSystem::sPhysics{};
+
 namespace BroadPhaseLayers
 {
 	static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
@@ -141,9 +143,9 @@ void PhysicSystem::Exit()
 	delete sPhysics.mSystem;
 	sPhysics.mSystem = nullptr;
 
+	sPhysics.mTemp_allocator = nullptr;
 	// Delete the temp allocator
 	delete sPhysics.mTemp_allocator;
-	sPhysics.mTemp_allocator = nullptr;
 
 	// Destroy the factory instance properly
 	delete JPH::Factory::sInstance;
@@ -152,8 +154,8 @@ void PhysicSystem::Exit()
 	JPH::UnregisterTypes();
 }
 
-void PhysicSystem::OnStart(Engine::Scene& scene) {
-	auto objects = scene.GetRootObjects();
+void PhysicSystem::OnStart(std::shared_ptr<Engine::Scene>& scene) {
+	auto objects = scene->GetRootObjects();
 
 	for (auto& it : objects) {
 		for (auto& comp : it->GetAllComponents()) {
@@ -167,8 +169,8 @@ void PhysicSystem::OnStart(Engine::Scene& scene) {
 	}
 }
 
-void PhysicSystem::OnEnd(Engine::Scene& scene) {
-	auto objects = scene.GetRootObjects();
+void PhysicSystem::OnEnd(std::shared_ptr<Engine::Scene>& scene) {
+	auto objects = scene->GetRootObjects();
 
 	for (auto& it : objects) {
 		for (auto& comp : it->GetAllComponents()) {
@@ -183,7 +185,7 @@ void PhysicSystem::OnEnd(Engine::Scene& scene) {
 	}
 }
 
-void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
+void PhysicSystem::Update(std::shared_ptr<Engine::Scene>& scene, float deltaTime) {
 	const float cDeltaTime = 1.0f / 60.0f;
 	const int cCollisionSteps = 1;
 
@@ -191,7 +193,7 @@ void PhysicSystem::Update(Engine::Scene& scene, float deltaTime) {
 
 	// Transforms Update || (pos et rot)
 	// pour tous aller chercher le body in rigidBody 
-	auto objects = scene.GetRootObjects();
+	auto objects = scene->GetRootObjects();
 
 	for (auto& it : objects){
 		for (auto& comp : it->GetAllComponents()){

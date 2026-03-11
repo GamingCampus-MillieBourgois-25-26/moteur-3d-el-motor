@@ -137,10 +137,5 @@ namespace Editor
 		/// <param name="state">The new editor state</param>
 		void SetEditorState(EditorState state) { editorState = state; }
 
-
-
-
-
-
 	};
 }

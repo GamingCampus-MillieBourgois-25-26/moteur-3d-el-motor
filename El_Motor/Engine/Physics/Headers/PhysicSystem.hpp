@@ -47,11 +47,11 @@ public:
 	void Init();
 	void Exit();
 
-	void OnStart(Engine::Scene& scene);
-	void OnEnd(Engine::Scene& scene);
+	void OnStart(std::shared_ptr<Engine::Scene>& scene);
+	void OnEnd(std::shared_ptr<Engine::Scene>& scene);
 
 
-	void Update(Engine::Scene& scene, float deltaTime);
+	void Update(std::shared_ptr<Engine::Scene>& scene, float deltaTime);
 
 	static JPH::BodyInterface* GetBodyInterface() { return sPhysics.mBodyInterface; }
 

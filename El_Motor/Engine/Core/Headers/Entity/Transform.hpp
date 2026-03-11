@@ -4,6 +4,7 @@
 
 #include "Maths/Headers/MVec2.hpp"
 #include "Maths/Headers/MVec3.hpp"
+#include "Maths/Headers/MQuaternion.hpp"
 
 namespace Engine {
     class Transform : public Component {
@@ -13,16 +14,14 @@ namespace Engine {
             return "Transform";
         }
 
-        Maths::Vec3f position{};
-        Maths::Quatf rotation{};
-        Maths::Vec3f scale{ 1.f, 1.f, 1.f };
+        Maths::Vec3f position;
+        Maths::Quatf rotation;
+        Maths::Vec3f scale;
 
         Transform() = default;
 
-        Transform(const Maths::Vec3f& pos,
-            const Maths::Quatf& rot = Maths::Quatf(),
-            const Maths::Vec3f& scl = Maths::Vec3f(1.f, 1.f, 1.f))
-            : position(pos), rotation(rot), scale(scl) {
+        Transform(const Maths::Vec3f& pos, const Maths::Quatf& rot, const Maths::Vec3f& scl) : position(pos), rotation(rot), scale(scl) {
+			if (scale == Maths::Vec3f(0.0f, 0.0f, 0.0f)) Engine::Transform::SetScale(Maths::Vec3f(1.0f, 1.0f, 1.0f));
         }
 
         void Translate(const Maths::Vec3f& delta) {

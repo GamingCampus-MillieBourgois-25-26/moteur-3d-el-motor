@@ -13,9 +13,6 @@ namespace Editor
 		double x = 0.0;
 		double y = 0.0;
 
-
-	protected:
-
 	public:
 		EditorCore() {}
 		~EditorCore() {}
