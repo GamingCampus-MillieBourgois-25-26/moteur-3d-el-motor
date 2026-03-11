@@ -41,5 +41,4 @@ target_link_libraries(Engine PRIVATE
     d3dcompiler
     DirectXTK
     assimp
-    Jolt
 )

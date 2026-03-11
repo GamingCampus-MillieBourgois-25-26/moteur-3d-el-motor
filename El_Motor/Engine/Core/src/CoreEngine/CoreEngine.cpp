@@ -1,12 +1,12 @@
 #include "CoreEngine/CoreEngine.hpp"
 
 void Engine::CoreEngine::init(Engine::Application& app) {
-	// Initialisation des syst�mes de l'Engine , fen�tre, rendu, etc.
+	// Initialisation des systemes de l'Engine , fenetre, rendu, etc.
 	inputManager.init();
 	loggerManager.LogInitialize();
 	timeManager.Init();
 	assetManager.Initialize(app.getD3D11()->GetDevice(), app.getD3D11()->GetContext());
-	physicSystem.Init();
+	// physicSystem.Init();
 
 	running = true;
 
@@ -20,9 +20,9 @@ void Engine::CoreEngine::run() {
 }
 
 void Engine::CoreEngine::shutdown() {
-	// Nettoyage du moteur, lib�ration de m�moires(� faire)
+	// Nettoyage du moteur, liberation de memoires(a faire)
 	loggerManager.LogShutdown();
-	physicSystem.OnEnd(getScene());
-	physicSystem.Exit();
+	// physicSystem.OnEnd(getScene());
+	// physicSystem.Exit();
 	running = false;
 }
